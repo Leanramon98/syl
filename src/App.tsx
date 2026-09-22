@@ -61,6 +61,9 @@ export function App() {
           <VideoEnvelopeIntro
             videoSrc={intro.videoSrc}
             buttonText={buttonText}
+            mainPhrase={mainPhrase}
+            date={date}
+            replayButtonText={options.replayButtonText}
             onOpenVideoModal={() => setIsVideoModalOpen(true)}
           />
         ) : (

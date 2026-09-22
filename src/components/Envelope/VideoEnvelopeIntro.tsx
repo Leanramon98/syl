@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play, RotateCcw, Sparkles } from 'lucide-react';
+import { Play } from 'lucide-react';
+import { InvitationCard } from '../InvitationCard/InvitationCard';
 
 export interface VideoEnvelopeIntroProps {
   /** Video source URL or public file path (default: '/intro-envelope.mp4') */
@@ -9,24 +10,107 @@ export interface VideoEnvelopeIntroProps {
   onOpenVideoModal: () => void;
   /** Primary button label */
   buttonText?: string;
+  /** Main wedding announcement headline */
+  mainPhrase?: string;
+  /** Wedding date string */
+  date?: string;
+  /** Label for replay button */
+  replayButtonText?: string;
 }
 
 export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   videoSrc = '/intro-envelope.mp4',
   onOpenVideoModal,
   buttonText = 'Ver video',
+  mainPhrase = 'NOS CASAMOS',
+  date,
+  replayButtonText = 'Volver a ver apertura',
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isEnded, setIsEnded] = useState<boolean>(false);
+  const [isCardRevealed, setIsCardRevealed] = useState<boolean>(false);
+  const [isBlooming, setIsBlooming] = useState<boolean>(false);
   const [isAutoplayBlocked, setIsAutoplayBlocked] = useState<boolean>(false);
+
+  const hasTriggeredTransition = useRef<boolean>(false);
+  const transitionTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
+  const rafRef = useRef<number | null>(null);
+
+  // Clear pending transition timeouts
+  const clearTimeouts = useCallback(() => {
+    transitionTimeoutsRef.current.forEach(clearTimeout);
+    transitionTimeoutsRef.current = [];
+  }, []);
+
+  // Soft optical bloom transition: opacity 0 -> 1 -> 0 over ~600ms
+  // At peak (~300ms), pause video and switch seamlessly to InvitationCard
+  const triggerZoomTransition = useCallback(() => {
+    clearTimeouts();
+    setIsBlooming(true);
+
+    // Peak of the white bloom (~300ms): video pause & card switch
+    const peakTimer = setTimeout(() => {
+      if (videoRef.current) {
+        videoRef.current.pause();
+      }
+      setIsCardRevealed(true);
+    }, 300);
+
+    // Completion of the white bloom (~600ms): dismiss bloom overlay
+    const endTimer = setTimeout(() => {
+      setIsBlooming(false);
+    }, 600);
+
+    transitionTimeoutsRef.current = [peakTimer, endTimer];
+  }, [clearTimeouts]);
+
+  // Video timeupdate check (guaranteed trigger at >= 5.2s)
+  const handleTimeUpdate = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    if (!hasTriggeredTransition.current && video.currentTime >= 5.2) {
+      hasTriggeredTransition.current = true;
+      triggerZoomTransition();
+    }
+  }, [triggerZoomTransition]);
+
+  // Frame-accurate RAF loop for instantaneous zoom detection
+  useEffect(() => {
+    let active = true;
+
+    const checkTime = () => {
+      if (!active) return;
+      const video = videoRef.current;
+      if (video && isPlaying && !hasTriggeredTransition.current) {
+        if (video.currentTime >= 5.2) {
+          hasTriggeredTransition.current = true;
+          triggerZoomTransition();
+          return;
+        }
+      }
+      if (isPlaying && !hasTriggeredTransition.current) {
+        rafRef.current = requestAnimationFrame(checkTime);
+      }
+    };
+
+    if (isPlaying && !hasTriggeredTransition.current) {
+      rafRef.current = requestAnimationFrame(checkTime);
+    }
+
+    return () => {
+      active = false;
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [isPlaying, triggerZoomTransition]);
 
   // Enforce muted & attempt initial autoplay on mount
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    // Direct DOM property enforcement for iOS/WebKit autoplay compliance
     video.defaultMuted = true;
     video.muted = true;
 
@@ -44,9 +128,16 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           setIsPlaying(false);
         });
     }
-  }, [videoSrc]);
 
-  // Start playback upon user interaction
+    return () => {
+      clearTimeouts();
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+    };
+  }, [videoSrc, clearTimeouts]);
+
+  // Start playback upon user interaction if autoplay was blocked
   const handleStartPlayback = () => {
     const video = videoRef.current;
     if (!video) return;
@@ -65,53 +156,60 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
       });
   };
 
-  // When video reaches end: pause on last frame and show interactive reveal actions
+  // Replay intro video: resets video to 0s, clears transition, and plays again
+  const handleReplay = useCallback(
+    (e?: React.MouseEvent) => {
+      e?.stopPropagation();
+      clearTimeouts();
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+      }
+
+      setIsBlooming(false);
+      setIsCardRevealed(false);
+      hasTriggeredTransition.current = false;
+
+      const video = videoRef.current;
+      if (!video) return;
+
+      video.currentTime = 0;
+      video
+        .play()
+        .then(() => {
+          setIsPlaying(true);
+          setIsAutoplayBlocked(false);
+        })
+        .catch((error) => {
+          console.warn('Replay playback error:', error);
+        });
+    },
+    [clearTimeouts]
+  );
+
+  // Handle video end fallback if reached before 5.2s
   const handleEnded = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
+    if (!hasTriggeredTransition.current) {
+      hasTriggeredTransition.current = true;
+      triggerZoomTransition();
     }
-    setIsEnded(true);
-    setIsPlaying(false);
-  };
-
-  // Replay intro video anytime
-  const handleReplay = (e?: React.MouseEvent) => {
-    e?.stopPropagation();
-    const video = videoRef.current;
-    if (!video) return;
-
-    setIsEnded(false);
-    video.currentTime = 0;
-    video
-      .play()
-      .then(() => {
-        setIsPlaying(true);
-        setIsAutoplayBlocked(false);
-      })
-      .catch((error) => {
-        console.warn('Replay playback error:', error);
-      });
   };
 
   return (
     <div className="relative w-full flex flex-col items-center justify-center px-3 sm:px-4">
       {/* 
         Mobile-first vertical layout:
-        Strict 9:16 aspect ratio fitting inside viewport with zero overflow:
-        Max width is clamped by min(420px, 86dvh * 9/16)
+        Strict 9:16 aspect ratio matching the 720x1280 video and stationery card:
+        Max width is clamped by min(420px, calc(86dvh * 9 / 16))
       */}
       <div
         style={{
           aspectRatio: '9 / 16',
           maxWidth: 'min(420px, calc(86dvh * 9 / 16))',
         }}
-        className="relative w-full aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_-10px_rgba(40,30,20,0.28),0_0_24px_rgba(196,151,70,0.18)] border border-[#C49746]/40 bg-[#161412] flex items-center justify-center select-none"
+        className="relative w-full aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_-10px_rgba(40,30,20,0.28),0_0_24px_rgba(110,65,56,0.15)] border border-[#6E4138]/25 bg-[#FAF8F3] flex items-center justify-center select-none"
         onClick={isAutoplayBlocked ? handleStartPlayback : undefined}
       >
-        {/* Fine ornamental interior gold foil frame */}
-        <div className="absolute inset-2 sm:inset-2.5 rounded-xl sm:rounded-2xl border border-[#C49746]/25 pointer-events-none z-10" />
-
-        {/* Video Player */}
+        {/* Video Player: Always mounted to avoid reload latencies upon replay */}
         <video
           ref={videoRef}
           src={videoSrc}
@@ -120,18 +218,54 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           playsInline
           controls={false}
           preload="auto"
+          onTimeUpdate={handleTimeUpdate}
           onPlay={() => {
             setIsPlaying(true);
             setIsAutoplayBlocked(false);
           }}
           onPause={() => setIsPlaying(false)}
           onEnded={handleEnded}
-          className="w-full h-full object-cover select-none pointer-events-none"
+          className={`w-full h-full object-cover select-none pointer-events-none transition-opacity duration-200 ${
+            isCardRevealed ? 'opacity-0' : 'opacity-100'
+          }`}
         />
+
+        {/* Real HTML InvitationCard: Revealed seamlessly at the peak of the white bloom */}
+        {isCardRevealed && (
+          <div className="absolute inset-0 w-full h-full z-20">
+            <InvitationCard
+              onOpenVideo={onOpenVideoModal}
+              onReplay={handleReplay}
+              mainPhrase={mainPhrase}
+              date={date}
+              buttonText={buttonText}
+              replayButtonText={replayButtonText}
+              isRevealed={isCardRevealed}
+            />
+          </div>
+        )}
+
+        {/* Smooth White Transition: Soft optical bloom overlay (opacity 0 -> 1 -> 0 over ~600ms) */}
+        <AnimatePresence>
+          {isBlooming && (
+            <motion.div
+              key="optical-bloom-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 1, 0] }}
+              exit={{ opacity: 0 }}
+              transition={{
+                duration: 0.6,
+                times: [0, 0.45, 0.55, 1],
+                ease: 'easeInOut',
+              }}
+              className="absolute inset-0 z-40 pointer-events-none bg-white"
+            />
+          )}
+        </AnimatePresence>
 
         {/* Error / Autoplay-block Fallback: "Tocar para abrir" prompt */}
         <AnimatePresence>
-          {isAutoplayBlocked && !isPlaying && !isEnded && (
+          {isAutoplayBlocked && !isPlaying && !isCardRevealed && (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -164,71 +298,9 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-
-        {/* 
-          Revealed Interactive Actions when Video Ends:
-          Pauses and holds seamlessly on the final frame while controls fade in
-        */}
-        <AnimatePresence>
-          {isEnded && (
-            <motion.div
-              initial={{ opacity: 0, y: 22 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 16 }}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="absolute inset-x-0 bottom-0 pb-7 pt-20 px-4 z-20 flex flex-col items-center gap-3.5 bg-gradient-to-t from-black/85 via-black/45 to-transparent pointer-events-auto"
-            >
-              {/* Primary Action Button: Luxury Gold Jewel Button */}
-              <motion.button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onOpenVideoModal();
-                }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.97 }}
-                className="group relative inline-flex items-center justify-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-b from-[#FFFDF9] via-[#FAF5EC] to-[#F1E7D5] border border-[#C49746]/70 text-[#6B4F1A] shadow-[0_6px_24px_rgba(180,140,80,0.3)] hover:shadow-[0_10px_32px_rgba(180,140,80,0.45)] hover:border-[#B38734] hover:text-[#523B0F] uppercase tracking-[0.22em] text-xs sm:text-[13px] font-sans font-medium transition-all duration-300 focus:outline-none cursor-pointer overflow-hidden"
-                aria-label={buttonText}
-              >
-                {/* Continuous sweeping soft golden sheen */}
-                <motion.span
-                  initial={{ x: '-140%', opacity: 0 }}
-                  animate={{
-                    x: ['-140%', '180%'],
-                    opacity: [0, 0.75, 0],
-                  }}
-                  transition={{
-                    delay: 0.4,
-                    duration: 1.6,
-                    repeat: Infinity,
-                    repeatDelay: 3.2,
-                    ease: [0.22, 1, 0.36, 1],
-                  }}
-                  className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/80 to-transparent skew-x-12 pointer-events-none"
-                />
-
-                <span className="absolute inset-0 rounded-full bg-[#C49746]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <Play className="w-3.5 h-3.5 fill-[#C49746] text-[#C49746] transition-transform duration-300 group-hover:scale-110" />
-                <span>{buttonText}</span>
-                <Sparkles className="w-3.5 h-3.5 text-[#C49746]/80 group-hover:text-[#C49746] transition-colors duration-300" />
-              </motion.button>
-
-              {/* Discreet Replay Button */}
-              <motion.button
-                type="button"
-                onClick={handleReplay}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.96 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs text-[#E5CA96] hover:text-[#FFFDF9] bg-black/35 hover:bg-black/55 border border-[#C49746]/35 hover:border-[#C49746]/65 transition-all duration-200 tracking-wider uppercase font-medium focus:outline-none focus:ring-1 focus:ring-[#C49746] cursor-pointer backdrop-blur-sm"
-                title="Volver a reproducir la apertura"
-              >
-                <RotateCcw className="w-3.5 h-3.5 text-[#C49746]" />
-                <span>Repetir</span>
-              </motion.button>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
     </div>
   );
 };
+
+export default VideoEnvelopeIntro;
