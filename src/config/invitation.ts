@@ -57,12 +57,15 @@ export interface ThemeConfig {
 export interface IntroConfig {
   /**
    * Presentation mode for the invitation opening:
+   * - 'frames': Sequential animated frames with smooth cross-fade
    * - 'video': High-quality vertical video intro (e.g. envelope opening animation)
    * - 'animation': Interactive 3D CSS/Framer-Motion gatefold envelope with wax seal & ribbon
    */
-  type: 'video' | 'animation';
+  type: 'frames' | 'video' | 'animation';
   /** Path to intro video (e.g. '/intro-envelope.mp4' in public folder) */
-  videoSrc: string;
+  videoSrc?: string;
+  /** Frame sequence paths for frame animation mode */
+  frames?: string[];
 }
 
 export interface OptionsConfig {
@@ -111,8 +114,15 @@ export const invitationConfig: InvitationConfig = {
 
   // Intro Presentation Mode Configuration
   intro: {
-    type: "video",
+    type: "frames",
     videoSrc: "/intro-envelope.mp4",
+    frames: [
+      "/frames/frame-1.png",
+      "/frames/frame-2.png",
+      "/frames/frame-3.png",
+      "/frames/frame-4.png",
+      "/frames/frame-5.png",
+    ],
   },
 
   // Video Source Configuration
@@ -127,7 +137,7 @@ export const invitationConfig: InvitationConfig = {
   theme: {
     primaryAccent: "#C49746",
     primaryAccentHover: "#855F1E",
-    paperBackground: "#FAF7F2",
+    paperBackground: "#F7F5EF",
     cardBackground: "#FFFDF9",
     textPrimary: "#2C2A29",
     textSecondary: "#615242",

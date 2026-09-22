@@ -13,11 +13,11 @@
   --color-gold-600: #A87B2E;
   --color-gold-700: #855F1E;
 
-  --color-cream-50: #FDFBF7;
-  --color-cream-100: #FAF6EF;
-  --color-cream-200: #F3ECE1;
-  --color-cream-300: #E7DDD0;
-  --color-cream-400: #D8C9B5;
+  --color-cream-50: #FAF8F5;
+  --color-cream-100: #F7F5EF;
+  --color-cream-200: #EFE9DE;
+  --color-cream-300: #E2D9CA;
+  --color-cream-400: #D4C6B3;
 
   --color-charcoal-800: #2C2A29;
   --color-charcoal-900: #1B1A19;
@@ -48,10 +48,10 @@
 
 /* Subtle luxury paper texture and gradients */
 .paper-texture {
-  background-color: var(--theme-bg, #FAF7F2);
+  background-color: var(--theme-bg, #F7F5EF);
   background-image: 
-    radial-gradient(#E8DFCE 0.5px, transparent 0.5px),
-    radial-gradient(#E0D4C0 0.5px, var(--theme-bg, #FAF7F2) 0.5px);
+    radial-gradient(#E5DFD4 0.5px, transparent 0.5px),
+    radial-gradient(#DDD4C5 0.5px, var(--theme-bg, #F7F5EF) 0.5px);
   background-size: 24px 24px;
   background-position: 0 0, 12px 12px;
 }
