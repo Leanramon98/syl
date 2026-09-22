@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
+import { Sparkles, ArrowUp } from 'lucide-react';
 import { InvitationCard } from '../InvitationCard/InvitationCard';
 
 export interface VideoEnvelopeIntroProps {
@@ -290,15 +290,30 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
                   {/* Soft golden shimmer or breathing glow on the seal */}
                   <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#C49746]/15 via-[#F3E5C8]/25 to-[#C49746]/10 shadow-[inset_0_0_15px_rgba(196,151,70,0.35)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95 pointer-events-none" />
                 </button>
-
-                {/* Delicate floating luxury badge right below the chapita */}
-                <div className="absolute top-[calc(100%+14px)] flex items-center justify-center pointer-events-none whitespace-nowrap">
-                  <div className="uppercase text-[10px] tracking-[0.25em] text-[#F3E5C8] font-sans font-medium px-4 py-1.5 rounded-full bg-black/60 border border-[#C49746]/50 shadow-lg backdrop-blur-md flex items-center gap-1.5 select-none pointer-events-none">
-                    <Sparkles className="w-3 h-3 text-[#E7CB93] animate-pulse" />
-                    <span>Tocar para abrir</span>
-                  </div>
-                </div>
               </div>
+
+              {/* Indicator positioned lower down with an animated arrow pointing up to the seal button */}
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.25, duration: 0.5 }}
+                className="absolute bottom-7 sm:bottom-9 inset-x-0 flex flex-col items-center justify-center pointer-events-none z-30"
+              >
+                {/* Animated bouncing arrow pointing directly up to the chapita button */}
+                <motion.div
+                  animate={{ y: [0, -6, 0] }}
+                  transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
+                  className="flex items-center justify-center mb-1.5"
+                >
+                  <ArrowUp className="w-5 h-5 text-[#E7CB93] drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]" />
+                </motion.div>
+
+                {/* Elegant floating pill */}
+                <div className="uppercase text-[10px] sm:text-[11px] tracking-[0.25em] text-[#F3E5C8] font-sans font-medium px-4 py-1.5 rounded-full bg-black/65 border border-[#C49746]/50 shadow-xl backdrop-blur-md flex items-center gap-1.5 select-none">
+                  <Sparkles className="w-3 h-3 text-[#E7CB93] animate-pulse" />
+                  <span>Tocar para abrir</span>
+                </div>
+              </motion.div>
             </motion.div>
           )}
         </AnimatePresence>
