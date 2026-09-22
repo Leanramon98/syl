@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { GatefoldEnvelope, type AnimationStage } from './components/Envelope/GatefoldEnvelope';
+import { VideoEnvelopeIntro } from './components/Envelope/VideoEnvelopeIntro';
 import { VideoModal } from './components/Modal/VideoModal';
 import { invitationConfig } from './config/invitation';
 
@@ -7,7 +8,8 @@ export function App() {
   const [animationStage, setAnimationStage] = useState<AnimationStage>('closed');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
 
-  const { theme } = invitationConfig;
+  const { theme, intro, buttonText } = invitationConfig;
+  const isVideoIntro = intro?.type === 'video';
 
   // Injected CSS custom properties from invitationConfig.theme
   const rootStyle = {
@@ -42,13 +44,21 @@ export function App() {
         />
       </div>
 
-      {/* Main Center Stage: Gatefold Envelope */}
+      {/* Main Center Stage: Video Intro or Gatefold Envelope */}
       <main className="relative z-10 w-full flex items-center justify-center">
-        <GatefoldEnvelope
-          stage={animationStage}
-          onStageChange={setAnimationStage}
-          onOpenVideo={() => setIsVideoModalOpen(true)}
-        />
+        {isVideoIntro ? (
+          <VideoEnvelopeIntro
+            videoSrc={intro.videoSrc}
+            buttonText={buttonText}
+            onOpenVideoModal={() => setIsVideoModalOpen(true)}
+          />
+        ) : (
+          <GatefoldEnvelope
+            stage={animationStage}
+            onStageChange={setAnimationStage}
+            onOpenVideo={() => setIsVideoModalOpen(true)}
+          />
+        )}
       </main>
 
       {/* Video Modal Player */}

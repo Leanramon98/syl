@@ -54,6 +54,17 @@ export interface ThemeConfig {
   fontScript: string;
 }
 
+export interface IntroConfig {
+  /**
+   * Presentation mode for the invitation opening:
+   * - 'video': High-quality vertical video intro (e.g. envelope opening animation)
+   * - 'animation': Interactive 3D CSS/Framer-Motion gatefold envelope with wax seal & ribbon
+   */
+  type: 'video' | 'animation';
+  /** Path to intro video (e.g. '/intro-envelope.mp4' in public folder) */
+  videoSrc: string;
+}
+
 export interface OptionsConfig {
   /** Whether the envelope untying & opening animation starts automatically */
   autoPlayIntro: boolean;
@@ -74,6 +85,7 @@ export interface InvitationConfig {
   video: VideoConfig;
   theme: ThemeConfig;
   options: OptionsConfig;
+  intro: IntroConfig;
 }
 
 export const invitationConfig: InvitationConfig = {
@@ -96,6 +108,12 @@ export const invitationConfig: InvitationConfig = {
 
   // Primary Action Button Label
   buttonText: "Ver video",
+
+  // Intro Presentation Mode Configuration
+  intro: {
+    type: "video",
+    videoSrc: "/intro-envelope.mp4",
+  },
 
   // Video Source Configuration
   // Supports YouTube, Vimeo, and local video files in the public folder.
@@ -126,3 +144,4 @@ export const invitationConfig: InvitationConfig = {
     replayButtonText: "Volver a ver apertura",
   },
 };
+
