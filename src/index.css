@@ -50,18 +50,18 @@
 .paper-texture {
   background-color: var(--theme-bg, #FAF7F2);
   background-image: 
-    radial-gradient(#E8DFC8 0.65px, transparent 0.65px),
-    radial-gradient(#DFD4BA 0.65px, var(--theme-bg, #FAF7F2) 0.65px);
-  background-size: 26px 26px;
-  background-position: 0 0, 13px 13px;
+    radial-gradient(#E8DFCE 0.5px, transparent 0.5px),
+    radial-gradient(#E0D4C0 0.5px, var(--theme-bg, #FAF7F2) 0.5px);
+  background-size: 24px 24px;
+  background-position: 0 0, 12px 12px;
 }
 
 .envelope-texture {
-  background: linear-gradient(135deg, #F9F5EE 0%, #F1E9DC 50%, #ECE2D2 100%);
+  background: linear-gradient(135deg, #FBF8F2 0%, #F3ECDF 50%, #EBE1D0 100%);
 }
 
 .card-texture {
-  background: linear-gradient(165deg, var(--theme-card, #FFFDF9) 0%, #FAF6EE 60%, #F6F0E4 100%);
+  background: linear-gradient(170deg, var(--theme-card, #FFFDF9) 0%, #FCF8F0 50%, #F7F1E6 100%);
 }
 
 .gold-shimmer {
@@ -90,30 +90,31 @@
 /* Soft luxury shadow */
 .shadow-luxury {
   box-shadow: 
-    0 4px 6px -1px rgba(60, 45, 30, 0.05),
-    0 10px 25px -5px rgba(60, 45, 30, 0.12),
-    0 20px 40px -10px rgba(60, 45, 30, 0.08);
+    0 4px 12px -2px rgba(50, 40, 25, 0.04),
+    0 12px 28px -6px rgba(50, 40, 25, 0.08),
+    0 24px 48px -12px rgba(50, 40, 25, 0.06);
 }
 
 .shadow-card-elevated {
   box-shadow: 
-    0 10px 30px -5px rgba(50, 35, 20, 0.15),
-    0 25px 60px -12px rgba(50, 35, 20, 0.22),
-    0 0 0 1px rgba(196, 151, 70, 0.15);
+    0 30px 60px -15px rgba(50, 40, 30, 0.09),
+    0 10px 24px -5px rgba(50, 40, 30, 0.05),
+    0 0 0 1px rgba(196, 151, 70, 0.12);
 }
 
 .shadow-card-floating {
   box-shadow:
-    0 25px 50px -12px rgba(45, 32, 18, 0.2),
-    0 0 0 1px rgba(196, 151, 70, 0.2);
+    0 30px 60px -15px rgba(50, 40, 30, 0.09),
+    0 10px 24px -5px rgba(50, 40, 30, 0.05),
+    0 0 0 1px rgba(196, 151, 70, 0.12);
 }
 
 .shadow-flap-left {
-  box-shadow: 4px 0 15px -2px rgba(40, 30, 20, 0.15);
+  box-shadow: 3px 0 12px rgba(50, 40, 25, 0.06);
 }
 
 .shadow-flap-right {
-  box-shadow: -4px 0 15px -2px rgba(40, 30, 20, 0.15);
+  box-shadow: -3px 0 12px rgba(50, 40, 25, 0.06);
 }
 
 @keyframes gold-sweep {

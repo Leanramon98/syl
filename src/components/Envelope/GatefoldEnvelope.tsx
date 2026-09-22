@@ -88,9 +88,12 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
         style={{ perspective: '1400px' }}
       >
         {/* Envelope Base Tray / Interior Lining */}
-        <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#EFE8DC] via-[#E8DFD0] to-[#DDD2C0] shadow-luxury border border-[#D5C6B1] overflow-hidden">
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#F4EFE6] via-[#EBE2D4] to-[#DFD4C2] shadow-luxury border border-[#D5C6B1]/80 overflow-hidden">
+          {/* Hairline gold accent frame inside interior tray */}
+          <div className="absolute inset-2.5 sm:inset-3.5 rounded-xl border border-[#C49746]/25 pointer-events-none" />
+
           {/* Subtle watermark monogram inside back tray */}
-          <div className="absolute inset-0 opacity-15 flex items-center justify-center pointer-events-none">
+          <div className="absolute inset-0 opacity-12 flex items-center justify-center pointer-events-none">
             <span
               className="text-8xl sm:text-9xl select-none font-extralight tracking-widest"
               style={{
