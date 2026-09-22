@@ -7,18 +7,24 @@
 export interface VideoConfig {
   /**
    * Type of video embed or custom stream
-   * - 'youtube': Standard YouTube embed URL (e.g. https://www.youtube-nocookie.com/embed/...)
-   * - 'vimeo': Vimeo player embed URL (e.g. https://player.vimeo.com/video/...)
-   * - 'custom': Direct MP4/WebM URL for HTML5 <video> player
+   * - 'youtube': YouTube video (watch URL, share URL, or embed URL)
+   * - 'vimeo': Vimeo video URL (watch URL or player embed URL)
+   * - 'local' | 'custom': Direct MP4/WebM file (e.g. '/video.mp4')
+   * - 'auto': Automatically detect based on URL
    */
-  type: 'youtube' | 'vimeo' | 'custom';
+  type?: 'youtube' | 'vimeo' | 'custom' | 'local' | 'auto';
   /**
-   * The embed or video stream URL.
-   * For YouTube, use privacy-enhanced embed domain: https://www.youtube-nocookie.com/embed/{VIDEO_ID}?autoplay=1
+   * The embed, share, or video stream URL / local file path.
+   * Examples:
+   * - YouTube: "https://www.youtube.com/watch?v=LXb3EKWsInQ" or "https://youtu.be/LXb3EKWsInQ"
+   * - Vimeo: "https://vimeo.com/123456789"
+   * - Local file: "/video.mp4" (placed in the public/ folder)
    */
   url: string;
   /** Accessible title for screen readers and modal header */
-  title: string;
+  title?: string;
+  /** Optional poster image URL for HTML5 video player */
+  poster?: string;
 }
 
 export interface CoupleConfig {
@@ -57,12 +63,34 @@ export const invitationConfig: InvitationConfig = {
   location: "Estancia La Candelaria",
   address: "Ruta 205 Km 114.5, Lobos, Prov. de Buenos Aires",
   reception: "Ceremonia & Fiesta al atardecer",
+  // =========================================================================
+  // VIDEO CONFIGURATION
+  // =========================================================================
+  // The video modal supports YouTube, Vimeo, and local video files (.mp4/.webm).
+  // URLs are automatically normalized and optimized for mobile playback.
+  //
+  // HOW TO SWITCH VIDEO SOURCES:
+  //
+  // 1. YouTube (Recommended):
+  //    type: "youtube", // or "auto"
+  //    url: "https://www.youtube.com/watch?v=LXb3EKWsInQ", // or "https://youtu.be/..."
+  //    title: "Sofía & Tomás — Nuestra Historia de Amor",
+  //
+  // 2. Vimeo:
+  //    type: "vimeo", // or "auto"
+  //    url: "https://vimeo.com/123456789", // or "https://player.vimeo.com/video/..."
+  //    title: "Sofía & Tomás — Nuestra Historia de Amor",
+  //
+  // 3. Local Video File:
+  //    Place your video inside the `public/` directory (e.g., `public/video.mp4`)
+  //    type: "local", // or "custom", or "auto"
+  //    url: "/video.mp4",
+  //    poster: "/video-poster.jpg", // Optional cover image before playing
+  //    title: "Sofía & Tomás — Nuestra Historia de Amor",
+  // =========================================================================
   video: {
     type: "youtube",
-    // Sample romantic cinematic wedding teaser embed
-    // To change to your own video, replace with your YouTube video ID:
-    // e.g., "https://www.youtube-nocookie.com/embed/YOUR_ID?autoplay=1&rel=0"
-    url: "https://www.youtube-nocookie.com/embed/LXb3EKWsInQ?autoplay=1&rel=0&modestbranding=1",
+    url: "https://www.youtube.com/watch?v=LXb3EKWsInQ",
     title: "Sofía & Tomás — Nuestra Historia de Amor",
   },
   buttonText: "Ver video",
