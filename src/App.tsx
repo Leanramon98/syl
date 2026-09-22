@@ -60,6 +60,7 @@ export function App() {
         ) : isVideoIntro ? (
           <VideoEnvelopeIntro
             videoSrc={intro.videoSrc}
+            autoPlayIntro={options.autoPlayIntro}
             buttonText={buttonText}
             mainPhrase={mainPhrase}
             date={date}

@@ -148,7 +148,7 @@ export const invitationConfig: InvitationConfig = {
 
   // Interactive Playback Options
   options: {
-    autoPlayIntro: true,
+    autoPlayIntro: false,
     introDelayMs: 800,
     showReplayButton: true,
     replayButtonText: "Volver a ver apertura",

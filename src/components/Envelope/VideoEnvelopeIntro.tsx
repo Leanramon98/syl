@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Play } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { InvitationCard } from '../InvitationCard/InvitationCard';
 
 export interface VideoEnvelopeIntroProps {
   /** Video source URL or public file path (default: '/intro-envelope.mp4') */
   videoSrc?: string;
+  /** Whether the intro should autoplay immediately (default: false) */
+  autoPlayIntro?: boolean;
   /** Callback fired when user clicks the primary action button to open the video modal */
   onOpenVideoModal: () => void;
   /** Primary button label */
@@ -20,6 +22,7 @@ export interface VideoEnvelopeIntroProps {
 
 export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   videoSrc = '/intro-envelope.mp4',
+  autoPlayIntro = false,
   onOpenVideoModal,
   buttonText = 'Ver video',
   mainPhrase = 'NOS CASAMOS',
@@ -28,9 +31,9 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [hasStarted, setHasStarted] = useState<boolean>(autoPlayIntro);
   const [isCardRevealed, setIsCardRevealed] = useState<boolean>(false);
   const [isBlooming, setIsBlooming] = useState<boolean>(false);
-  const [isAutoplayBlocked, setIsAutoplayBlocked] = useState<boolean>(false);
 
   const hasTriggeredTransition = useRef<boolean>(false);
   const transitionTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
@@ -106,7 +109,28 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
     };
   }, [isPlaying, triggerZoomTransition]);
 
-  // Enforce muted & attempt initial autoplay on mount
+  // Start playback upon user interaction (tapping chapita or clicking envelope)
+  const handleStartPlayback = useCallback(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    video.defaultMuted = true;
+    video.muted = true;
+
+    setHasStarted(true);
+    video
+      .play()
+      .then(() => {
+        setIsPlaying(true);
+      })
+      .catch((error) => {
+        console.warn('Video playback error:', error);
+        setHasStarted(false);
+        setIsPlaying(false);
+      });
+  }, []);
+
+  // Initialize video muted state; conditionally autoplay only if autoPlayIntro is true
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -114,19 +138,11 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
     video.defaultMuted = true;
     video.muted = true;
 
-    const playPromise = video.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setIsAutoplayBlocked(false);
-          setIsPlaying(true);
-        })
-        .catch((error) => {
-          // Autoplay policy or Low Power Mode blocked initial playback
-          console.warn('Intro video autoplay prevented by browser:', error);
-          setIsAutoplayBlocked(true);
-          setIsPlaying(false);
-        });
+    if (autoPlayIntro) {
+      handleStartPlayback();
+    } else {
+      video.pause();
+      video.currentTime = 0;
     }
 
     return () => {
@@ -135,28 +151,9 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
         cancelAnimationFrame(rafRef.current);
       }
     };
-  }, [videoSrc, clearTimeouts]);
+  }, [videoSrc, autoPlayIntro, handleStartPlayback, clearTimeouts]);
 
-  // Start playback upon user interaction if autoplay was blocked
-  const handleStartPlayback = () => {
-    const video = videoRef.current;
-    if (!video) return;
-
-    video.defaultMuted = true;
-    video.muted = true;
-
-    video
-      .play()
-      .then(() => {
-        setIsAutoplayBlocked(false);
-        setIsPlaying(true);
-      })
-      .catch((error) => {
-        console.error('Manual video playback error:', error);
-      });
-  };
-
-  // Replay intro video: resets video to 0s, clears transition, and plays again
+  // Replay intro video: resets video to 0s, pauses, and re-shows closed envelope with chapita cue
   const handleReplay = useCallback(
     (e?: React.MouseEvent) => {
       e?.stopPropagation();
@@ -168,20 +165,14 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
       setIsBlooming(false);
       setIsCardRevealed(false);
       hasTriggeredTransition.current = false;
+      setIsPlaying(false);
+      setHasStarted(false);
 
       const video = videoRef.current;
       if (!video) return;
 
+      video.pause();
       video.currentTime = 0;
-      video
-        .play()
-        .then(() => {
-          setIsPlaying(true);
-          setIsAutoplayBlocked(false);
-        })
-        .catch((error) => {
-          console.warn('Replay playback error:', error);
-        });
     },
     [clearTimeouts]
   );
@@ -206,23 +197,21 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           aspectRatio: '9 / 16',
           maxWidth: 'min(420px, calc(86dvh * 9 / 16))',
         }}
-        className="relative w-full aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_-10px_rgba(40,30,20,0.28),0_0_24px_rgba(110,65,56,0.15)] border border-[#6E4138]/25 bg-[#FAF8F3] flex items-center justify-center select-none"
-        onClick={isAutoplayBlocked ? handleStartPlayback : undefined}
+        className={`relative w-full aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_-10px_rgba(40,30,20,0.28),0_0_24px_rgba(110,65,56,0.15)] border border-[#6E4138]/25 bg-[#FAF8F3] flex items-center justify-center select-none ${
+          !hasStarted && !isCardRevealed ? 'cursor-pointer' : ''
+        }`}
+        onClick={!hasStarted && !isCardRevealed ? handleStartPlayback : undefined}
       >
         {/* Video Player: Always mounted to avoid reload latencies upon replay */}
         <video
           ref={videoRef}
           src={videoSrc}
-          autoPlay
           muted
           playsInline
           controls={false}
           preload="auto"
           onTimeUpdate={handleTimeUpdate}
-          onPlay={() => {
-            setIsPlaying(true);
-            setIsAutoplayBlocked(false);
-          }}
+          onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onEnded={handleEnded}
           className={`w-full h-full object-cover select-none pointer-events-none transition-opacity duration-200 ${
@@ -263,38 +252,53 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           )}
         </AnimatePresence>
 
-        {/* Error / Autoplay-block Fallback: "Tocar para abrir" prompt */}
+        {/* Interactive Chapita / Wax Seal Cue: Pulsing ring & luxury badge */}
         <AnimatePresence>
-          {isAutoplayBlocked && !isPlaying && !isCardRevealed && (
+          {!hasStarted && !isCardRevealed && (
             <motion.div
+              key="chapita-cue-overlay"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-              className="absolute inset-0 z-30 flex flex-col items-center justify-center p-6 bg-black/45 backdrop-blur-[3px] cursor-pointer"
-              onClick={handleStartPlayback}
+              exit={{ opacity: 0, transition: { duration: 0.35, ease: 'easeOut' } }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none"
             >
-              <motion.div
-                initial={{ scale: 0.9, y: 10 }}
-                animate={{ scale: 1, y: 0 }}
-                exit={{ scale: 0.9, y: 10 }}
-                whileHover={{ scale: 1.03 }}
-                whileTap={{ scale: 0.96 }}
-                className="flex flex-col items-center gap-3.5 px-6 py-6 rounded-2xl bg-gradient-to-b from-[#FFFDF9] via-[#FAF6EF] to-[#F3ECE1] border border-[#C49746]/70 shadow-[0_16px_36px_rgba(0,0,0,0.4),0_0_24px_rgba(196,151,70,0.25)] text-center cursor-pointer"
-              >
-                <div className="relative w-14 h-14 rounded-full bg-gradient-to-br from-[#E7CB93] via-[#C49746] to-[#8A651D] flex items-center justify-center text-[#FFFDF9] shadow-[0_4px_16px_rgba(196,151,70,0.45)]">
-                  <Play className="w-6 h-6 fill-current ml-0.5 text-white" />
-                  <span className="absolute inset-0 rounded-full border border-white/50 animate-ping opacity-35" />
+              <div className="relative flex flex-col items-center justify-center">
+                {/* Touch target centered over the seal (50% x 50%) */}
+                <button
+                  type="button"
+                  aria-label="Tocar para abrir invitación"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStartPlayback();
+                  }}
+                  className="group relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center cursor-pointer pointer-events-auto select-none focus:outline-none"
+                >
+                  {/* Subtle pulsing golden radar / ripple ring */}
+                  <span
+                    className="absolute inset-0 rounded-full border border-[#C49746] animate-ping opacity-40 pointer-events-none"
+                    style={{ animationDuration: '2.5s' }}
+                  />
+                  <span
+                    className="absolute -inset-2 rounded-full border border-[#C49746]/40 animate-pulse pointer-events-none"
+                    style={{ animationDuration: '2s' }}
+                  />
+
+                  {/* Soft glowing halo */}
+                  <span className="absolute -inset-3 rounded-full bg-[#C49746]/20 blur-md pointer-events-none animate-pulse" />
+
+                  {/* Soft golden shimmer or breathing glow on the seal */}
+                  <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#C49746]/15 via-[#F3E5C8]/25 to-[#C49746]/10 shadow-[inset_0_0_15px_rgba(196,151,70,0.35)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95 pointer-events-none" />
+                </button>
+
+                {/* Delicate floating luxury badge right below the chapita */}
+                <div className="absolute top-[calc(100%+14px)] flex items-center justify-center pointer-events-none whitespace-nowrap">
+                  <div className="uppercase text-[10px] tracking-[0.25em] text-[#F3E5C8] font-sans font-medium px-4 py-1.5 rounded-full bg-black/60 border border-[#C49746]/50 shadow-lg backdrop-blur-md flex items-center gap-1.5 select-none pointer-events-none">
+                    <Sparkles className="w-3 h-3 text-[#E7CB93] animate-pulse" />
+                    <span>Tocar para abrir</span>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-serif text-lg sm:text-xl text-[#2C2A29] font-normal tracking-wide">
-                    Tocar para abrir
-                  </h3>
-                  <p className="mt-1 text-[10px] sm:text-[11px] font-sans uppercase tracking-[0.22em] text-[#8A6A32] font-medium">
-                    Invitación de boda
-                  </p>
-                </div>
-              </motion.div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
