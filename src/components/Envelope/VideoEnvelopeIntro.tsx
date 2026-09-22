@@ -274,21 +274,21 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
                   }}
                   className="group relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center cursor-pointer pointer-events-auto select-none focus:outline-none"
                 >
-                  {/* Subtle pulsing golden radar / ripple ring */}
+                  {/* Subtle pulsing translucent white radar / ripple ring */}
                   <span
-                    className="absolute inset-0 rounded-full border border-[#C49746] animate-ping opacity-40 pointer-events-none"
+                    className="absolute inset-0 rounded-full border border-white/60 animate-ping opacity-35 pointer-events-none"
                     style={{ animationDuration: '2.5s' }}
                   />
                   <span
-                    className="absolute -inset-2 rounded-full border border-[#C49746]/40 animate-pulse pointer-events-none"
+                    className="absolute -inset-2 rounded-full border border-white/35 animate-pulse pointer-events-none"
                     style={{ animationDuration: '2s' }}
                   />
 
-                  {/* Soft glowing halo */}
-                  <span className="absolute -inset-3 rounded-full bg-[#C49746]/20 blur-md pointer-events-none animate-pulse" />
+                  {/* Soft translucent white glowing halo */}
+                  <span className="absolute -inset-2.5 rounded-full bg-white/20 blur-md pointer-events-none animate-pulse" />
 
-                  {/* Soft golden shimmer or breathing glow on the seal */}
-                  <span className="absolute inset-0 rounded-full bg-gradient-to-tr from-[#C49746]/15 via-[#F3E5C8]/25 to-[#C49746]/10 shadow-[inset_0_0_15px_rgba(196,151,70,0.35)] transition-transform duration-300 group-hover:scale-105 group-active:scale-95 pointer-events-none" />
+                  {/* Frosted translucent white glass lens over the seal */}
+                  <span className="absolute inset-0 rounded-full bg-white/[0.12] border border-white/45 backdrop-blur-[0.5px] shadow-[inset_0_0_14px_rgba(255,255,255,0.45),0_0_16px_rgba(255,255,255,0.25)] transition-all duration-300 group-hover:scale-105 group-hover:bg-white/[0.22] group-active:scale-95 pointer-events-none" />
                 </button>
               </div>
 
@@ -305,12 +305,12 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
                   transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
                   className="flex items-center justify-center mb-1.5"
                 >
-                  <ArrowUp className="w-5 h-5 text-[#E7CB93] drop-shadow-[0_2px_6px_rgba(0,0,0,0.7)]" />
+                  <ArrowUp className="w-5 h-5 text-white/95 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]" />
                 </motion.div>
 
-                {/* Elegant floating pill */}
-                <div className="uppercase text-[10px] sm:text-[11px] tracking-[0.25em] text-[#F3E5C8] font-sans font-medium px-4 py-1.5 rounded-full bg-black/65 border border-[#C49746]/50 shadow-xl backdrop-blur-md flex items-center gap-1.5 select-none">
-                  <Sparkles className="w-3 h-3 text-[#E7CB93] animate-pulse" />
+                {/* Elegant translucent frosted white pill */}
+                <div className="uppercase text-[10px] sm:text-[11px] tracking-[0.25em] text-white/95 font-sans font-medium px-4 py-1.5 rounded-full bg-white/20 border border-white/45 shadow-xl backdrop-blur-md flex items-center gap-1.5 select-none drop-shadow-sm">
+                  <Sparkles className="w-3 h-3 text-white/90 animate-pulse" />
                   <span>Tocar para abrir</span>
                 </div>
               </motion.div>
