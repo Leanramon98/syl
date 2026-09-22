@@ -43,10 +43,10 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
     let timer: NodeJS.Timeout;
 
     if (stage === 'closed') {
-      // Deliberate contemplation beat before auto-starting intro
+      // Deliberate contemplation beat before auto-starting intro (~800ms)
       timer = setTimeout(() => {
         updateStage('untying');
-      }, 1000);
+      }, 800);
     } else if (stage === 'untying') {
       // Ribbon unties and wax gently dissolves over 1.4s
       timer = setTimeout(() => {
@@ -138,25 +138,6 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
             >
               <WaxSeal initials={invitationConfig.couple.initials} />
             </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Interactive Click Cues when closed */}
-        <AnimatePresence>
-          {stage === 'closed' && (
-            <motion.button
-              type="button"
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8, transition: { duration: 0.3 } }}
-              onClick={handleStartOpening}
-              className="absolute -bottom-14 sm:-bottom-16 z-30 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/85 hover:bg-white text-[#855F1E] border border-[#E0D1BB] shadow-sm backdrop-blur-sm text-xs sm:text-sm font-sans tracking-widest uppercase transition-all duration-300 hover:scale-105 cursor-pointer"
-              aria-label={invitationConfig.envelopePrompt}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C49746] animate-ping" />
-              <span>{invitationConfig.envelopePrompt}</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C49746]" />
-            </motion.button>
           )}
         </AnimatePresence>
       </div>
