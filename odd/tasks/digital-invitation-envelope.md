@@ -21,3 +21,8 @@
 - [x] Task 4: Build Invitation Card component with luxury stationery styling
 - [x] Task 5: Build accessible Video Modal component
 - [x] Task 6: Assemble main App page, verify responsiveness and transitions, and add documentation
+
+## Evidence & Verification
+- **Commit**: `3407aea` (`feat: implement luxury gatefold envelope wedding invitation with video modal`)
+- **Build verification**: `npm run build` completed cleanly with zero TypeScript / Vite compilation errors.
+
