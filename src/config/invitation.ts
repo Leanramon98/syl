@@ -114,7 +114,7 @@ export const invitationConfig: InvitationConfig = {
 
   // Intro Presentation Mode Configuration
   intro: {
-    type: "frames",
+    type: "video",
     videoSrc: "/intro-envelope.mp4",
     frames: [
       "/frames/frame-1.png",
