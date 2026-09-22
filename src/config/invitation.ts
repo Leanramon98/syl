@@ -1,99 +1,128 @@
 /**
- * Wedding Invitation Configuration
+ * Wedding Digital Invitation Configuration
  *
- * Customize all text, dates, names, locations, and video settings here.
+ * Single centralized configuration object for editing all texts,
+ * couple names, dates, colors, fonts, video source, and playback options.
  */
+
+export interface CoupleConfig {
+  /** Name of the first partner */
+  person1: string;
+  /** Name of the second partner */
+  person2: string;
+  /** Connector between names (e.g. '&', 'y', '+') */
+  ampersand?: string;
+  /** Monogram initials for the wax seal and interior watermark (e.g. 'S & T') */
+  initials: string;
+}
 
 export interface VideoConfig {
   /**
    * Type of video embed or custom stream
+   * - 'auto': Automatically detect based on URL
    * - 'youtube': YouTube video (watch URL, share URL, or embed URL)
    * - 'vimeo': Vimeo video URL (watch URL or player embed URL)
-   * - 'local' | 'custom': Direct MP4/WebM file (e.g. '/video.mp4')
-   * - 'auto': Automatically detect based on URL
+   * - 'local': Direct MP4/WebM file (e.g. '/video.mp4' in public folder)
    */
-  type?: 'youtube' | 'vimeo' | 'custom' | 'local' | 'auto';
-  /**
-   * The embed, share, or video stream URL / local file path.
-   * Examples:
-   * - YouTube: "https://www.youtube.com/watch?v=LXb3EKWsInQ" or "https://youtu.be/LXb3EKWsInQ"
-   * - Vimeo: "https://vimeo.com/123456789"
-   * - Local file: "/video.mp4" (placed in the public/ folder)
-   */
+  type: 'auto' | 'youtube' | 'vimeo' | 'local';
+  /** Video URL or local file path */
   url: string;
   /** Accessible title for screen readers and modal header */
-  title?: string;
-  /** Optional poster image URL for HTML5 video player */
+  title: string;
+  /** Optional poster image URL for local video playback */
   poster?: string;
 }
 
-export interface CoupleConfig {
-  person1: string;
-  person2: string;
-  initials: string;
-  subtitle?: string;
+export interface ThemeConfig {
+  /** Main metallic or brand accent (gold) */
+  primaryAccent: string;
+  /** Darker accent for hover states, active borders and headlines */
+  primaryAccentHover: string;
+  /** Outer viewport & page background color */
+  paperBackground: string;
+  /** Inner invitation card background */
+  cardBackground: string;
+  /** Main heading and text color */
+  textPrimary: string;
+  /** Subtitle, date, and secondary text color */
+  textSecondary: string;
+  /** Serif font family for titles and elegant headings */
+  fontSerif: string;
+  /** Sans-serif font family for dates, labels, and buttons */
+  fontSans: string;
+  /** Script / calligraphy font family for ornamental ampersand */
+  fontScript: string;
+}
+
+export interface OptionsConfig {
+  /** Whether the envelope untying & opening animation starts automatically */
+  autoPlayIntro: boolean;
+  /** Delay in milliseconds before starting the auto-play intro */
+  introDelayMs: number;
+  /** Show discrete replay button on the revealed card */
+  showReplayButton: boolean;
+  /** Label for the replay button */
+  replayButtonText: string;
 }
 
 export interface InvitationConfig {
   couple: CoupleConfig;
-  title: string;
-  headline?: string;
+  mainPhrase: string;
   date: string;
-  time?: string;
-  location: string;
-  address?: string;
-  reception?: string;
-  video: VideoConfig;
+  secondaryText?: string;
   buttonText: string;
-  replayText: string;
-  envelopePrompt: string;
+  video: VideoConfig;
+  theme: ThemeConfig;
+  options: OptionsConfig;
 }
 
 export const invitationConfig: InvitationConfig = {
+  // Couple Information
   couple: {
     person1: "Sofía",
     person2: "Tomás",
+    ampersand: "&",
     initials: "S & T",
-    subtitle: "Junto a sus familias",
   },
-  title: "Nos casamos",
-  headline: "Tenemos el honor de invitarte a celebrar nuestro casamiento",
+
+  // Main Invitation Phrasing
+  mainPhrase: "Nos casamos",
+
+  // Celebration Date
   date: "15 de noviembre de 2026",
-  time: "17:30 hs",
-  location: "Estancia La Candelaria",
-  address: "Ruta 205 Km 114.5, Lobos, Prov. de Buenos Aires",
-  reception: "Ceremonia & Fiesta al atardecer",
-  // =========================================================================
-  // VIDEO CONFIGURATION
-  // =========================================================================
-  // The video modal supports YouTube, Vimeo, and local video files (.mp4/.webm).
-  // URLs are automatically normalized and optimized for mobile playback.
-  //
-  // HOW TO SWITCH VIDEO SOURCES:
-  //
-  // 1. YouTube (Recommended):
-  //    type: "youtube", // or "auto"
-  //    url: "https://www.youtube.com/watch?v=LXb3EKWsInQ", // or "https://youtu.be/..."
-  //    title: "Sofía & Tomás — Nuestra Historia de Amor",
-  //
-  // 2. Vimeo:
-  //    type: "vimeo", // or "auto"
-  //    url: "https://vimeo.com/123456789", // or "https://player.vimeo.com/video/..."
-  //    title: "Sofía & Tomás — Nuestra Historia de Amor",
-  //
-  // 3. Local Video File:
-  //    Place your video inside the `public/` directory (e.g., `public/video.mp4`)
-  //    type: "local", // or "custom", or "auto"
-  //    url: "/video.mp4",
-  //    poster: "/video-poster.jpg", // Optional cover image before playing
-  //    title: "Sofía & Tomás — Nuestra Historia de Amor",
-  // =========================================================================
+
+  // Secondary Invitation Text (leave as empty string or undefined to omit)
+  secondaryText: "Tenemos el honor de invitarte a celebrar nuestro amor",
+
+  // Primary Action Button Label
+  buttonText: "Ver video",
+
+  // Video Source Configuration
+  // Supports YouTube, Vimeo, and local video files in the public folder.
   video: {
     type: "youtube",
     url: "https://www.youtube.com/watch?v=LXb3EKWsInQ",
     title: "Sofía & Tomás — Nuestra Historia de Amor",
   },
-  buttonText: "Ver video",
-  replayText: "Repetir animación",
-  envelopePrompt: "Tocar para abrir",
+
+  // Color Palette and Typography Styles
+  theme: {
+    primaryAccent: "#C49746",
+    primaryAccentHover: "#855F1E",
+    paperBackground: "#FAF7F2",
+    cardBackground: "#FFFDF9",
+    textPrimary: "#2C2A29",
+    textSecondary: "#615242",
+    fontSerif: "'Cormorant Garamond', Georgia, serif",
+    fontSans: "'Montserrat', sans-serif",
+    fontScript: "'Great Vibes', cursive",
+  },
+
+  // Interactive Playback Options
+  options: {
+    autoPlayIntro: true,
+    introDelayMs: 800,
+    showReplayButton: true,
+    replayButtonText: "Volver a ver apertura",
+  },
 };

@@ -22,6 +22,8 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
   const [internalStage, setInternalStage] = useState<AnimationStage>('closed');
   const stage = externalStage !== undefined ? externalStage : internalStage;
 
+  const { couple, theme, options } = invitationConfig;
+
   const updateStage = (newStage: AnimationStage) => {
     setInternalStage(newStage);
     onStageChange?.(newStage);
@@ -33,20 +35,20 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
   };
 
   // Progression of the animation sequence:
-  // Total intro timeline: ~5.2s
-  // 1. closed: 1.0s contemplation beat (auto-starts or click immediately)
+  // 1. closed: contemplation beat before auto-starting (if autoPlayIntro is true)
   // 2. untying: 1.4s ribbon & wax dissolution
-  // 3. opening: 1.0s doors swinging open (1.6s total swing)
+  // 3. opening: 1.0s doors swinging open
   // 4. revealing: 1.8s card smoothly rises forward & contents bloom
   // 5. opened: final stable interactive state
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
     if (stage === 'closed') {
-      // Deliberate contemplation beat before auto-starting intro (~800ms)
-      timer = setTimeout(() => {
-        updateStage('untying');
-      }, 800);
+      if (options.autoPlayIntro) {
+        timer = setTimeout(() => {
+          updateStage('untying');
+        }, options.introDelayMs);
+      }
     } else if (stage === 'untying') {
       // Ribbon unties and wax gently dissolves over 1.4s
       timer = setTimeout(() => {
@@ -65,7 +67,7 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
     }
 
     return () => clearTimeout(timer);
-  }, [stage]);
+  }, [stage, options.autoPlayIntro, options.introDelayMs]);
 
   const handleReplay = () => {
     updateStage('closed');
@@ -89,8 +91,14 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
         <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#EFE8DC] via-[#E8DFD0] to-[#DDD2C0] shadow-luxury border border-[#D5C6B1] overflow-hidden">
           {/* Subtle watermark monogram inside back tray */}
           <div className="absolute inset-0 opacity-15 flex items-center justify-center pointer-events-none">
-            <span className="font-serif text-8xl sm:text-9xl text-[#B88E48] select-none font-extralight tracking-widest">
-              {invitationConfig.couple.initials}
+            <span
+              className="text-8xl sm:text-9xl select-none font-extralight tracking-widest"
+              style={{
+                fontFamily: theme.fontSerif,
+                color: theme.primaryAccent,
+              }}
+            >
+              {couple.initials}
             </span>
           </div>
         </div>
@@ -105,7 +113,7 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
           <InvitationCard
             isRevealed={isCardRevealed}
             onOpenVideo={onOpenVideo}
-            onReplay={stage === 'opened' ? handleReplay : undefined}
+            onReplay={stage === 'opened' && options.showReplayButton ? handleReplay : undefined}
           />
         </div>
 
@@ -136,7 +144,7 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
               onClick={handleStartOpening}
               className="absolute z-40 cursor-pointer pointer-events-auto flex flex-col items-center"
             >
-              <WaxSeal initials={invitationConfig.couple.initials} />
+              <WaxSeal initials={couple.initials} />
             </motion.div>
           )}
         </AnimatePresence>

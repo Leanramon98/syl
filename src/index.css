@@ -48,10 +48,10 @@
 
 /* Subtle luxury paper texture and gradients */
 .paper-texture {
-  background-color: #FAF7F2;
+  background-color: var(--theme-bg, #FAF7F2);
   background-image: 
     radial-gradient(#E8DFC8 0.65px, transparent 0.65px),
-    radial-gradient(#DFD4BA 0.65px, #FAF7F2 0.65px);
+    radial-gradient(#DFD4BA 0.65px, var(--theme-bg, #FAF7F2) 0.65px);
   background-size: 26px 26px;
   background-position: 0 0, 13px 13px;
 }
@@ -61,7 +61,7 @@
 }
 
 .card-texture {
-  background: linear-gradient(165deg, #FFFDF9 0%, #FAF6EE 60%, #F6F0E4 100%);
+  background: linear-gradient(165deg, var(--theme-card, #FFFDF9) 0%, #FAF6EE 60%, #F6F0E4 100%);
 }
 
 .gold-shimmer {

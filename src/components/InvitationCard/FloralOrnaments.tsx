@@ -2,11 +2,13 @@ import React from 'react';
 
 interface FloralOrnamentProps {
   className?: string;
+  style?: React.CSSProperties;
   variant?: 'top' | 'bottom' | 'divider' | 'corner';
 }
 
 export const FloralOrnaments: React.FC<FloralOrnamentProps> = ({
   className = '',
+  style,
   variant = 'top',
 }) => {
   if (variant === 'top') {
@@ -16,6 +18,7 @@ export const FloralOrnaments: React.FC<FloralOrnamentProps> = ({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className={`w-48 sm:w-56 h-auto stroke-current ${className}`}
+        style={style}
         aria-hidden="true"
       >
         {/* Central delicate bud and leaves */}
@@ -83,6 +86,7 @@ export const FloralOrnaments: React.FC<FloralOrnamentProps> = ({
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
         className={`w-40 sm:w-48 h-auto stroke-current ${className}`}
+        style={style}
         aria-hidden="true"
       >
         <circle cx="120" cy="16" r="2" fill="currentColor" fillOpacity="0.75" />
@@ -115,7 +119,7 @@ export const FloralOrnaments: React.FC<FloralOrnamentProps> = ({
 
   // Elegant subtle line divider
   return (
-    <div className={`flex items-center justify-center gap-3 ${className}`}>
+    <div className={`flex items-center justify-center gap-3 ${className}`} style={style}>
       <span className="h-[0.5px] w-12 sm:w-20 bg-gradient-to-r from-transparent via-[#C49746]/60 to-[#C49746]" />
       <span className="w-1.5 h-1.5 rotate-45 border border-[#C49746] bg-[#C49746]/30" />
       <span className="h-[0.5px] w-12 sm:w-20 bg-gradient-to-l from-transparent via-[#C49746]/60 to-[#C49746]" />
