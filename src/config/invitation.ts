@@ -89,6 +89,11 @@ export interface InvitationConfig {
   theme: ThemeConfig;
   options: OptionsConfig;
   intro: IntroConfig;
+  music?: {
+    src: string;
+    loop: boolean;
+    title?: string;
+  };
 }
 
 export const invitationConfig: InvitationConfig = {
@@ -152,6 +157,13 @@ export const invitationConfig: InvitationConfig = {
     introDelayMs: 800,
     showReplayButton: true,
     replayButtonText: "Volver a ver apertura",
+  },
+
+  // Background Audio Configuration
+  music: {
+    src: "/background-music.mp3",
+    loop: true,
+    title: "Sarà perché ti amo",
   },
 };
 
