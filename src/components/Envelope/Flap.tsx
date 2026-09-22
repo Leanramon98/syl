@@ -4,28 +4,44 @@ import { motion } from 'framer-motion';
 interface FlapProps {
   side: 'left' | 'right';
   isOpen: boolean;
+  isOpened?: boolean;
   children?: React.ReactNode;
 }
 
-export const Flap: React.FC<FlapProps> = ({ side, isOpen, children }) => {
+export const Flap: React.FC<FlapProps> = ({ side, isOpen, isOpened = false, children }) => {
   const isLeft = side === 'left';
 
   return (
     <motion.div
       initial={false}
       animate={{
-        rotateY: isOpen ? (isLeft ? -120 : 120) : 0,
+        rotateY: isOpen ? (isLeft ? -118 : 118) : 0,
+        opacity: isOpened ? 0.45 : 1,
         boxShadow: isOpen
-          ? isLeft
-            ? '-12px 10px 24px rgba(40, 30, 20, 0.15)'
-            : '12px 10px 24px rgba(40, 30, 20, 0.15)'
+          ? isOpened
+            ? isLeft
+              ? '-6px 6px 16px rgba(40, 30, 20, 0.08)'
+              : '6px 6px 16px rgba(40, 30, 20, 0.08)'
+            : isLeft
+            ? '-14px 10px 24px rgba(40, 30, 20, 0.16)'
+            : '14px 10px 24px rgba(40, 30, 20, 0.16)'
           : isLeft
           ? '4px 0 12px rgba(40, 30, 20, 0.08)'
           : '-4px 0 12px rgba(40, 30, 20, 0.08)',
       }}
       transition={{
-        duration: 1.1,
-        ease: [0.25, 1, 0.35, 1], // Smooth organic opening curve
+        rotateY: {
+          duration: 1.6,
+          ease: [0.22, 1, 0.36, 1], // Luxurious velvety deceleration with zero bouncing
+        },
+        opacity: {
+          duration: 0.9,
+          ease: 'easeInOut',
+        },
+        boxShadow: {
+          duration: 1.4,
+          ease: [0.22, 1, 0.36, 1],
+        },
       }}
       style={{
         transformOrigin: isLeft ? 'left center' : 'right center',
@@ -45,12 +61,16 @@ export const Flap: React.FC<FlapProps> = ({ side, isOpen, children }) => {
         }`}
       />
 
-      {/* Subtle paper grain and lighting gradient */}
-      <div
-        className={`absolute inset-0 bg-gradient-to-r ${
+      {/* Dynamic lighting: smooth shadow gradient shift simulating the opening of real paper flaps */}
+      <motion.div
+        animate={{
+          opacity: isOpen ? 0.25 : 0.85,
+        }}
+        transition={{ duration: 1.6, ease: [0.22, 1, 0.36, 1] }}
+        className={`absolute inset-0 bg-gradient-to-r pointer-events-none ${
           isLeft
-            ? 'from-black/[0.04] via-transparent to-black/[0.06]'
-            : 'from-black/[0.06] via-transparent to-black/[0.04]'
+            ? 'from-black/[0.08] via-transparent to-black/[0.12]'
+            : 'from-black/[0.12] via-transparent to-black/[0.08]'
         }`}
       />
 

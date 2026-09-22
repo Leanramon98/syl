@@ -6,7 +6,7 @@ import { RibbonBow } from './RibbonBow';
 import { WaxSeal } from './WaxSeal';
 import { InvitationCard } from '../InvitationCard/InvitationCard';
 
-export type AnimationStage = 'closed' | 'untying' | 'opening' | 'opened';
+export type AnimationStage = 'closed' | 'untying' | 'opening' | 'revealing' | 'opened';
 
 interface GatefoldEnvelopeProps {
   onOpenVideo: () => void;
@@ -29,24 +29,41 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
 
   const handleStartOpening = () => {
     if (stage !== 'closed') return;
-    // Step 1: Untie ribbon
     updateStage('untying');
   };
 
-  // Progression of the animation sequence
+  // Progression of the animation sequence:
+  // Total intro timeline: ~5.2s
+  // 1. closed: 1.0s contemplation beat (auto-starts or click immediately)
+  // 2. untying: 1.4s ribbon & wax dissolution
+  // 3. opening: 1.0s doors swinging open (1.6s total swing)
+  // 4. revealing: 1.8s card smoothly rises forward & contents bloom
+  // 5. opened: final stable interactive state
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (stage === 'untying') {
-      // Untie duration before opening flaps
+
+    if (stage === 'closed') {
+      // Deliberate contemplation beat before auto-starting intro
+      timer = setTimeout(() => {
+        updateStage('untying');
+      }, 1000);
+    } else if (stage === 'untying') {
+      // Ribbon unties and wax gently dissolves over 1.4s
       timer = setTimeout(() => {
         updateStage('opening');
-      }, 700);
+      }, 1400);
     } else if (stage === 'opening') {
-      // Gatefold flaps swing open before card emerges
+      // Gatefold doors swing open outward. At 1.0s in, card begins rising
+      timer = setTimeout(() => {
+        updateStage('revealing');
+      }, 1000);
+    } else if (stage === 'revealing') {
+      // Card emergence forward completes over 1.8s
       timer = setTimeout(() => {
         updateStage('opened');
-      }, 950);
+      }, 1800);
     }
+
     return () => clearTimeout(timer);
   }, [stage]);
 
@@ -54,19 +71,23 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
     updateStage('closed');
   };
 
-  const isFlapsOpen = stage === 'opening' || stage === 'opened';
+  const isFlapsOpen = stage === 'opening' || stage === 'revealing' || stage === 'opened';
   const isRibbonUntied = stage !== 'closed';
+  const isCardRevealed = stage === 'revealing' || stage === 'opened';
 
   return (
     <div className="relative w-full max-w-[440px] sm:max-w-[480px] mx-auto px-4 flex flex-col items-center justify-center min-h-[580px] sm:min-h-[620px]">
       {/* 3D Gatefold Container */}
       <div
-        className="relative w-full aspect-[4/5] sm:aspect-[3.8/5] max-h-[660px] perspective-container flex items-center justify-center"
+        className={`relative w-full aspect-[4/5] sm:aspect-[3.8/5] max-h-[660px] perspective-container flex items-center justify-center ${
+          stage === 'closed' ? 'cursor-pointer' : ''
+        }`}
+        onClick={stage === 'closed' ? handleStartOpening : undefined}
         style={{ perspective: '1400px' }}
       >
         {/* Envelope Base Tray / Interior Lining */}
         <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#EFE8DC] via-[#E8DFD0] to-[#DDD2C0] shadow-luxury border border-[#D5C6B1] overflow-hidden">
-          {/* Subtle watermark monogram or geometric foil texture inside back tray */}
+          {/* Subtle watermark monogram inside back tray */}
           <div className="absolute inset-0 opacity-15 flex items-center justify-center pointer-events-none">
             <span className="font-serif text-8xl sm:text-9xl text-[#B88E48] select-none font-extralight tracking-widest">
               {invitationConfig.couple.initials}
@@ -75,32 +96,24 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
         </div>
 
         {/* Invitation Card nestled inside / emerging forward */}
-        <motion.div
-          animate={{
-            scale: stage === 'opened' ? 1 : 0.94,
-            y: stage === 'opened' ? 0 : 4,
-            z: stage === 'opened' ? 40 : 0,
-            opacity: stage === 'closed' ? 0.8 : 1,
-          }}
-          transition={{
-            duration: 0.9,
-            ease: [0.16, 1, 0.3, 1],
-          }}
+        <div
           className={`w-full z-10 ${
             stage === 'opened' ? 'pointer-events-auto' : 'pointer-events-none'
           }`}
+          style={{ transformStyle: 'preserve-3d' }}
         >
           <InvitationCard
+            isRevealed={isCardRevealed}
             onOpenVideo={onOpenVideo}
             onReplay={stage === 'opened' ? handleReplay : undefined}
           />
-        </motion.div>
+        </div>
 
         {/* Left Gatefold Flap */}
-        <Flap side="left" isOpen={isFlapsOpen} />
+        <Flap side="left" isOpen={isFlapsOpen} isOpened={stage === 'opened'} />
 
         {/* Right Gatefold Flap */}
-        <Flap side="right" isOpen={isFlapsOpen} />
+        <Flap side="right" isOpen={isFlapsOpen} isOpened={stage === 'opened'} />
 
         {/* Satin Ribbon & Bow (Unties first) */}
         <RibbonBow
@@ -113,13 +126,12 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
           {!isRibbonUntied && (
             <motion.div
               key="wax-seal"
-              initial={{ scale: 0.8, opacity: 0 }}
+              initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{
-                scale: 1.25,
+                scale: 1.06,
                 opacity: 0,
-                rotate: 8,
-                transition: { duration: 0.5, ease: 'easeOut' },
+                transition: { duration: 1.1, ease: [0.25, 1, 0.5, 1] },
               }}
               onClick={handleStartOpening}
               className="absolute z-40 cursor-pointer pointer-events-auto flex flex-col items-center"
@@ -136,12 +148,12 @@ export const GatefoldEnvelope: React.FC<GatefoldEnvelopeProps> = ({
               type="button"
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
+              exit={{ opacity: 0, y: -8, transition: { duration: 0.3 } }}
               onClick={handleStartOpening}
-              className="absolute -bottom-14 sm:-bottom-16 z-30 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/80 hover:bg-white text-[#855F1E] border border-[#E0D1BB] shadow-sm backdrop-blur-sm text-xs sm:text-sm font-sans tracking-widest uppercase transition-all duration-300 hover:scale-105 cursor-pointer animate-pulse"
+              className="absolute -bottom-14 sm:-bottom-16 z-30 inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/85 hover:bg-white text-[#855F1E] border border-[#E0D1BB] shadow-sm backdrop-blur-sm text-xs sm:text-sm font-sans tracking-widest uppercase transition-all duration-300 hover:scale-105 cursor-pointer"
               aria-label={invitationConfig.envelopePrompt}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#C49746]" />
+              <span className="w-1.5 h-1.5 rounded-full bg-[#C49746] animate-ping" />
               <span>{invitationConfig.envelopePrompt}</span>
               <span className="w-1.5 h-1.5 rounded-full bg-[#C49746]" />
             </motion.button>

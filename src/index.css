@@ -98,7 +98,14 @@
 .shadow-card-elevated {
   box-shadow: 
     0 10px 30px -5px rgba(50, 35, 20, 0.15),
-    0 25px 60px -12px rgba(50, 35, 20, 0.22);
+    0 25px 60px -12px rgba(50, 35, 20, 0.22),
+    0 0 0 1px rgba(196, 151, 70, 0.15);
+}
+
+.shadow-card-floating {
+  box-shadow:
+    0 25px 50px -12px rgba(45, 32, 18, 0.2),
+    0 0 0 1px rgba(196, 151, 70, 0.2);
 }
 
 .shadow-flap-left {
@@ -107,4 +114,22 @@
 
 .shadow-flap-right {
   box-shadow: -4px 0 15px -2px rgba(40, 30, 20, 0.15);
+}
+
+@keyframes gold-sweep {
+  0% {
+    transform: translateX(-150%) skewX(12deg);
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateX(180%) skewX(12deg);
+    opacity: 0;
+  }
+}
+
+.animate-gold-sweep {
+  animation: gold-sweep 2.2s cubic-bezier(0.22, 1, 0.36, 1) infinite;
 }

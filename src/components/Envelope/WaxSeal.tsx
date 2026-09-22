@@ -17,7 +17,19 @@ export const WaxSeal: React.FC<WaxSealProps> = ({
       onClick={onClick}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.96 }}
-      className={`relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full cursor-pointer select-none filter drop-shadow-[0_4px_10px_rgba(70,40,20,0.35)] ${className}`}
+      animate={{
+        filter: [
+          'drop-shadow(0 4px 10px rgba(70,40,20,0.35))',
+          'drop-shadow(0 6px 15px rgba(115,70,25,0.5))',
+          'drop-shadow(0 4px 10px rgba(70,40,20,0.35))',
+        ],
+      }}
+      transition={{
+        duration: 3.4,
+        repeat: Infinity,
+        ease: 'easeInOut',
+      }}
+      className={`relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-full cursor-pointer select-none ${className}`}
       title="Sello de cera"
     >
       {/* Irregular organic wax perimeter outline */}

@@ -7,21 +7,34 @@ import { FloralOrnaments } from './FloralOrnaments';
 interface InvitationCardProps {
   onOpenVideo: () => void;
   onReplay?: () => void;
+  isRevealed?: boolean;
 }
 
 export const InvitationCard: React.FC<InvitationCardProps> = ({
   onOpenVideo,
   onReplay,
+  isRevealed = true,
 }) => {
   const { couple, title, headline, date, time, location, reception, buttonText, replayText } =
     invitationConfig;
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 15, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-      className="relative w-full max-w-[420px] sm:max-w-[460px] mx-auto rounded-xl p-5 sm:p-7 md:p-8 card-texture shadow-card-elevated border border-[#E9DFCE] text-center select-none overflow-hidden"
+      initial={false}
+      animate={{
+        scale: isRevealed ? 1 : 0.88,
+        y: isRevealed ? 0 : 28,
+        opacity: isRevealed ? 1 : 0,
+        filter: isRevealed ? 'blur(0px)' : 'blur(2px)',
+        boxShadow: isRevealed
+          ? '0 25px 50px -12px rgba(45, 32, 18, 0.2), 0 0 0 1px rgba(196, 151, 70, 0.2)'
+          : '0 4px 6px -1px rgba(45, 32, 18, 0.05), 0 0 0 1px rgba(196, 151, 70, 0.05)',
+      }}
+      transition={{
+        duration: 1.6,
+        ease: [0.16, 1, 0.3, 1], // Velvety smooth emergence forward
+      }}
+      className="relative w-full max-w-[420px] sm:max-w-[460px] mx-auto rounded-xl p-5 sm:p-7 md:p-8 card-texture border border-[#E9DFCE] text-center select-none overflow-hidden"
     >
       {/* Outer decorative margin border */}
       <div className="absolute inset-2 sm:inset-3 rounded-lg border border-[#D9C8AC]/40 pointer-events-none" />
@@ -36,8 +49,13 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
       </div>
 
       <div className="relative z-10 flex flex-col items-center justify-between min-h-[500px] sm:min-h-[540px] py-2">
-        {/* Top Ornament */}
-        <header className="flex flex-col items-center w-full pt-1">
+        {/* Top Ornament with gentle fade & drop */}
+        <motion.header
+          initial={{ opacity: 0, y: -6 }}
+          animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: -6 }}
+          transition={{ duration: 0.9, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="flex flex-col items-center w-full pt-1"
+        >
           <FloralOrnaments variant="top" className="text-[#C49746] mb-2 opacity-90" />
           
           {couple.subtitle && (
@@ -49,11 +67,16 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           <h2 className="font-serif text-xs sm:text-sm tracking-[0.35em] uppercase text-[#855F1E] font-semibold">
             {title}
           </h2>
-        </header>
+        </motion.header>
 
         {/* Center: Couple Names & Monogram */}
         <div className="my-auto py-4 flex flex-col items-center w-full">
-          <div className="flex flex-col items-center">
+          <motion.div
+            initial={{ opacity: 0, y: 8 }}
+            animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
+            transition={{ duration: 1.0, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col items-center"
+          >
             <h1 className="font-serif text-3xl sm:text-4xl md:text-[2.75rem] font-light tracking-wide text-[#2C2A29] leading-tight">
               {couple.person1}
             </h1>
@@ -67,18 +90,30 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <h1 className="font-serif text-3xl sm:text-4xl md:text-[2.75rem] font-light tracking-wide text-[#2C2A29] leading-tight">
               {couple.person2}
             </h1>
-          </div>
+          </motion.div>
 
-          <FloralOrnaments variant="divider" className="my-4" />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={isRevealed ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.9, delay: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col items-center w-full"
+          >
+            <FloralOrnaments variant="divider" className="my-4" />
 
-          {headline && (
-            <p className="font-serif italic text-sm sm:text-base text-[#615242] max-w-[280px] sm:max-w-[320px] leading-relaxed">
-              {headline}
-            </p>
-          )}
+            {headline && (
+              <p className="font-serif italic text-sm sm:text-base text-[#615242] max-w-[280px] sm:max-w-[320px] leading-relaxed">
+                {headline}
+              </p>
+            )}
+          </motion.div>
 
           {/* Date, Time & Venue Information */}
-          <div className="mt-5 flex flex-col items-center gap-1.5 text-xs sm:text-sm text-[#4A4036]">
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+            transition={{ duration: 1.0, delay: 0.75, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-5 flex flex-col items-center gap-1.5 text-xs sm:text-sm text-[#4A4036]"
+          >
             <div className="flex items-center gap-1.5 font-sans font-medium text-[#2C2A29] tracking-wider uppercase text-xs sm:text-[13px]">
               <Calendar className="w-3.5 h-3.5 text-[#C49746]" />
               <span>{date}</span>
@@ -100,41 +135,75 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
                 {reception}
               </span>
             )}
-          </div>
+          </motion.div>
         </div>
 
         {/* Bottom Actions */}
         <footer className="w-full flex flex-col items-center gap-4 pt-2">
-          {/* Primary Action Button: Ver video */}
-          <motion.button
-            type="button"
-            onClick={onOpenVideo}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.97 }}
-            className="group relative inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-gradient-to-r from-[#855F1E] via-[#C49746] to-[#855F1E] text-white font-sans text-xs sm:text-sm uppercase tracking-[0.2em] font-medium shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#C49746] focus:ring-offset-2 focus:ring-offset-[#FAF6EE] cursor-pointer"
-            aria-label={`${buttonText}: ${invitationConfig.video.title}`}
+          {/* Primary Action Button: Ver video with gold sheen sweep */}
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+            transition={{ duration: 0.9, delay: 1.05, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full flex flex-col items-center"
           >
-            {/* Shimmer sweep effect */}
-            <span className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            <Play className="w-3.5 h-3.5 fill-current transition-transform duration-300 group-hover:scale-110" />
-            <span>{buttonText}</span>
-            <Sparkles className="w-3.5 h-3.5 text-[#FFE8B8] opacity-80" />
-          </motion.button>
+            <motion.button
+              type="button"
+              onClick={onOpenVideo}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              className="group relative inline-flex items-center justify-center gap-2.5 px-7 py-3 rounded-full bg-gradient-to-r from-[#855F1E] via-[#C49746] to-[#855F1E] text-white font-sans text-xs sm:text-sm uppercase tracking-[0.2em] font-medium shadow-md hover:shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[#C49746] focus:ring-offset-2 focus:ring-offset-[#FAF6EE] cursor-pointer overflow-hidden"
+              aria-label={`${buttonText}: ${invitationConfig.video.title}`}
+            >
+              {/* Soft gold sheen animation sweeping across button at the end of the intro */}
+              <motion.span
+                initial={{ x: '-140%', opacity: 0 }}
+                animate={
+                  isRevealed
+                    ? {
+                        x: ['-140%', '180%'],
+                        opacity: [0, 0.75, 0],
+                      }
+                    : {}
+                }
+                transition={{
+                  delay: 1.8,
+                  duration: 1.4,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+                className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/40 to-transparent skew-x-12 pointer-events-none"
+              />
+
+              <span className="absolute inset-0 rounded-full bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <Play className="w-3.5 h-3.5 fill-current transition-transform duration-300 group-hover:scale-110" />
+              <span>{buttonText}</span>
+              <Sparkles className="w-3.5 h-3.5 text-[#FFE8B8] opacity-80" />
+            </motion.button>
+          </motion.div>
 
           {/* Secondary / Discrete Replay Action */}
           {onReplay && (
-            <button
+            <motion.button
               type="button"
+              initial={{ opacity: 0 }}
+              animate={isRevealed ? { opacity: 1 } : { opacity: 0 }}
+              transition={{ delay: 1.3, duration: 0.8 }}
               onClick={onReplay}
               className="inline-flex items-center gap-1.5 text-[11px] sm:text-xs text-[#9B8874] hover:text-[#574433] transition-colors duration-200 tracking-wider font-sans uppercase font-medium focus:outline-none focus:underline cursor-pointer"
               title={replayText}
             >
               <RotateCcw className="w-3 h-3" />
               <span>{replayText}</span>
-            </button>
+            </motion.button>
           )}
 
-          <FloralOrnaments variant="bottom" className="text-[#C49746] mt-1 opacity-70" />
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={isRevealed ? { opacity: 0.7 } : { opacity: 0 }}
+            transition={{ delay: 1.2, duration: 0.8 }}
+          >
+            <FloralOrnaments variant="bottom" className="text-[#C49746] mt-1" />
+          </motion.div>
         </footer>
       </div>
     </motion.article>
