@@ -25,3 +25,8 @@ dist-ssr
 
 # TypeScript build info
 *.tsbuildinfo
+
+# Python environment
+.venv/
+__pycache__/
+*.pyc
