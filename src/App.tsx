@@ -99,12 +99,12 @@ export function App() {
         onPause={() => setIsPlaying(false)}
       />
 
-      {/* Top-centered Sound Toggle Button */}
+      {/* Secondary Sound Toggle Button: Centered on mobile, top-right on desktop */}
       <button
         type="button"
         data-music-toggle="true"
         onClick={toggleMusic}
-        className="fixed top-4 sm:top-6 left-1/2 -translate-x-1/2 z-50 bg-white/25 border border-white/50 backdrop-blur-md shadow-lg text-[#3E2723] hover:bg-white/40 active:scale-95 transition-all cursor-pointer px-3.5 py-1.5 rounded-full flex items-center gap-2 text-xs font-sans tracking-wider uppercase select-none"
+        className="fixed top-3.5 sm:top-6 left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 z-50 bg-white/30 border border-white/60 backdrop-blur-md shadow-xs text-[#3E2723] hover:bg-white/50 active:scale-95 transition-all cursor-pointer px-3 sm:px-3.5 py-1.5 rounded-full flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-sans tracking-wider uppercase select-none"
         aria-label={isPlaying ? "Silenciar música" : "Activar música"}
       >
         {isPlaying ? (

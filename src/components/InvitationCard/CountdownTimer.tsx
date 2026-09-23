@@ -63,24 +63,22 @@ export const CountdownTimer: React.FC<CountdownTimerProps> = ({
       initial={{ opacity: 0, y: 10 }}
       animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
       transition={{ duration: 0.7, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-      className={`flex items-center justify-center ${className}`}
+      className={`w-full flex items-center justify-center ${className}`}
     >
       {/* macOS Widget Style Frosted Capsule */}
-      <div className="relative inline-flex items-center px-4 py-2.5 sm:px-6 sm:py-3 rounded-2xl bg-white/60 border border-[#E6DCCE]/85 shadow-[0_4px_20px_-2px_rgba(62,41,34,0.06),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-md">
+      <div className="w-full max-w-[320px] sm:max-w-[360px] flex items-center justify-between px-3 sm:px-5 py-2.5 sm:py-3 rounded-2xl bg-white/65 border border-[#E6DCCE]/85 shadow-[0_4px_20px_-2px_rgba(62,41,34,0.06),inset_0_1px_1px_rgba(255,255,255,0.9)] backdrop-blur-md">
         {units.map((unit, index) => (
           <React.Fragment key={unit.label}>
             {index > 0 && (
-              <div className="flex flex-col items-center justify-center px-2 sm:px-3 select-none">
-                <span className="text-xs sm:text-sm text-[#A89885] font-light leading-none -translate-y-1">
-                  :
-                </span>
-              </div>
+              <span className="text-xs sm:text-sm text-[#A89885]/70 font-light select-none px-0.5 -translate-y-0.5">
+                :
+              </span>
             )}
-            <div className="flex flex-col items-center justify-center min-w-[36px] sm:min-w-[44px]">
-              <span className="tabular-nums font-sans font-medium text-lg sm:text-xl text-[#2C1D18] tracking-tight leading-tight select-none">
+            <div className="flex-1 flex flex-col items-center justify-center min-w-0">
+              <span className="tabular-nums font-sans font-semibold text-lg sm:text-xl text-[#2C1D18] tracking-tight leading-none select-none">
                 {unit.value}
               </span>
-              <span className="uppercase text-[8px] sm:text-[9px] tracking-[0.2em] font-sans text-[#8D6E63] font-medium leading-none select-none mt-1">
+              <span className="uppercase text-[8px] sm:text-[9px] tracking-[0.2em] font-sans text-[#8D6E63] font-medium leading-none select-none mt-1.5">
                 {unit.label}
               </span>
             </div>

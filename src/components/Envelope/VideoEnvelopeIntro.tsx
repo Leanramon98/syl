@@ -318,7 +318,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           duration: 0.5,
           ease: [0.16, 1, 0.3, 1],
         }}
-        className={`absolute inset-0 w-full min-h-[100dvh] flex flex-col items-center justify-center ${
+        className={`absolute inset-0 w-full min-h-[100svh] min-h-[100dvh] overflow-y-auto flex flex-col items-center justify-center ${
           isCardRevealed ? 'z-20 pointer-events-auto' : 'z-0 pointer-events-none'
         }`}
       >
