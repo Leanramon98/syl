@@ -100,23 +100,23 @@ export interface InvitationConfig {
 export const invitationConfig: InvitationConfig = {
   // Couple Information
   couple: {
-    person1: "Sofía",
-    person2: "Leandro",
+    person1: "Sol",
+    person2: "Lea",
     ampersand: "&",
     initials: "S & L",
   },
 
   // Main Invitation Phrasing
-  mainPhrase: "Nos casamos",
+  mainPhrase: "NOS CASAMOS, ya tenemos fecha",
 
   // Celebration Date
   date: "15 de noviembre de 2026",
 
   // Secondary Invitation Text
-  secondaryText: "Ya tenemos fecha",
+  secondaryText: "Por ahora solo reservate la fecha... Más adelante te contamos más",
 
   // Primary Action Button Label
-  buttonText: "Save the Date",
+  buttonText: "Descubrir la fecha",
 
   // Target Date for macOS style countdown timer
   countdownTargetDate: "2026-11-15T18:00:00",

@@ -20,6 +20,8 @@ export interface VideoEnvelopeIntroProps {
   date?: string;
   /** Target date ISO string for macOS countdown */
   countdownTargetDate?: string;
+  /** Whether the user has watched the video modal */
+  hasWatchedVideo?: boolean;
   /** Label for replay button */
   replayButtonText?: string;
 }
@@ -28,11 +30,12 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   videoSrc = '/intro-envelope.mp4',
   autoPlayIntro = false,
   onOpenVideoModal,
-  buttonText = 'Save the Date',
-  mainPhrase = 'NOS CASAMOS',
-  secondaryText = 'Ya tenemos fecha',
+  buttonText = 'Descubrir la fecha',
+  mainPhrase = 'NOS CASAMOS, ya tenemos fecha',
+  secondaryText = 'Por ahora solo reservate la fecha... Más adelante te contamos más',
   date,
   countdownTargetDate,
+  hasWatchedVideo = false,
   replayButtonText = 'Volver a ver apertura',
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -326,6 +329,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           secondaryText={secondaryText}
           date={date}
           countdownTargetDate={countdownTargetDate}
+          hasWatchedVideo={hasWatchedVideo}
           buttonText={buttonText}
           replayButtonText={replayButtonText}
           isRevealed={isCardRevealed}

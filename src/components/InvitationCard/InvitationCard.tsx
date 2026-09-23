@@ -11,13 +11,15 @@ export interface InvitationCardProps {
   onReplay?: () => void;
   /** Whether the card content is fully revealed */
   isRevealed?: boolean;
-  /** Main wedding announcement headline (default: 'NOS CASAMOS') */
+  /** Whether the user has watched the video modal */
+  hasWatchedVideo?: boolean;
+  /** Main wedding announcement headline (default: 'NOS CASAMOS, ya tenemos fecha') */
   mainPhrase?: string;
-  /** Secondary subtitle (default: 'Ya tenemos fecha') */
+  /** Secondary subtitle (default: 'Por ahora solo reservate la fecha... Más adelante te contamos más') */
   secondaryText?: string;
   /** Wedding date string (default: '15 de noviembre de 2026') */
   date?: string;
-  /** Primary button label (default: 'Save the Date') */
+  /** Primary button label (default: 'Descubrir la fecha') */
   buttonText?: string;
   /** Countdown target date ISO string */
   countdownTargetDate?: string;
@@ -31,10 +33,11 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   onOpenVideo,
   onReplay,
   isRevealed = true,
-  mainPhrase = invitationConfig.mainPhrase || 'NOS CASAMOS',
-  secondaryText = invitationConfig.secondaryText || 'Ya tenemos fecha',
+  hasWatchedVideo = false,
+  mainPhrase = invitationConfig.mainPhrase || 'NOS CASAMOS, ya tenemos fecha',
+  secondaryText = invitationConfig.secondaryText || 'Por ahora solo reservate la fecha... Más adelante te contamos más',
   date = invitationConfig.date || '15 de noviembre de 2026',
-  buttonText = invitationConfig.buttonText || 'Save the Date',
+  buttonText = invitationConfig.buttonText || 'Descubrir la fecha',
   countdownTargetDate = invitationConfig.countdownTargetDate || '2026-11-15T18:00:00',
   replayButtonText = invitationConfig.options.replayButtonText || 'Volver a ver apertura',
   className = '',
@@ -46,23 +49,45 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
       }}
       className={`relative min-h-[100dvh] w-full flex flex-col justify-between items-center py-10 sm:py-14 px-6 max-w-md mx-auto text-center select-none ${className}`}
     >
-      {/* Top Section: Monogram Logo (w-28 sm:w-32) with staggered entrance (delay 0.15s, y: 8 -> 0) */}
+      {/* Top Section: Monogram Logo & 'Sol & Lea' in the logo's serif typography */}
       <div className="w-full flex flex-col items-center pt-2 sm:pt-4">
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
           transition={{ duration: 0.7, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
-          className="flex justify-center items-center"
+          className="flex flex-col justify-center items-center"
         >
           <img
             src="/monogram-clean.png"
             alt="Monograma S & L"
-            className="w-28 sm:w-32 h-auto object-contain select-none pointer-events-none drop-shadow-xs"
+            className="w-24 sm:w-28 h-auto object-contain select-none pointer-events-none drop-shadow-xs"
           />
+
+          {/* Sol & Lea in the logo's typography */}
+          <div className="flex items-center justify-center gap-2 mt-3 sm:mt-3.5">
+            <span
+              className="font-serif font-light text-2xl sm:text-[1.75rem] tracking-[0.06em] text-[#2C1D18]"
+              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
+            >
+              Sol
+            </span>
+            <span
+              className="font-script text-2xl sm:text-3xl text-[#7D5A4F] select-none -translate-y-0.5"
+              style={{ fontFamily: "'Great Vibes', cursive" }}
+            >
+              &
+            </span>
+            <span
+              className="font-serif font-light text-2xl sm:text-[1.75rem] tracking-[0.06em] text-[#2C1D18]"
+              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
+            >
+              Lea
+            </span>
+          </div>
         </motion.div>
       </div>
 
-      {/* Center Section: Headline, 'Ya tenemos fecha', Date & macOS style Countdown Timer */}
+      {/* Center Section: Headline, 'Por ahora...', and conditional Countdown Timer */}
       <div className="w-full flex flex-col items-center justify-center my-auto py-4 sm:py-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
@@ -70,9 +95,9 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           transition={{ duration: 0.7, delay: 0.35, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col items-center"
         >
-          {/* "NOS CASAMOS" with airy tracking */}
+          {/* "NOS CASAMOS, ya tenemos fecha" */}
           <h1
-            className="tracking-[0.44em] text-[11px] sm:text-xs font-sans text-[#5D4037] uppercase font-medium"
+            className="tracking-[0.28em] sm:tracking-[0.32em] text-xs sm:text-[13px] font-sans text-[#5D4037] uppercase font-medium"
             style={{
               fontFamily: invitationConfig.theme.fontSans,
             }}
@@ -80,10 +105,10 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             {mainPhrase}
           </h1>
 
-          {/* "Ya tenemos fecha" */}
+          {/* "Por ahora solo reservate la fecha... Más adelante te contamos más" */}
           {secondaryText && (
             <p
-              className="font-serif italic text-base sm:text-lg text-[#7D5A4F] tracking-wide mt-2.5"
+              className="font-serif italic text-sm sm:text-base text-[#6E4138] mt-3 max-w-[290px] leading-relaxed"
               style={{
                 fontFamily: invitationConfig.theme.fontSerif,
               }}
@@ -92,22 +117,29 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             </p>
           )}
 
-          {/* Date: "15 de noviembre de 2026" */}
-          <p
-            className="font-serif text-xl sm:text-2xl font-light text-[#2C1D18] tracking-wide mt-1"
-            style={{
-              fontFamily: invitationConfig.theme.fontSerif,
-            }}
-          >
-            {date}
-          </p>
+          {/* The Date and Countdown Timer appear once the user has watched the video */}
+          {hasWatchedVideo && (
+            <motion.div
+              initial={{ opacity: 0, y: 12, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+              className="flex flex-col items-center mt-5 sm:mt-6"
+            >
+              <p
+                className="font-serif text-lg sm:text-xl font-light text-[#2C1D18] tracking-wide mb-3"
+                style={{
+                  fontFamily: invitationConfig.theme.fontSerif,
+                }}
+              >
+                {date}
+              </p>
 
-          {/* macOS Style Countdown Timer */}
-          <CountdownTimer
-            targetDate={countdownTargetDate}
-            isRevealed={isRevealed}
-            className="mt-6 sm:mt-7"
-          />
+              <CountdownTimer
+                targetDate={countdownTargetDate}
+                isRevealed={true}
+              />
+            </motion.div>
+          )}
         </motion.div>
       </div>
 

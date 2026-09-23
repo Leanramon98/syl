@@ -9,6 +9,7 @@ import { invitationConfig } from './config/invitation';
 export function App() {
   const [animationStage, setAnimationStage] = useState<AnimationStage>('closed');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
+  const [hasWatchedVideo, setHasWatchedVideo] = useState<boolean>(false);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [isUserMuted, setIsUserMuted] = useState<boolean>(false);
 
@@ -144,8 +145,12 @@ export function App() {
             secondaryText={secondaryText}
             date={date}
             countdownTargetDate={countdownTargetDate}
+            hasWatchedVideo={hasWatchedVideo}
             replayButtonText={options.replayButtonText}
-            onOpenVideoModal={() => setIsVideoModalOpen(true)}
+            onOpenVideoModal={() => {
+              setIsVideoModalOpen(true);
+              setHasWatchedVideo(true);
+            }}
           />
         ) : (
           <GatefoldEnvelope
