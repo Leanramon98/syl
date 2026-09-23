@@ -14,8 +14,12 @@ export interface VideoEnvelopeIntroProps {
   buttonText?: string;
   /** Main wedding announcement headline */
   mainPhrase?: string;
+  /** Secondary subtitle (e.g. 'Ya tenemos fecha') */
+  secondaryText?: string;
   /** Wedding date string */
   date?: string;
+  /** Target date ISO string for macOS countdown */
+  countdownTargetDate?: string;
   /** Label for replay button */
   replayButtonText?: string;
 }
@@ -24,9 +28,11 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   videoSrc = '/intro-envelope.mp4',
   autoPlayIntro = false,
   onOpenVideoModal,
-  buttonText = 'Ver video',
+  buttonText = 'Save the Date',
   mainPhrase = 'NOS CASAMOS',
+  secondaryText = 'Ya tenemos fecha',
   date,
+  countdownTargetDate,
   replayButtonText = 'Volver a ver apertura',
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -317,7 +323,9 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           onOpenVideo={onOpenVideoModal}
           onReplay={handleReplay}
           mainPhrase={mainPhrase}
+          secondaryText={secondaryText}
           date={date}
+          countdownTargetDate={countdownTargetDate}
           buttonText={buttonText}
           replayButtonText={replayButtonText}
           isRevealed={isCardRevealed}

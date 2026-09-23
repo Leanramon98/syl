@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Play, RotateCcw } from 'lucide-react';
 import { invitationConfig } from '../../config/invitation';
+import { CountdownTimer } from './CountdownTimer';
 
 export interface InvitationCardProps {
   /** Callback fired when user clicks the primary video action button */
@@ -12,10 +13,14 @@ export interface InvitationCardProps {
   isRevealed?: boolean;
   /** Main wedding announcement headline (default: 'NOS CASAMOS') */
   mainPhrase?: string;
+  /** Secondary subtitle (default: 'Ya tenemos fecha') */
+  secondaryText?: string;
   /** Wedding date string (default: '15 de noviembre de 2026') */
   date?: string;
-  /** Primary button label (default: 'Ver video') */
+  /** Primary button label (default: 'Save the Date') */
   buttonText?: string;
+  /** Countdown target date ISO string */
+  countdownTargetDate?: string;
   /** Label for the discreet replay button (default: 'Volver a ver apertura') */
   replayButtonText?: string;
   /** Optional custom container class name */
@@ -26,9 +31,11 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   onOpenVideo,
   onReplay,
   isRevealed = true,
-  mainPhrase = 'NOS CASAMOS',
+  mainPhrase = invitationConfig.mainPhrase || 'NOS CASAMOS',
+  secondaryText = invitationConfig.secondaryText || 'Ya tenemos fecha',
   date = invitationConfig.date || '15 de noviembre de 2026',
-  buttonText = invitationConfig.buttonText || 'Ver video',
+  buttonText = invitationConfig.buttonText || 'Save the Date',
+  countdownTargetDate = invitationConfig.countdownTargetDate || '2026-11-15T18:00:00',
   replayButtonText = invitationConfig.options.replayButtonText || 'Volver a ver apertura',
   className = '',
 }) => {
@@ -37,7 +44,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
       style={{
         fontFamily: invitationConfig.theme.fontSans,
       }}
-      className={`relative min-h-[100dvh] w-full flex flex-col justify-between items-center py-12 sm:py-16 px-6 max-w-md mx-auto text-center select-none ${className}`}
+      className={`relative min-h-[100dvh] w-full flex flex-col justify-between items-center py-10 sm:py-14 px-6 max-w-md mx-auto text-center select-none ${className}`}
     >
       {/* Top Section: Monogram Logo (w-28 sm:w-32) with staggered entrance (delay 0.15s, y: 8 -> 0) */}
       <div className="w-full flex flex-col items-center pt-2 sm:pt-4">
@@ -50,13 +57,13 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           <img
             src="/monogram-clean.png"
             alt="Monograma S & L"
-            className="w-28 sm:w-32 h-auto object-contain select-none pointer-events-none"
+            className="w-28 sm:w-32 h-auto object-contain select-none pointer-events-none drop-shadow-xs"
           />
         </motion.div>
       </div>
 
-      {/* Center Section: Headline & Date with generous breathing space & staggered entrance (delay 0.35s, y: 10 -> 0) */}
-      <div className="w-full flex flex-col items-center justify-center my-auto py-8">
+      {/* Center Section: Headline, 'Ya tenemos fecha', Date & macOS style Countdown Timer */}
+      <div className="w-full flex flex-col items-center justify-center my-auto py-4 sm:py-6">
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
@@ -65,7 +72,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
         >
           {/* "NOS CASAMOS" with airy tracking */}
           <h1
-            className="tracking-[0.42em] text-[11px] sm:text-xs font-sans text-[#5D4037] uppercase font-medium"
+            className="tracking-[0.44em] text-[11px] sm:text-xs font-sans text-[#5D4037] uppercase font-medium"
             style={{
               fontFamily: invitationConfig.theme.fontSans,
             }}
@@ -73,15 +80,34 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             {mainPhrase}
           </h1>
 
-          {/* "15 de noviembre de 2026" */}
+          {/* "Ya tenemos fecha" */}
+          {secondaryText && (
+            <p
+              className="font-serif italic text-base sm:text-lg text-[#7D5A4F] tracking-wide mt-2.5"
+              style={{
+                fontFamily: invitationConfig.theme.fontSerif,
+              }}
+            >
+              {secondaryText}
+            </p>
+          )}
+
+          {/* Date: "15 de noviembre de 2026" */}
           <p
-            className="font-serif text-lg sm:text-xl font-light text-[#2C1D18] tracking-wide mt-3"
+            className="font-serif text-xl sm:text-2xl font-light text-[#2C1D18] tracking-wide mt-1"
             style={{
               fontFamily: invitationConfig.theme.fontSerif,
             }}
           >
             {date}
           </p>
+
+          {/* macOS Style Countdown Timer */}
+          <CountdownTimer
+            targetDate={countdownTargetDate}
+            isRevealed={isRevealed}
+            className="mt-6 sm:mt-7"
+          />
         </motion.div>
       </div>
 

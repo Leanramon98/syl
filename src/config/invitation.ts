@@ -85,6 +85,7 @@ export interface InvitationConfig {
   date: string;
   secondaryText?: string;
   buttonText: string;
+  countdownTargetDate?: string;
   video: VideoConfig;
   theme: ThemeConfig;
   options: OptionsConfig;
@@ -100,9 +101,9 @@ export const invitationConfig: InvitationConfig = {
   // Couple Information
   couple: {
     person1: "Sofía",
-    person2: "Tomás",
+    person2: "Leandro",
     ampersand: "&",
-    initials: "S & T",
+    initials: "S & L",
   },
 
   // Main Invitation Phrasing
@@ -111,11 +112,14 @@ export const invitationConfig: InvitationConfig = {
   // Celebration Date
   date: "15 de noviembre de 2026",
 
-  // Secondary Invitation Text (leave as empty string or undefined to omit)
-  secondaryText: "Tenemos el honor de invitarte a celebrar nuestro amor",
+  // Secondary Invitation Text
+  secondaryText: "Ya tenemos fecha",
 
   // Primary Action Button Label
-  buttonText: "Ver video",
+  buttonText: "Save the Date",
+
+  // Target Date for macOS style countdown timer
+  countdownTargetDate: "2026-11-15T18:00:00",
 
   // Intro Presentation Mode Configuration
   intro: {

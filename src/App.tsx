@@ -14,7 +14,7 @@ export function App() {
 
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const { theme, intro, buttonText, mainPhrase, date, options, music } = invitationConfig;
+  const { theme, intro, buttonText, mainPhrase, secondaryText, date, countdownTargetDate, options, music } = invitationConfig;
   const isFramesIntro = intro?.type === 'frames';
   const isVideoIntro = intro?.type === 'video';
 
@@ -141,7 +141,9 @@ export function App() {
             autoPlayIntro={options.autoPlayIntro}
             buttonText={buttonText}
             mainPhrase={mainPhrase}
+            secondaryText={secondaryText}
             date={date}
+            countdownTargetDate={countdownTargetDate}
             replayButtonText={options.replayButtonText}
             onOpenVideoModal={() => setIsVideoModalOpen(true)}
           />
