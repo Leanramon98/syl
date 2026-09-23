@@ -50,9 +50,9 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
       className={`relative min-h-[100svh] min-h-[100dvh] w-full flex flex-col items-center justify-center py-6 sm:py-10 md:py-12 px-5 sm:px-6 select-none ${className}`}
     >
       {/* Unified Optical Center Editorial Block */}
-      <div className="w-full max-w-[340px] sm:max-w-md mx-auto my-auto flex flex-col items-center text-center -translate-y-1 sm:-translate-y-3">
+      <div className="w-full max-w-[360px] sm:max-w-xl mx-auto my-auto flex flex-col items-center text-center -translate-y-1 sm:-translate-y-3">
         
-        {/* 1. Logo Monograma (Identifica con sutileza y pureza sin competir) */}
+        {/* 1. Logo Monograma */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
@@ -62,20 +62,20 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           <img
             src="/monogram-clean.png"
             alt="Monograma S & L"
-            className="w-16 h-auto sm:w-20 md:w-22 object-contain select-none pointer-events-none drop-shadow-xs"
+            className="w-18 h-auto sm:w-22 md:w-24 object-contain select-none pointer-events-none drop-shadow-xs"
           />
         </motion.div>
 
-        {/* 2. Headline & 3. Bajada (Protagonismo principal con espaciado controlado) */}
+        {/* 2. Headline & 3. Bajada (+50% larger for bold clarity) */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
           transition={{ duration: 0.7, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center mt-6 sm:mt-9 md:mt-11 px-1"
+          className="flex flex-col items-center mt-7 sm:mt-10 md:mt-12 px-1"
         >
-          {/* Headline: Bolder, 2 lines on mobile, single line on desktop */}
+          {/* Headline: +50% larger, 2 lines on mobile, single on desktop */}
           <h1
-            className="font-sans font-semibold text-[#2C1D18] tracking-[0.16em] sm:tracking-[0.24em] text-[1.12rem] sm:text-[1.28rem] md:text-[1.38rem] leading-[1.35] uppercase"
+            className="font-sans font-semibold text-[#2C1D18] tracking-[0.15em] sm:tracking-[0.22em] text-[1.55rem] sm:text-[1.85rem] md:text-[2.1rem] leading-[1.28] uppercase"
             style={{ fontFamily: invitationConfig.theme.fontSans }}
           >
             {mainPhrase.includes(',') ? (
@@ -88,10 +88,10 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             )}
           </h1>
 
-          {/* Bajada: Sutil y legible */}
+          {/* Bajada: +50% larger, highly readable */}
           {secondaryText && (
             <p
-              className="font-serif italic text-xs sm:text-sm md:text-[15px] text-[#6E4138] mt-2.5 sm:mt-3 max-w-[270px] sm:max-w-xs leading-relaxed"
+              className="font-serif italic text-base sm:text-lg md:text-[1.28rem] text-[#6E4138] mt-3 sm:mt-4 max-w-[320px] sm:max-w-md leading-relaxed"
               style={{ fontFamily: invitationConfig.theme.fontSerif }}
             >
               Por ahora solo reservate la fecha...
@@ -101,16 +101,16 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           )}
         </motion.div>
 
-        {/* 4. Fecha & 5. Countdown (Aparece tras descubrir la fecha / ver el video) */}
+        {/* 4. Fecha & 5. Countdown (Flip Clock in #b4717a with white digits) */}
         {hasWatchedVideo && (
           <motion.div
             initial={{ opacity: 0, y: 12, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full flex flex-col items-center mt-5 sm:mt-6"
+            className="w-full flex flex-col items-center mt-6 sm:mt-8"
           >
             <p
-              className="font-serif text-base sm:text-lg md:text-xl font-light text-[#2C1D18] tracking-wide mb-2.5 sm:mb-3"
+              className="font-serif text-xl sm:text-2xl md:text-[1.85rem] font-light text-[#2C1D18] tracking-wide mb-3.5 sm:mb-4"
               style={{ fontFamily: invitationConfig.theme.fontSerif }}
             >
               {date}
@@ -128,15 +128,15 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           initial={{ opacity: 0, y: 12 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
           transition={{ duration: 0.7, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}
-          className="w-full flex flex-col items-center mt-7 sm:mt-9 md:mt-10"
+          className="w-full flex flex-col items-center mt-8 sm:mt-10 md:mt-12"
         >
-          {/* CTA Button en tono #9aa289: 90-100% en mobile (w-full max-w-[330px]), proporcional en desktop */}
+          {/* CTA Button en tono #9aa289: +50% larger text and padding */}
           <motion.button
             type="button"
             onClick={onOpenVideo}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="group relative w-full max-w-[330px] sm:max-w-[310px] py-3.5 sm:py-3.5 rounded-full bg-[#9aa289] hover:bg-[#8d957d] active:bg-[#838b73] text-white border border-[#8a927a]/60 hover:border-[#7c846a] shadow-[0_4px_16px_rgba(154,162,137,0.3)] hover:shadow-[0_6px_20px_rgba(154,162,137,0.4)] transition-all duration-300 flex items-center justify-center gap-2.5 uppercase tracking-[0.22em] text-[11px] sm:text-xs font-sans font-medium cursor-pointer select-none overflow-hidden focus:outline-none"
+            className="group relative w-full max-w-[340px] sm:max-w-[350px] py-4 sm:py-4.5 rounded-full bg-[#9aa289] hover:bg-[#8d957d] active:bg-[#838b73] text-white border border-[#8a927a]/60 hover:border-[#7c846a] shadow-[0_4px_16px_rgba(154,162,137,0.35)] hover:shadow-[0_6px_22px_rgba(154,162,137,0.45)] transition-all duration-300 flex items-center justify-center gap-3 uppercase tracking-[0.24em] text-xs sm:text-[13px] font-sans font-medium cursor-pointer select-none overflow-hidden focus:outline-none"
             aria-label={buttonText}
           >
             {/* Satin sheen sweep */}
@@ -160,7 +160,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
               className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 pointer-events-none"
             />
 
-            <Play className="w-3.5 h-3.5 fill-white text-white transition-transform duration-300 group-hover:scale-110" />
+            <Play className="w-4 h-4 fill-white text-white transition-transform duration-300 group-hover:scale-110" />
             <span>{buttonText}</span>
           </motion.button>
 
@@ -174,35 +174,35 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
               onClick={onReplay}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#8D6E63] hover:text-[#b4717a] transition-colors duration-200 tracking-wider uppercase font-medium focus:outline-none cursor-pointer mt-3 sm:mt-3.5 select-none"
+              className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#8D6E63] hover:text-[#b4717a] transition-colors duration-200 tracking-wider uppercase font-medium focus:outline-none cursor-pointer mt-3.5 sm:mt-4 select-none"
               title={replayButtonText}
             >
-              <RotateCcw className="w-3 h-3 text-[#8D6E63]" />
+              <RotateCcw className="w-3.5 h-3.5 text-[#8D6E63]" />
               <span>{replayButtonText}</span>
             </motion.button>
           )}
 
-          {/* 8. Cierre de firma: Sol & Lea al final de todo */}
+          {/* 8. Cierre de firma: Sol & Lea al final de todo (+50% larger) */}
           <motion.div
             initial={{ opacity: 0, y: 6 }}
             animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
             transition={{ delay: 0.68, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center justify-center gap-1.5 sm:gap-2 mt-7 sm:mt-9 select-none"
+            className="flex items-center justify-center gap-2 sm:gap-2.5 mt-8 sm:mt-11 select-none"
           >
             <span
-              className="font-serif font-light text-xl sm:text-2xl tracking-[0.08em] text-[#2C1D18]"
+              className="font-serif font-light text-2xl sm:text-3xl md:text-4xl tracking-[0.08em] text-[#2C1D18]"
               style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
             >
               Sol
             </span>
             <span
-              className="font-script text-xl sm:text-2xl text-[#b4717a] select-none -translate-y-0.5"
+              className="font-script text-2xl sm:text-3xl md:text-4xl text-[#b4717a] select-none -translate-y-1"
               style={{ fontFamily: "'Great Vibes', cursive" }}
             >
               &
             </span>
             <span
-              className="font-serif font-light text-xl sm:text-2xl tracking-[0.08em] text-[#2C1D18]"
+              className="font-serif font-light text-2xl sm:text-3xl md:text-4xl tracking-[0.08em] text-[#2C1D18]"
               style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
             >
               Lea

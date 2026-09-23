@@ -110,7 +110,7 @@ export const invitationConfig: InvitationConfig = {
   mainPhrase: "NOS CASAMOS, ya tenemos fecha",
 
   // Celebration Date
-  date: "15 de noviembre de 2026",
+  date: "06 de Marzo de 2027",
 
   // Secondary Invitation Text
   secondaryText: "Por ahora solo reservate la fecha... Más adelante te contamos más",
@@ -118,8 +118,8 @@ export const invitationConfig: InvitationConfig = {
   // Primary Action Button Label
   buttonText: "Descubrir la fecha",
 
-  // Target Date for macOS style countdown timer
-  countdownTargetDate: "2026-11-15T18:00:00",
+  // Target Date for flip clock countdown timer (06 de Marzo de 2027)
+  countdownTargetDate: "2027-03-06T18:00:00",
 
   // Intro Presentation Mode Configuration
   intro: {
