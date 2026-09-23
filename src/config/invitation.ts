@@ -113,10 +113,10 @@ export const invitationConfig: InvitationConfig = {
   date: "06 de Marzo de 2027",
 
   // Secondary Invitation Text
-  secondaryText: "Por ahora solo reservate la fecha... Más adelante te contamos más",
+  secondaryText: "Por ahora reservate solo el día",
 
   // Primary Action Button Label
-  buttonText: "Descubrir la fecha",
+  buttonText: "Descubrí cuándo",
 
   // Target Date for flip clock countdown timer (06 de Marzo de 2027)
   countdownTargetDate: "2027-03-06T18:00:00",
