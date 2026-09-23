@@ -90,6 +90,9 @@ export interface InvitationConfig {
   theme: ThemeConfig;
   options: OptionsConfig;
   intro: IntroConfig;
+  formalInvitation?: {
+    passcode: string;
+  };
   music?: {
     src: string;
     loop: boolean;
@@ -120,6 +123,11 @@ export const invitationConfig: InvitationConfig = {
 
   // Target Date for flip clock countdown timer (06 de Marzo de 2027)
   countdownTargetDate: "2027-03-06T18:00:00",
+
+  // Formal Invitation Access Gate (Route /)
+  formalInvitation: {
+    passcode: "solylea",
+  },
 
   // Intro Presentation Mode Configuration
   intro: {
