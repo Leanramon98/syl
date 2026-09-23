@@ -139,13 +139,14 @@ export const invitationConfig: InvitationConfig = {
   video: {
     type: "youtube",
     url: "https://www.youtube.com/watch?v=LXb3EKWsInQ",
-    title: "Sofía & Tomás — Nuestra Historia de Amor",
+    title: "Sol & Lea — Nuestra Boda",
   },
 
-  // Color Palette and Typography Styles
+  // Color Palette and Typography Styles (Official Sol & Lea Brand Palette)
+  // Brand colors: #9aa289 (sage), #c4a270 (camel sand), #b4717a (dusty rose), #e2b093 (blush), #d4c1bd (dusty alabaster)
   theme: {
-    primaryAccent: "#C49746",
-    primaryAccentHover: "#855F1E",
+    primaryAccent: "#c4a270",
+    primaryAccentHover: "#b4717a",
     paperBackground: "#FAF8F3",
     cardBackground: "#FAF8F3",
     textPrimary: "#2C1D18",

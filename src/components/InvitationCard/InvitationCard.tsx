@@ -52,7 +52,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
       {/* Unified Optical Center Editorial Block */}
       <div className="w-full max-w-[340px] sm:max-w-md mx-auto my-auto flex flex-col items-center text-center -translate-y-1 sm:-translate-y-3">
         
-        {/* 1. Logo Sol & Lea (Identifica de forma compacta y refinada sin competir) */}
+        {/* 1. Logo Monograma (Identifica con sutileza y pureza sin competir) */}
         <motion.div
           initial={{ opacity: 0, y: 8 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 8 }}
@@ -64,27 +64,6 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             alt="Monograma S & L"
             className="w-16 h-auto sm:w-20 md:w-22 object-contain select-none pointer-events-none drop-shadow-xs"
           />
-
-          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-2 sm:mt-2.5">
-            <span
-              className="font-serif font-light text-xl sm:text-2xl tracking-[0.06em] text-[#2C1D18]"
-              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
-            >
-              Sol
-            </span>
-            <span
-              className="font-script text-xl sm:text-2xl text-[#7D5A4F] select-none -translate-y-0.5"
-              style={{ fontFamily: "'Great Vibes', cursive" }}
-            >
-              &
-            </span>
-            <span
-              className="font-serif font-light text-xl sm:text-2xl tracking-[0.06em] text-[#2C1D18]"
-              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
-            >
-              Lea
-            </span>
-          </div>
         </motion.div>
 
         {/* 2. Headline & 3. Bajada (Protagonismo principal con espaciado controlado) */}
@@ -92,7 +71,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           initial={{ opacity: 0, y: 10 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 10 }}
           transition={{ duration: 0.7, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
-          className="flex flex-col items-center mt-7 sm:mt-10 md:mt-12 px-1"
+          className="flex flex-col items-center mt-6 sm:mt-9 md:mt-11 px-1"
         >
           {/* Headline: Bolder, 2 lines on mobile, single line on desktop */}
           <h1
@@ -144,20 +123,20 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           </motion.div>
         )}
 
-        {/* 6. CTA Principal & 7. Acción Secundaria (Proximidad visual al bloque, sin pegarse al fondo) */}
+        {/* 6. CTA Principal (#9aa289) & 7. Acción Secundaria */}
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 12 }}
           transition={{ duration: 0.7, delay: 0.42, ease: [0.16, 1, 0.3, 1] }}
           className="w-full flex flex-col items-center mt-7 sm:mt-9 md:mt-10"
         >
-          {/* CTA Button: 90-100% en mobile (w-full max-w-[330px]), proporcional en desktop */}
+          {/* CTA Button en tono #9aa289: 90-100% en mobile (w-full max-w-[330px]), proporcional en desktop */}
           <motion.button
             type="button"
             onClick={onOpenVideo}
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
-            className="group relative w-full max-w-[330px] sm:max-w-[310px] py-3.5 sm:py-3.5 rounded-full bg-gradient-to-r from-[#3E2922] via-[#2F1E19] to-[#3E2922] text-[#F7F2EA] border border-[#7D5A4F]/40 hover:border-[#A88276] shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2.5 uppercase tracking-[0.22em] text-[11px] sm:text-xs font-sans font-medium cursor-pointer select-none overflow-hidden focus:outline-none"
+            className="group relative w-full max-w-[330px] sm:max-w-[310px] py-3.5 sm:py-3.5 rounded-full bg-[#9aa289] hover:bg-[#8d957d] active:bg-[#838b73] text-white border border-[#8a927a]/60 hover:border-[#7c846a] shadow-[0_4px_16px_rgba(154,162,137,0.3)] hover:shadow-[0_6px_20px_rgba(154,162,137,0.4)] transition-all duration-300 flex items-center justify-center gap-2.5 uppercase tracking-[0.22em] text-[11px] sm:text-xs font-sans font-medium cursor-pointer select-none overflow-hidden focus:outline-none"
             aria-label={buttonText}
           >
             {/* Satin sheen sweep */}
@@ -167,7 +146,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
                 isRevealed
                   ? {
                       x: ['-150%', '200%'],
-                      opacity: [0, 0.45, 0],
+                      opacity: [0, 0.4, 0],
                     }
                   : {}
               }
@@ -178,10 +157,10 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
                 repeatDelay: 4.0,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-[#FFF8EC]/25 to-transparent skew-x-12 pointer-events-none"
+              className="absolute inset-y-0 w-1/2 bg-gradient-to-r from-transparent via-white/30 to-transparent skew-x-12 pointer-events-none"
             />
 
-            <Play className="w-3.5 h-3.5 fill-[#D4AF67] text-[#D4AF67] transition-transform duration-300 group-hover:scale-110" />
+            <Play className="w-3.5 h-3.5 fill-white text-white transition-transform duration-300 group-hover:scale-110" />
             <span>{buttonText}</span>
           </motion.button>
 
@@ -195,13 +174,40 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
               onClick={onReplay}
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#8D6E63] hover:text-[#3E2922] transition-colors duration-200 tracking-wider uppercase font-medium focus:outline-none cursor-pointer mt-3 sm:mt-3.5 select-none"
+              className="inline-flex items-center gap-1.5 text-[10px] sm:text-[11px] text-[#8D6E63] hover:text-[#b4717a] transition-colors duration-200 tracking-wider uppercase font-medium focus:outline-none cursor-pointer mt-3 sm:mt-3.5 select-none"
               title={replayButtonText}
             >
               <RotateCcw className="w-3 h-3 text-[#8D6E63]" />
               <span>{replayButtonText}</span>
             </motion.button>
           )}
+
+          {/* 8. Cierre de firma: Sol & Lea al final de todo */}
+          <motion.div
+            initial={{ opacity: 0, y: 6 }}
+            animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
+            transition={{ delay: 0.68, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+            className="flex items-center justify-center gap-1.5 sm:gap-2 mt-7 sm:mt-9 select-none"
+          >
+            <span
+              className="font-serif font-light text-xl sm:text-2xl tracking-[0.08em] text-[#2C1D18]"
+              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
+            >
+              Sol
+            </span>
+            <span
+              className="font-script text-xl sm:text-2xl text-[#b4717a] select-none -translate-y-0.5"
+              style={{ fontFamily: "'Great Vibes', cursive" }}
+            >
+              &
+            </span>
+            <span
+              className="font-serif font-light text-xl sm:text-2xl tracking-[0.08em] text-[#2C1D18]"
+              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
+            >
+              Lea
+            </span>
+          </motion.div>
         </motion.div>
 
       </div>

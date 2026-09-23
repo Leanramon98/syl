@@ -203,14 +203,14 @@ export const VideoModal: React.FC<VideoModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.93, y: 14 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl bg-[#141312] border border-[#C49746]/40 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(196,151,70,0.15)] flex flex-col max-h-[92dvh]"
+            className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl bg-[#141312] border border-[#c4a270]/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(196,162,112,0.12)] flex flex-col max-h-[92dvh]"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 border-b border-[#C49746]/20 bg-[#1A1918]/90 backdrop-blur-sm">
+            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 border-b border-[#c4a270]/20 bg-[#1A1918]/90 backdrop-blur-sm">
               <div className="flex items-center gap-2.5 min-w-0 pr-3">
-                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#C49746]/10 border border-[#C49746]/30 flex items-center justify-center text-[#E5CA96]">
-                  <Film className="w-3.5 h-3.5 text-[#C49746]" />
+                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#b4717a]/15 border border-[#b4717a]/35 flex items-center justify-center text-[#e2b093]">
+                  <Film className="w-3.5 h-3.5 text-[#e2b093]" />
                 </div>
                 <h3
                   id="video-modal-title"
@@ -220,12 +220,12 @@ export const VideoModal: React.FC<VideoModalProps> = ({
                 </h3>
               </div>
 
-              {/* Gold Accented Close Button (Min 44x44px touch target) */}
+              {/* Brand Styled Close Button (Min 44x44px touch target) */}
               <button
                 ref={closeButtonRef}
                 type="button"
                 onClick={onClose}
-                className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full p-2 text-[#E5CA96] hover:text-[#FAF6EE] bg-[#C49746]/10 hover:bg-[#C49746]/20 active:bg-[#C49746]/30 border border-[#C49746]/35 hover:border-[#C49746]/60 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#C49746] cursor-pointer"
+                className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full p-2 text-[#d4c1bd] hover:text-[#FAF6EE] bg-[#c4a270]/10 hover:bg-[#b4717a]/25 active:bg-[#b4717a]/35 border border-[#c4a270]/30 hover:border-[#b4717a]/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#c4a270] cursor-pointer"
                 aria-label="Cerrar video"
               >
                 <X className="w-5 h-5" />
