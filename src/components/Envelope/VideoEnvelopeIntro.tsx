@@ -32,7 +32,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   onOpenVideoModal,
   buttonText = 'Descubrí cuándo',
   mainPhrase = 'NOS CASAMOS, ya tenemos fecha',
-  secondaryText = 'Por ahora solo reservate el día',
+  secondaryText = 'Por ahora solo reservate el día,\nmás adelante te contamos más detalles',
   date,
   countdownTargetDate,
   hasWatchedVideo = false,

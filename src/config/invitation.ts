@@ -113,7 +113,7 @@ export const invitationConfig: InvitationConfig = {
   date: "06 de Marzo de 2027",
 
   // Secondary Invitation Text
-  secondaryText: "Por ahora solo reservate el día",
+  secondaryText: "Por ahora solo reservate el día,\nmás adelante te contamos más detalles",
 
   // Primary Action Button Label
   buttonText: "Descubrí cuándo",

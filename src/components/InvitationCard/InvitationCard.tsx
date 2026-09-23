@@ -35,7 +35,7 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   isRevealed = true,
   hasWatchedVideo = false,
   mainPhrase = invitationConfig.mainPhrase || 'NOS CASAMOS, ya tenemos fecha',
-  secondaryText = invitationConfig.secondaryText || 'Por ahora solo reservate el día',
+  secondaryText = invitationConfig.secondaryText || 'Por ahora solo reservate el día,\nmás adelante te contamos más detalles',
   date = invitationConfig.date || '06 de Marzo de 2027',
   buttonText = invitationConfig.buttonText || 'Descubrí cuándo',
   countdownTargetDate = invitationConfig.countdownTargetDate || '2027-03-06T18:00:00',
@@ -90,10 +90,10 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <span className="block font-normal text-[#5D4037] mt-1 sm:mt-1.5">{secondLine}</span>
           </h1>
 
-          {/* Bajada: +50% larger, highly readable */}
+          {/* Bajada: +50% larger, highly readable with newline support */}
           {secondaryText && (
             <p
-              className="font-serif italic text-base sm:text-lg md:text-[1.28rem] text-[#6E4138] mt-3 sm:mt-4 max-w-[320px] sm:max-w-md leading-relaxed"
+              className="font-serif italic text-base sm:text-lg md:text-[1.28rem] text-[#6E4138] mt-3 sm:mt-4 max-w-[320px] sm:max-w-md leading-relaxed whitespace-pre-line"
               style={{ fontFamily: invitationConfig.theme.fontSerif }}
             >
               {secondaryText}
