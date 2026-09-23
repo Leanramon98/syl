@@ -221,10 +221,20 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
         }`}
         onClick={!hasStarted && !isCardRevealed ? handleStartPlayback : undefined}
       >
+        {/* Immediate First-Frame Poster for iOS Safari & instant visual stability */}
+        <img
+          src="/envelope-poster.jpg"
+          alt="Sobre de invitación"
+          className={`absolute inset-0 w-full h-full object-cover select-none pointer-events-none transition-opacity duration-200 ${
+            isPlaying ? 'opacity-0' : 'opacity-100'
+          }`}
+        />
+
         {/* Video Player */}
         <video
           ref={videoRef}
           src={videoSrc}
+          poster="/envelope-poster.jpg"
           muted
           playsInline
           controls={false}
