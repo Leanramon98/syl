@@ -126,7 +126,7 @@ export const invitationConfig: InvitationConfig = {
 
   // Formal Invitation Access Gate (Route /)
   formalInvitation: {
-    passcode: "solylea",
+    passcode: "141014syl",
   },
 
   // Intro Presentation Mode Configuration

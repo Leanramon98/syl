@@ -227,10 +227,7 @@ export function App() {
         */
         <main className="relative z-10 w-full flex items-center justify-center">
           {!isFormalUnlocked ? (
-            <PasscodeGate
-              onUnlock={handleUnlockFormal}
-              onNavigateToSaveTheDate={() => navigate('/save-the-date')}
-            />
+            <PasscodeGate onUnlock={handleUnlockFormal} />
           ) : (
             <FormalInvitationView
               onLock={handleLockFormal}

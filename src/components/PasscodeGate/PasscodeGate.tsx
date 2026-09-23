@@ -6,19 +6,14 @@ import { invitationConfig } from '../../config/invitation';
 export interface PasscodeGateProps {
   /** Callback fired when correct passcode is entered */
   onUnlock: () => void;
-  /** Link navigation callback to go to /save-the-date */
-  onNavigateToSaveTheDate: () => void;
 }
 
-export const PasscodeGate: React.FC<PasscodeGateProps> = ({
-  onUnlock,
-  onNavigateToSaveTheDate,
-}) => {
+export const PasscodeGate: React.FC<PasscodeGateProps> = ({ onUnlock }) => {
   const [passcode, setPasscode] = useState('');
   const [error, setError] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const expectedPasscode = (invitationConfig as any).formalInvitation?.passcode || 'solylea';
+  const expectedPasscode = invitationConfig.formalInvitation?.passcode || '141014syl';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,7 +22,7 @@ export const PasscodeGate: React.FC<PasscodeGateProps> = ({
     setIsSubmitting(true);
     setError(false);
 
-    // Normalize comparison (case-insensitive, trimmed)
+    // Case-insensitive, trimmed comparison
     const isValid = passcode.trim().toLowerCase() === expectedPasscode.trim().toLowerCase();
 
     setTimeout(() => {
@@ -62,17 +57,17 @@ export const PasscodeGate: React.FC<PasscodeGateProps> = ({
           </div>
         </div>
 
-        {/* Header */}
+        {/* Header: Acceso Privado */}
         <div className="mb-6">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#9aa289]/15 border border-[#9aa289]/30 text-[#606a52] text-[10px] sm:text-[11px] font-sans font-medium tracking-[0.2em] uppercase mb-2.5">
             <Lock className="w-3 h-3 text-[#788466]" />
             <span>Invitación Formal</span>
           </div>
-          <h1 className="font-serif text-2xl sm:text-[1.7rem] text-[#2C1D18] font-light leading-snug">
+          <h1 className="font-serif text-2xl sm:text-[1.75rem] text-[#2C1D18] font-light leading-snug">
             Acceso Privado
           </h1>
-          <p className="font-sans text-xs sm:text-[13px] text-[#6E4138] mt-1.5 max-w-[260px] mx-auto leading-relaxed">
-            Ingresá la clave para acceder a la invitación formal.
+          <p className="font-sans text-xs sm:text-[13px] text-[#6E4138] mt-1.5 max-w-[280px] mx-auto leading-relaxed">
+            Estamos preparando las invitaciones formales.
           </p>
         </div>
 
@@ -124,18 +119,6 @@ export const PasscodeGate: React.FC<PasscodeGateProps> = ({
             <ArrowRight className="w-3.5 h-3.5 text-white" />
           </button>
         </form>
-
-        {/* Link to Save the Date */}
-        <div className="mt-7 pt-5 border-t border-[#E6DCCE]/70 w-full flex flex-col items-center">
-          <button
-            type="button"
-            onClick={onNavigateToSaveTheDate}
-            className="inline-flex items-center gap-1.5 text-xs text-[#8D6E63] hover:text-[#b4717a] transition-colors font-sans tracking-wider uppercase font-medium cursor-pointer"
-          >
-            <span>Ver Save the Date</span>
-            <ArrowRight className="w-3 h-3" />
-          </button>
-        </div>
       </motion.div>
     </div>
   );
