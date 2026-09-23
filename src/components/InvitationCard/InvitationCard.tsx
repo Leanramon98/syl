@@ -42,6 +42,14 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
   replayButtonText = invitationConfig.options.replayButtonText || 'Volver a ver apertura',
   className = '',
 }) => {
+  const [firstLine, secondLine] = React.useMemo(() => {
+    if (mainPhrase.includes(',')) {
+      const parts = mainPhrase.split(',');
+      return [parts[0].trim() + ',', parts.slice(1).join(',').trim()];
+    }
+    return ['NOS CASAMOS,', 'YA TENEMOS LA FECHA'];
+  }, [mainPhrase]);
+
   return (
     <article
       style={{
@@ -73,19 +81,13 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
           transition={{ duration: 0.7, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
           className="flex flex-col items-center mt-7 sm:mt-10 md:mt-12 px-1"
         >
-          {/* Headline: +50% larger, 2 lines on mobile, single on desktop */}
+          {/* Headline: "NOS CASAMOS," en negrita. debajo "YA TENEMOS LA FECHA", sin negrita */}
           <h1
-            className="font-sans font-semibold text-[#2C1D18] tracking-[0.15em] sm:tracking-[0.22em] text-[1.55rem] sm:text-[1.85rem] md:text-[2.1rem] leading-[1.28] uppercase"
+            className="tracking-[0.14em] sm:tracking-[0.22em] text-[1.55rem] sm:text-[1.85rem] md:text-[2.1rem] leading-[1.28] uppercase text-center"
             style={{ fontFamily: invitationConfig.theme.fontSans }}
           >
-            {mainPhrase.includes(',') ? (
-              <>
-                <span className="block sm:inline">{mainPhrase.split(',')[0]},</span>{' '}
-                <span className="block sm:inline">{mainPhrase.split(',')[1].trim()}</span>
-              </>
-            ) : (
-              <span>{mainPhrase}</span>
-            )}
+            <span className="block font-bold text-[#2C1D18]">{firstLine}</span>
+            <span className="block font-normal text-[#5D4037] mt-1 sm:mt-1.5">{secondLine}</span>
           </h1>
 
           {/* Bajada: +50% larger, highly readable */}
@@ -181,33 +183,6 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
               <span>{replayButtonText}</span>
             </motion.button>
           )}
-
-          {/* 8. Cierre de firma: Sol & Lea al final de todo (+50% larger) */}
-          <motion.div
-            initial={{ opacity: 0, y: 6 }}
-            animate={isRevealed ? { opacity: 1, y: 0 } : { opacity: 0, y: 6 }}
-            transition={{ delay: 0.68, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="flex items-center justify-center gap-2 sm:gap-2.5 mt-8 sm:mt-11 select-none"
-          >
-            <span
-              className="font-serif font-light text-2xl sm:text-3xl md:text-4xl tracking-[0.08em] text-[#2C1D18]"
-              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
-            >
-              Sol
-            </span>
-            <span
-              className="font-script text-2xl sm:text-3xl md:text-4xl text-[#b4717a] select-none -translate-y-1"
-              style={{ fontFamily: "'Great Vibes', cursive" }}
-            >
-              &
-            </span>
-            <span
-              className="font-serif font-light text-2xl sm:text-3xl md:text-4xl tracking-[0.08em] text-[#2C1D18]"
-              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
-            >
-              Lea
-            </span>
-          </motion.div>
         </motion.div>
 
       </div>

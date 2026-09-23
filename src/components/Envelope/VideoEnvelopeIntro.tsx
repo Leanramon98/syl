@@ -190,7 +190,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   };
 
   return (
-    <div className="relative w-full min-h-[100dvh] flex items-center justify-center overflow-hidden">
+    <div className="relative w-full min-h-[100dvh] flex flex-col items-center justify-center overflow-hidden px-4">
       {/* 
         Stage 1 & Playing Envelope Container:
         - Initial size: max-w expanded to min(470px, calc(92dvh * 9 / 16)) (~20-25% increase)
@@ -201,7 +201,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
       <motion.div
         style={{
           aspectRatio: '9 / 16',
-          maxWidth: 'min(470px, calc(92dvh * 9 / 16))',
+          maxWidth: 'min(440px, calc(80dvh * 9 / 16))',
           transformOrigin: '50% 41.5%',
         }}
         animate={{
@@ -302,6 +302,39 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           )}
         </AnimatePresence>
       </motion.div>
+
+      {/* Sol & Lea below the envelope card on the intro screen */}
+      <AnimatePresence>
+        {!isCardRevealed && !isZooming && (
+          <motion.div
+            key="intro-sol-lea"
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, transition: { duration: 0.25 } }}
+            transition={{ delay: 0.3, duration: 0.6 }}
+            className="flex items-center justify-center gap-2 mt-8 sm:mt-12 md:mt-16 select-none z-10"
+          >
+            <span
+              className="font-serif font-light text-2xl sm:text-3xl tracking-[0.08em] text-[#2C1D18]"
+              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
+            >
+              Sol
+            </span>
+            <span
+              className="font-script text-2xl sm:text-3xl text-[#b4717a] select-none -translate-y-0.5"
+              style={{ fontFamily: "'Great Vibes', cursive" }}
+            >
+              &
+            </span>
+            <span
+              className="font-serif font-light text-2xl sm:text-3xl tracking-[0.08em] text-[#2C1D18]"
+              style={{ fontFamily: "'Playfair Display', 'Cormorant Garamond', Georgia, serif" }}
+            >
+              Lea
+            </span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 
         Final Editorial Stationery Page:

@@ -107,7 +107,7 @@ export const invitationConfig: InvitationConfig = {
   },
 
   // Main Invitation Phrasing
-  mainPhrase: "NOS CASAMOS, ya tenemos fecha",
+  mainPhrase: "NOS CASAMOS, YA TENEMOS LA FECHA",
 
   // Celebration Date
   date: "06 de Marzo de 2027",
