@@ -85,19 +85,8 @@ export function App() {
   return (
     <div
       style={rootStyle}
-      className="relative min-h-[100dvh] w-full flex items-center justify-center p-3 sm:p-6 paper-texture overflow-x-hidden selection:bg-[#4A3228] selection:text-[#F5EBE1]"
+      className="relative min-h-[100dvh] w-full flex items-center justify-center paper-texture overflow-hidden selection:bg-[#4A3228] selection:text-[#F5EBE1]"
     >
-      {/* Ambient background glows using warm theme accents */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden">
-        <div
-          className="absolute top-[-10%] left-[20%] w-[500px] h-[500px] rounded-full blur-[120px] opacity-35"
-          style={{ backgroundColor: `${theme.primaryAccent}26` }}
-        />
-        <div
-          className="absolute bottom-[-10%] right-[15%] w-[450px] h-[450px] rounded-full blur-[130px] opacity-25"
-          style={{ backgroundColor: '#8D6E6326' }}
-        />
-      </div>
 
       {/* Background Audio Player */}
       <audio

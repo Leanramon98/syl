@@ -32,8 +32,8 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [hasStarted, setHasStarted] = useState<boolean>(autoPlayIntro);
+  const [isZooming, setIsZooming] = useState<boolean>(false);
   const [isCardRevealed, setIsCardRevealed] = useState<boolean>(false);
-  const [isBlooming, setIsBlooming] = useState<boolean>(false);
 
   const hasTriggeredTransition = useRef<boolean>(false);
   const transitionTimeoutsRef = useRef<NodeJS.Timeout[]>([]);
@@ -45,34 +45,29 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
     transitionTimeoutsRef.current = [];
   }, []);
 
-  // Soft optical bloom transition: opacity 0 -> 1 -> 0 over ~600ms
-  // At peak (~300ms), pause video and switch seamlessly to InvitationCard
+  // Continuous push-in zoom: scale 1 -> 1.55 with origin '50% 41.5%',
+  // envelope physical borders expand past viewport, cross-fading into final editorial page over ~500ms
   const triggerZoomTransition = useCallback(() => {
     clearTimeouts();
-    setIsBlooming(true);
+    setIsZooming(true);
+    setIsCardRevealed(true);
 
-    // Peak of the white bloom (~300ms): video pause & card switch
-    const peakTimer = setTimeout(() => {
+    // Pause video after the 500ms cross-fade completes
+    const pauseTimer = setTimeout(() => {
       if (videoRef.current) {
         videoRef.current.pause();
       }
-      setIsCardRevealed(true);
-    }, 300);
+    }, 550);
 
-    // Completion of the white bloom (~600ms): dismiss bloom overlay
-    const endTimer = setTimeout(() => {
-      setIsBlooming(false);
-    }, 600);
-
-    transitionTimeoutsRef.current = [peakTimer, endTimer];
+    transitionTimeoutsRef.current = [pauseTimer];
   }, [clearTimeouts]);
 
-  // Video timeupdate check (guaranteed trigger at >= 5.2s)
+  // Video timeupdate check (triggers transition at ~5.05s)
   const handleTimeUpdate = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    if (!hasTriggeredTransition.current && video.currentTime >= 5.2) {
+    if (!hasTriggeredTransition.current && video.currentTime >= 5.05) {
       hasTriggeredTransition.current = true;
       triggerZoomTransition();
     }
@@ -86,7 +81,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
       if (!active) return;
       const video = videoRef.current;
       if (video && isPlaying && !hasTriggeredTransition.current) {
-        if (video.currentTime >= 5.2) {
+        if (video.currentTime >= 5.05) {
           hasTriggeredTransition.current = true;
           triggerZoomTransition();
           return;
@@ -109,7 +104,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
     };
   }, [isPlaying, triggerZoomTransition]);
 
-  // Start playback upon user interaction (tapping chapita or clicking envelope)
+  // Start playback upon user interaction (tapping seal or clicking envelope)
   const handleStartPlayback = useCallback(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -153,7 +148,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
     };
   }, [videoSrc, autoPlayIntro, handleStartPlayback, clearTimeouts]);
 
-  // Replay intro video: resets video to 0s, pauses, and re-shows closed envelope with chapita cue
+  // Replay intro video: smoothly returns to Stage 1 with closed envelope and interactive seal
   const handleReplay = useCallback(
     (e?: React.MouseEvent) => {
       e?.stopPropagation();
@@ -162,8 +157,8 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
         cancelAnimationFrame(rafRef.current);
       }
 
-      setIsBlooming(false);
       setIsCardRevealed(false);
+      setIsZooming(false);
       hasTriggeredTransition.current = false;
       setIsPlaying(false);
       setHasStarted(false);
@@ -177,7 +172,7 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
     [clearTimeouts]
   );
 
-  // Handle video end fallback if reached before 5.2s
+  // Handle video end fallback if reached before 5.05s
   const handleEnded = () => {
     if (!hasTriggeredTransition.current) {
       hasTriggeredTransition.current = true;
@@ -186,23 +181,38 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
   };
 
   return (
-    <div className="relative w-full flex flex-col items-center justify-center px-3 sm:px-4">
+    <div className="relative w-full min-h-[100dvh] flex items-center justify-center overflow-hidden">
       {/* 
-        Mobile-first vertical layout:
-        Strict 9:16 aspect ratio matching the 720x1280 video and stationery card:
-        Max width is clamped by min(420px, calc(86dvh * 9 / 16))
+        Stage 1 & Playing Envelope Container:
+        - Initial size: max-w expanded to min(470px, calc(92dvh * 9 / 16)) (~20-25% increase)
+        - Push-in zoom at ~5.0s: scale 1 -> 1.55, transformOrigin: '50% 41.5%'
+        - Envelope physical borders push past viewport boundaries
+        - Cross-fade over 500ms into final editorial page
       */}
-      <div
+      <motion.div
         style={{
           aspectRatio: '9 / 16',
-          maxWidth: 'min(420px, calc(86dvh * 9 / 16))',
+          maxWidth: 'min(470px, calc(92dvh * 9 / 16))',
+          transformOrigin: '50% 41.5%',
         }}
-        className={`relative w-full aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_-10px_rgba(40,30,20,0.28),0_0_24px_rgba(110,65,56,0.15)] border border-[#6E4138]/25 bg-[#FAF8F3] flex items-center justify-center select-none ${
-          !hasStarted && !isCardRevealed ? 'cursor-pointer' : ''
+        animate={{
+          scale: isZooming ? 1.55 : 1,
+          opacity: isCardRevealed ? 0 : 1,
+        }}
+        transition={{
+          scale: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
+          opacity: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
+        }}
+        className={`relative w-full aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_50px_-10px_rgba(40,30,20,0.22)] border border-[#6E4138]/20 bg-[#FAF8F3] flex items-center justify-center select-none ${
+          isCardRevealed
+            ? 'pointer-events-none'
+            : !hasStarted
+            ? 'cursor-pointer'
+            : ''
         }`}
         onClick={!hasStarted && !isCardRevealed ? handleStartPlayback : undefined}
       >
-        {/* Video Player: Always mounted to avoid reload latencies upon replay */}
+        {/* Video Player */}
         <video
           ref={videoRef}
           src={videoSrc}
@@ -214,43 +224,8 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
           onPlay={() => setIsPlaying(true)}
           onPause={() => setIsPlaying(false)}
           onEnded={handleEnded}
-          className={`w-full h-full object-cover select-none pointer-events-none transition-opacity duration-200 ${
-            isCardRevealed ? 'opacity-0' : 'opacity-100'
-          }`}
+          className="w-full h-full object-cover select-none pointer-events-none"
         />
-
-        {/* Real HTML InvitationCard: Revealed seamlessly at the peak of the white bloom */}
-        {isCardRevealed && (
-          <div className="absolute inset-0 w-full h-full z-20">
-            <InvitationCard
-              onOpenVideo={onOpenVideoModal}
-              onReplay={handleReplay}
-              mainPhrase={mainPhrase}
-              date={date}
-              buttonText={buttonText}
-              replayButtonText={replayButtonText}
-              isRevealed={isCardRevealed}
-            />
-          </div>
-        )}
-
-        {/* Smooth White Transition: Soft optical bloom overlay (opacity 0 -> 1 -> 0 over ~600ms) */}
-        <AnimatePresence>
-          {isBlooming && (
-            <motion.div
-              key="optical-bloom-overlay"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: [0, 1, 1, 0] }}
-              exit={{ opacity: 0 }}
-              transition={{
-                duration: 0.6,
-                times: [0, 0.45, 0.55, 1],
-                ease: 'easeInOut',
-              }}
-              className="absolute inset-0 z-40 pointer-events-none bg-white"
-            />
-          )}
-        </AnimatePresence>
 
         {/* Interactive Chapita / Wax Seal Cue: Pulsing ring & luxury badge */}
         <AnimatePresence>
@@ -317,7 +292,37 @@ export const VideoEnvelopeIntro: React.FC<VideoEnvelopeIntroProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
-      </div>
+      </motion.div>
+
+      {/* 
+        Final Editorial Stationery Page:
+        - Cross-fades in over 500ms
+        - Full vertical editorial composition (min-h-[100dvh])
+        - Card surface seamlessly becomes the page background with matching #FAF8F3 paper texture
+        - No physical card borders visible
+      */}
+      <motion.div
+        animate={{
+          opacity: isCardRevealed ? 1 : 0,
+        }}
+        transition={{
+          duration: 0.5,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+        className={`absolute inset-0 w-full min-h-[100dvh] flex flex-col items-center justify-center ${
+          isCardRevealed ? 'z-20 pointer-events-auto' : 'z-0 pointer-events-none'
+        }`}
+      >
+        <InvitationCard
+          onOpenVideo={onOpenVideoModal}
+          onReplay={handleReplay}
+          mainPhrase={mainPhrase}
+          date={date}
+          buttonText={buttonText}
+          replayButtonText={replayButtonText}
+          isRevealed={isCardRevealed}
+        />
+      </motion.div>
     </div>
   );
 };
