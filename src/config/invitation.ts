@@ -31,6 +31,8 @@ export interface VideoConfig {
   title: string;
   /** Optional poster image URL for local video playback */
   poster?: string;
+  /** Aspect ratio of the video frame ('16:9' landscape or '9:16' vertical) */
+  aspectRatio?: '16:9' | '9:16';
 }
 
 export interface ThemeConfig {
@@ -148,6 +150,7 @@ export const invitationConfig: InvitationConfig = {
     type: "local",
     url: "/save-the-date.mp4",
     title: "Sol & Lea — Save the Date",
+    aspectRatio: "9:16",
   },
 
   // Color Palette and Typography Styles (Official Sol & Lea Brand Palette)

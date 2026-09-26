@@ -18,6 +18,8 @@ export interface VideoModalProps {
   title?: string;
   /** Optional poster image URL for local video playback */
   poster?: string;
+  /** Aspect ratio of the video container ('16:9' or '9:16') */
+  aspectRatio?: '16:9' | '9:16';
   /** Backward-compatible configuration object */
   video?: VideoConfig;
 }
@@ -124,6 +126,7 @@ export const VideoModal: React.FC<VideoModalProps> = ({
   type,
   title,
   poster,
+  aspectRatio,
   video,
 }) => {
   const closeButtonRef = useRef<HTMLButtonElement>(null);
@@ -133,6 +136,8 @@ export const VideoModal: React.FC<VideoModalProps> = ({
   const rawType = type || video?.type || 'auto';
   const effectiveTitle = title || video?.title || 'Video de la boda';
   const effectivePoster = poster || video?.poster;
+  const effectiveAspectRatio = aspectRatio || video?.aspectRatio || '16:9';
+  const isVertical = effectiveAspectRatio === '9:16';
 
   const resolvedType = resolveVideoType(rawUrl, rawType);
   const finalVideoUrl = getFinalVideoUrl(rawUrl, resolvedType);
@@ -203,37 +208,51 @@ export const VideoModal: React.FC<VideoModalProps> = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.93, y: 14 }}
             transition={{ type: 'spring', damping: 26, stiffness: 320 }}
-            className="relative z-10 w-full max-w-4xl overflow-hidden rounded-2xl bg-[#141312] border border-[#c4a270]/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(196,162,112,0.12)] flex flex-col max-h-[92dvh]"
+            style={
+              isVertical
+                ? {
+                    width: '100%',
+                    maxWidth: 'min(92vw, calc((88dvh - 78px) * 9 / 16))',
+                  }
+                : undefined
+            }
+            className={`relative z-10 w-full overflow-hidden rounded-2xl bg-[#141312] border border-[#c4a270]/30 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9),0_0_30px_rgba(196,162,112,0.12)] flex flex-col max-h-[92dvh] ${
+              isVertical ? '' : 'max-w-4xl'
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Modal Header */}
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-3.5 border-b border-[#c4a270]/20 bg-[#1A1918]/90 backdrop-blur-sm">
-              <div className="flex items-center gap-2.5 min-w-0 pr-3">
-                <div className="flex-shrink-0 w-7 h-7 rounded-full bg-[#b4717a]/15 border border-[#b4717a]/35 flex items-center justify-center text-[#e2b093]">
-                  <Film className="w-3.5 h-3.5 text-[#e2b093]" />
+            <div className="flex items-center justify-between px-3.5 sm:px-5 py-2.5 sm:py-3 border-b border-[#c4a270]/20 bg-[#1A1918]/90 backdrop-blur-sm">
+              <div className="flex items-center gap-2 min-w-0 pr-2">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[#b4717a]/15 border border-[#b4717a]/35 flex items-center justify-center text-[#e2b093]">
+                  <Film className="w-3 h-3 text-[#e2b093]" />
                 </div>
                 <h3
                   id="video-modal-title"
-                  className="font-serif text-sm sm:text-base tracking-wide text-[#FAF6EE] truncate font-light"
+                  className="font-serif text-xs sm:text-sm tracking-wide text-[#FAF6EE] truncate font-light"
                 >
                   {effectiveTitle}
                 </h3>
               </div>
 
-              {/* Brand Styled Close Button (Min 44x44px touch target) */}
+              {/* Brand Styled Close Button */}
               <button
                 ref={closeButtonRef}
                 type="button"
                 onClick={onClose}
-                className="flex-shrink-0 min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full p-2 text-[#d4c1bd] hover:text-[#FAF6EE] bg-[#c4a270]/10 hover:bg-[#b4717a]/25 active:bg-[#b4717a]/35 border border-[#c4a270]/30 hover:border-[#b4717a]/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#c4a270] cursor-pointer"
+                className="flex-shrink-0 w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center rounded-full text-[#d4c1bd] hover:text-[#FAF6EE] bg-[#c4a270]/10 hover:bg-[#b4717a]/25 active:bg-[#b4717a]/35 border border-[#c4a270]/30 hover:border-[#b4717a]/50 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#c4a270] cursor-pointer"
                 aria-label="Cerrar video"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Video Frame (16:9 Aspect Ratio) */}
-            <div className="relative w-full aspect-video bg-black flex items-center justify-center overflow-hidden">
+            {/* Video Frame */}
+            <div
+              className={`relative w-full bg-black flex items-center justify-center overflow-hidden ${
+                isVertical ? 'aspect-[9/16]' : 'aspect-video'
+              }`}
+            >
               {resolvedType === 'local' ? (
                 <video
                   key={finalVideoUrl}
@@ -259,12 +278,9 @@ export const VideoModal: React.FC<VideoModalProps> = ({
             </div>
 
             {/* Modal Footer caption / subtle note */}
-            <div className="px-4 sm:px-6 py-2.5 bg-[#0F0E0D] border-t border-white/5 flex items-center justify-between text-xs text-[#A89885]">
-              <span className="font-serif italic tracking-wide hidden sm:inline text-xs text-[#A89885]/80">
-                {effectiveTitle}
-              </span>
-              <span className="font-serif italic text-center w-full sm:w-auto sm:ml-auto text-[11px] sm:text-xs text-[#8E8070]">
-                Presiona Esc o toca fuera para cerrar
+            <div className="px-3.5 sm:px-5 py-2 bg-[#0F0E0D] border-t border-white/5 flex items-center justify-center text-xs text-[#A89885]">
+              <span className="font-serif italic text-center w-full text-[11px] sm:text-xs text-[#8E8070]">
+                Toca fuera o la cruz para cerrar
               </span>
             </div>
           </motion.div>
