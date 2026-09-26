@@ -145,9 +145,9 @@ export const invitationConfig: InvitationConfig = {
   // Video Source Configuration
   // Supports YouTube, Vimeo, and local video files in the public folder.
   video: {
-    type: "youtube",
-    url: "https://www.youtube.com/watch?v=LXb3EKWsInQ",
-    title: "Sol & Lea — Nuestra Boda",
+    type: "local",
+    url: "/save-the-date.mp4",
+    title: "Sol & Lea — Save the Date",
   },
 
   // Color Palette and Typography Styles (Official Sol & Lea Brand Palette)
