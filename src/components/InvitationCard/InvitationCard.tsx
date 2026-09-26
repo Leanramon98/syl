@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Play, RotateCcw } from 'lucide-react';
 import { invitationConfig } from '../../config/invitation';
 import { CountdownTimer } from './CountdownTimer';
+import { AddToCalendarButton } from './AddToCalendarButton';
 
 export interface InvitationCardProps {
   /** Callback fired when user clicks the primary video action button */
@@ -120,6 +121,8 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
               targetDate={countdownTargetDate}
               isRevealed={true}
             />
+
+            <AddToCalendarButton />
           </motion.div>
         )}
 

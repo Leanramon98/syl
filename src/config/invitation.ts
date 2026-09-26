@@ -121,8 +121,8 @@ export const invitationConfig: InvitationConfig = {
   // Primary Action Button Label
   buttonText: "Descubrí cuándo",
 
-  // Target Date for flip clock countdown timer (06 de Marzo de 2027)
-  countdownTargetDate: "2027-03-06T18:00:00",
+  // Target Date for flip clock countdown timer (06 de Marzo de 2027, 17:00 hs)
+  countdownTargetDate: "2027-03-06T17:00:00",
 
   // Formal Invitation Access Gate (Route /)
   formalInvitation: {
