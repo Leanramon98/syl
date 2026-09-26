@@ -1,5 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
-import { Volume2, VolumeX } from 'lucide-react';
+import { useState, useEffect } from 'react';
 import { VideoEnvelopeIntro } from './components/Envelope/VideoEnvelopeIntro';
 import { FrameSequenceEnvelope } from './components/Envelope/FrameSequenceEnvelope';
 import { GatefoldEnvelope, type AnimationStage } from './components/Envelope/GatefoldEnvelope';
@@ -23,12 +22,8 @@ export function App() {
   const [animationStage, setAnimationStage] = useState<AnimationStage>('closed');
   const [isVideoModalOpen, setIsVideoModalOpen] = useState<boolean>(false);
   const [hasWatchedVideo, setHasWatchedVideo] = useState<boolean>(false);
-  const [isPlaying, setIsPlaying] = useState<boolean>(false);
-  const [isUserMuted, setIsUserMuted] = useState<boolean>(false);
 
-  const audioRef = useRef<HTMLAudioElement>(null);
-
-  const { theme, intro, buttonText, mainPhrase, secondaryText, date, countdownTargetDate, options, music } = invitationConfig;
+  const { theme, intro, buttonText, mainPhrase, secondaryText, date, countdownTargetDate, options } = invitationConfig;
   const isFramesIntro = intro?.type === 'frames';
   const isVideoIntro = intro?.type === 'video';
 
@@ -59,60 +54,7 @@ export function App() {
 
   const isSaveTheDateRoute = currentPath === '/save-the-date';
 
-  // Coordinate background music with video modal and user muted state
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio) return;
 
-    if (!isSaveTheDateRoute) {
-      audio.pause();
-      return;
-    }
-
-    if (isVideoModalOpen) {
-      audio.pause();
-    } else if (!isUserMuted) {
-      audio.play().catch(() => {
-        // Autoplay policy may restrict until first interaction
-      });
-    }
-  }, [isVideoModalOpen, isUserMuted, isSaveTheDateRoute]);
-
-  // First interaction trigger for audio on /save-the-date
-  useEffect(() => {
-    if (!isSaveTheDateRoute) return;
-
-    const handleFirstInteraction = (e: Event) => {
-      if ((e.target as HTMLElement)?.closest('[data-music-toggle]')) {
-        return;
-      }
-      if (!isUserMuted && !isVideoModalOpen && audioRef.current) {
-        audioRef.current.play().catch(() => {});
-      }
-    };
-
-    window.addEventListener('pointerdown', handleFirstInteraction);
-    window.addEventListener('keydown', handleFirstInteraction);
-
-    return () => {
-      window.removeEventListener('pointerdown', handleFirstInteraction);
-      window.removeEventListener('keydown', handleFirstInteraction);
-    };
-  }, [isUserMuted, isVideoModalOpen, isSaveTheDateRoute]);
-
-  const toggleMusic = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    const audio = audioRef.current;
-    if (!audio) return;
-
-    if (isPlaying) {
-      audio.pause();
-      setIsUserMuted(true);
-    } else {
-      setIsUserMuted(false);
-      audio.play().catch(() => {});
-    }
-  };
 
   // Injected CSS custom properties from invitationConfig.theme
   const rootStyle = {
@@ -135,48 +77,9 @@ export function App() {
       style={rootStyle}
       className="relative min-h-[100dvh] w-full flex items-center justify-center paper-texture overflow-hidden selection:bg-[#4A3228] selection:text-[#F5EBE1]"
     >
-      {/* Background Audio Player */}
-      <audio
-        ref={audioRef}
-        src={music?.src || '/background-music.mp3'}
-        loop={music?.loop ?? true}
-        preload="auto"
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-      />
-
-      {/* 
-        Route Branch 1: /save-the-date
-        Renders the full Save the Date cinematic experience with countdown & music
-      */}
+      {/* Route Branch 1: /save-the-date */}
       {isSaveTheDateRoute ? (
         <>
-          {/* Sound Toggle Button */}
-          <button
-            type="button"
-            data-music-toggle="true"
-            onClick={toggleMusic}
-            className="fixed top-3.5 sm:top-6 left-1/2 -translate-x-1/2 sm:left-auto sm:right-6 sm:translate-x-0 z-50 bg-white/30 border border-white/60 backdrop-blur-md shadow-xs text-[#3E2723] hover:bg-white/50 active:scale-95 transition-all cursor-pointer px-3 sm:px-3.5 py-1.5 rounded-full flex items-center gap-1.5 sm:gap-2 text-[10px] sm:text-xs font-sans tracking-wider uppercase select-none"
-            aria-label={isPlaying ? "Silenciar música" : "Activar música"}
-          >
-            {isPlaying ? (
-              <>
-                <Volume2 className="w-3.5 h-3.5 text-[#3E2723] animate-pulse" />
-                <span>Música</span>
-                <span className="flex items-end gap-0.5 h-2.5 ml-0.5" aria-hidden="true">
-                  <span className="w-0.5 bg-[#3E2723] h-full animate-pulse rounded-full" />
-                  <span className="w-0.5 bg-[#3E2723] h-1.5 animate-pulse rounded-full opacity-80" />
-                  <span className="w-0.5 bg-[#3E2723] h-2 animate-pulse rounded-full opacity-90" />
-                </span>
-              </>
-            ) : (
-              <>
-                <VolumeX className="w-3.5 h-3.5 text-[#3E2723]/70" />
-                <span className="text-[#3E2723]/70">Música</span>
-              </>
-            )}
-          </button>
-
           {/* Main Stage: Video Intro / Frames Sequence */}
           <main className="relative z-10 w-full flex items-center justify-center">
             {isFramesIntro ? (

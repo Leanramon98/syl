@@ -91,10 +91,10 @@ export const InvitationCard: React.FC<InvitationCardProps> = ({
             <span className="block font-normal text-[#5D4037] mt-1 sm:mt-1.5">{secondLine}</span>
           </h1>
 
-          {/* Bajada: +50% larger, highly readable with newline support */}
+          {/* Bajada: High contrast, solid weight and clear size on mobile screens */}
           {secondaryText && (
             <p
-              className="font-serif italic text-base sm:text-lg md:text-[1.28rem] text-[#6E4138] mt-3 sm:mt-4 max-w-[320px] sm:max-w-md leading-relaxed whitespace-pre-line"
+              className="font-serif italic font-medium text-lg sm:text-xl md:text-[1.32rem] text-[#2C1D18] mt-3 sm:mt-4 max-w-[340px] sm:max-w-md leading-snug sm:leading-relaxed whitespace-pre-line text-center"
               style={{ fontFamily: invitationConfig.theme.fontSerif }}
             >
               {secondaryText}
