@@ -209,9 +209,10 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
         }`}
         onClick={!hasStarted && !isRevealed ? handleStartPlayback : undefined}
       >
-        {/* Video Player - transparent envelope video on #BFB2A1 canvas */}
+        {/* Video Player - composite video with exact #BFB2A1 background */}
         <video
           ref={videoRef}
+          src="/video/sobre_compuesto.mp4"
           muted
           playsInline
           controls={false}
@@ -221,11 +222,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
           onPause={() => setIsPlaying(false)}
           onEnded={handleEnded}
           className="w-full h-full object-contain select-none pointer-events-none"
-        >
-          <source src="/video/sobre_sin_fondo.webm" type="video/webm" />
-          <source src="/video/sobre_sin_fondo.mov" type="video/quicktime" />
-          <source src="/video/sobre_abriendose.mp4" type="video/mp4" />
-        </video>
+        />
 
         {/* Interactive Seal Cue: Translucent pulsing ring & radar target */}
         <AnimatePresence>
