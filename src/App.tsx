@@ -5,14 +5,23 @@ import { GatefoldEnvelope, type AnimationStage } from './components/Envelope/Gat
 import { VideoModal } from './components/Modal/VideoModal';
 import { PasscodeGate } from './components/PasscodeGate/PasscodeGate';
 import { FormalInvitationView } from './components/FormalInvitation/FormalInvitationView';
+import { AdminLogin } from './components/Admin/AdminLogin';
+import { AdminDashboard } from './components/Admin/AdminDashboard';
+import { FamilyInvitationView } from './components/FamilyInvitation/FamilyInvitationView';
 import { invitationConfig } from './config/invitation';
+import { adminLogin, isAdminAuthenticated } from './lib/api';
 
 export function App() {
-  // Simple browser history routing: /save-the-date vs /
+  // Simple browser history routing
   const [currentPath, setCurrentPath] = useState<string>(() => {
     const raw = window.location.pathname.replace(/\/$/, '');
     return raw || '/';
   });
+
+  // Admin auth state
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => isAdminAuthenticated());
+  const [adminLoginLoading, setAdminLoginLoading] = useState(false);
+  const [adminLoginError, setAdminLoginError] = useState<string | null>(null);
 
   // Formal invitation passcode unlock state (saved in sessionStorage)
   const [isFormalUnlocked, setIsFormalUnlocked] = useState<boolean>(() => {
@@ -52,9 +61,24 @@ export function App() {
     setIsFormalUnlocked(false);
   };
 
+  const handleAdminLoginSubmit = async (password: string) => {
+    setAdminLoginLoading(true);
+    setAdminLoginError(null);
+    try {
+      await adminLogin(password);
+      setIsAdminLoggedIn(true);
+    } catch (err: any) {
+      setAdminLoginError(err?.message || 'Contraseña incorrecta');
+    } finally {
+      setAdminLoginLoading(false);
+    }
+  };
+
+  // Route matches
+  const isAdminRoute = currentPath === '/admin';
+  const invitationMatch = currentPath.match(/^\/invitacion\/([^/]+)$/);
+  const invitationToken = invitationMatch ? invitationMatch[1] : null;
   const isSaveTheDateRoute = currentPath === '/save-the-date';
-
-
 
   // Injected CSS custom properties from invitationConfig.theme
   const rootStyle = {
@@ -71,6 +95,31 @@ export function App() {
     color: theme.textPrimary,
     fontFamily: theme.fontSans,
   } as React.CSSProperties;
+
+  // Render Admin Route
+  if (isAdminRoute) {
+    return isAdminLoggedIn ? (
+      <AdminDashboard onLogout={() => setIsAdminLoggedIn(false)} />
+    ) : (
+      <AdminLogin
+        onLogin={handleAdminLoginSubmit}
+        isLoading={adminLoginLoading}
+        error={adminLoginError}
+      />
+    );
+  }
+
+  // Render Family Personalized Invitation Route
+  if (invitationToken) {
+    return (
+      <div style={rootStyle} className="min-h-[100dvh] w-full fine-paper-texture">
+        <FamilyInvitationView
+          token={invitationToken}
+          onNavigateHome={() => navigate('/save-the-date')}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

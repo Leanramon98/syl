@@ -23,6 +23,13 @@ dist-ssr
 *.sln
 *.sw?
 
+# SQLite database WAL
+*.db-shm
+*.db-wal
+
+# Local staging
+.orca/
+
 # TypeScript build info
 *.tsbuildinfo
 

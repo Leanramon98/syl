@@ -101,21 +101,21 @@ export const AddToCalendarButton: React.FC<AddToCalendarButtonProps> = ({ classN
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
-        className="inline-flex items-center gap-2 px-4 py-2 sm:px-4.5 sm:py-2.5 rounded-full bg-white/70 hover:bg-white/95 border border-[#c4a270]/40 hover:border-[#b4717a]/50 text-[#5D4037] hover:text-[#2C1D18] shadow-[0_2px_10px_rgba(196,162,112,0.12)] backdrop-blur-sm transition-all duration-200 cursor-pointer select-none text-xs sm:text-[13px] font-sans tracking-wider uppercase font-medium focus:outline-none"
+        className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white hover:bg-[#FAF8F5] border border-[#9aa289] hover:border-[#732a2d] text-[#732a2d] hover:text-[#732a2d] shadow-[0_2px_10px_rgba(115,42,45,0.08)] transition-all duration-200 cursor-pointer select-none text-xs sm:text-[13px] font-sans tracking-wider uppercase font-semibold focus:outline-none"
         aria-expanded={isOpen}
         aria-haspopup="true"
       >
         {added ? (
           <>
             <Check className="w-3.5 h-3.5 text-[#9aa289]" />
-            <span className="text-[#5D4037]">¡Evento agregado!</span>
+            <span className="text-[#732a2d]">¡Evento agendado!</span>
           </>
         ) : (
           <>
             <CalendarPlus className="w-4 h-4 text-[#b4717a]" />
-            <span>Agregar a mi Calendario</span>
+            <span>Agendar fecha</span>
             <ChevronDown
-              className={`w-3.5 h-3.5 text-[#8D6E63] transition-transform duration-200 ${
+              className={`w-3.5 h-3.5 text-[#b4717a] transition-transform duration-200 ${
                 isOpen ? 'rotate-180' : ''
               }`}
             />
@@ -131,36 +131,36 @@ export const AddToCalendarButton: React.FC<AddToCalendarButtonProps> = ({ classN
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 6, scale: 0.95 }}
             transition={{ duration: 0.18, ease: 'easeOut' }}
-            className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-1.5 rounded-2xl bg-[#FAF8F3]/95 backdrop-blur-md border border-[#c4a270]/40 shadow-[0_12px_30px_rgba(44,29,24,0.15)] z-50 flex flex-col gap-1 select-none"
+            className="absolute left-1/2 -translate-x-1/2 bottom-full mb-2 w-64 p-1.5 rounded-2xl bg-white/95 backdrop-blur-md border border-[#9aa289]/50 shadow-[0_12px_30px_rgba(115,42,45,0.15)] z-50 flex flex-col gap-1 select-none"
           >
-            <div className="px-3 py-1.5 text-[11px] font-serif italic text-[#8D6E63] border-b border-[#c4a270]/20 text-center">
-              06 Mar 2027 · 17:00 a 01:00 hs
+            <div className="px-3 py-1.5 text-[11px] font-['Rubik',sans-serif] text-[#73494c] border-b border-[#d4c1bd]/50 text-center">
+              06 Mar 2027 · 18:00 hs
             </div>
 
             {/* Google Calendar */}
             <button
               type="button"
               onClick={handleGoogleCalendar}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left text-xs font-sans text-[#2C1D18] hover:bg-[#c4a270]/15 hover:text-[#2C1D18] transition-colors cursor-pointer group"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left text-xs font-sans text-[#393734] hover:bg-[#9aa289]/15 transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-[#4285F4]" />
                 <span className="font-medium">Google Calendar</span>
               </div>
-              <ExternalLink className="w-3.5 h-3.5 text-[#8D6E63] group-hover:text-[#2C1D18] transition-colors" />
+              <ExternalLink className="w-3.5 h-3.5 text-[#73494c] group-hover:text-[#732a2d] transition-colors" />
             </button>
 
             {/* Apple / Outlook / iCal */}
             <button
               type="button"
               onClick={handleDownloadIcs}
-              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left text-xs font-sans text-[#2C1D18] hover:bg-[#c4a270]/15 hover:text-[#2C1D18] transition-colors cursor-pointer group"
+              className="w-full flex items-center justify-between px-3 py-2 rounded-xl text-left text-xs font-sans text-[#393734] hover:bg-[#9aa289]/15 transition-colors cursor-pointer group"
             >
               <div className="flex items-center gap-2.5">
                 <span className="w-2 h-2 rounded-full bg-[#b4717a]" />
                 <span className="font-medium">Apple / Outlook (.ics)</span>
               </div>
-              <Download className="w-3.5 h-3.5 text-[#8D6E63] group-hover:text-[#2C1D18] transition-colors" />
+              <Download className="w-3.5 h-3.5 text-[#73494c] group-hover:text-[#732a2d] transition-colors" />
             </button>
           </motion.div>
         )}

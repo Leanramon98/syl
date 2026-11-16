@@ -46,6 +46,213 @@
   transform-origin: right center;
 }
 
+/* Authentic handmade textured cotton paper */
+.cotton-paper {
+  background-color: #FAF7F2;
+  background-image: 
+    radial-gradient(#E8E2D7 0.75px, transparent 0.75px),
+    radial-gradient(#DFD7CA 0.75px, #FAF7F2 0.75px);
+  background-size: 20px 20px;
+  background-position: 0 0, 10px 10px;
+  box-shadow: 
+    0 2px 4px rgba(60, 50, 40, 0.02),
+    0 12px 32px -4px rgba(60, 50, 40, 0.06),
+    0 30px 60px -12px rgba(60, 50, 40, 0.08),
+    inset 0 0 40px rgba(232, 226, 215, 0.45);
+}
+
+.paper-grain-bg {
+  background-color: #F5F1EA;
+  background-image: 
+    radial-gradient(rgba(0, 0, 0, 0.025) 1px, transparent 0),
+    radial-gradient(rgba(212, 175, 103, 0.04) 1px, transparent 0);
+  background-size: 16px 16px, 32px 32px;
+  background-position: 0 0, 8px 8px;
+}
+
+.blind-emboss-text {
+  color: #383431;
+  text-shadow: 
+    0 1px 1px rgba(255, 255, 255, 0.9),
+    0 -1px 1px rgba(0, 0, 0, 0.08);
+}
+
+.blind-emboss-card {
+  box-shadow:
+    inset 0 1px 2px rgba(255, 255, 255, 0.95),
+    inset 0 -1px 2px rgba(0, 0, 0, 0.06),
+    0 10px 30px -5px rgba(60, 50, 40, 0.06);
+}
+
+/* Authentic handmade cotton paper texture */
+.fine-paper-texture {
+  background-color: #F7F3EC;
+  background-image: url('/textures/cotton-paper.png') !important;
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Fixdate White Theme Utilities */
+.font-script {
+  font-family: 'Parisienne', 'Great Vibes', cursive;
+}
+
+.font-heading {
+  font-family: 'Parisienne', 'Great Vibes', cursive;
+}
+
+.font-body {
+  font-family: 'Rubik', 'Raleway', sans-serif;
+}
+
+.fixdate-btn {
+  background: #732a2d;
+  color: #ffffff;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 500;
+  border-radius: 50px;
+  font-size: 16px;
+  padding: 13px 36px;
+  box-shadow: 0 4px 15px rgba(115, 42, 45, 0.35);
+  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.fixdate-btn:hover {
+  background: #b4717a;
+  box-shadow: 0 6px 20px rgba(180, 113, 122, 0.45);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.fixdate-btn-rose {
+  background: #b4717a;
+  color: #ffffff;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 500;
+  border-radius: 50px;
+  font-size: 16px;
+  padding: 13px 36px;
+  box-shadow: 0 4px 15px rgba(180, 113, 122, 0.35);
+  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.fixdate-btn-rose:hover {
+  background: #732a2d;
+  box-shadow: 0 6px 20px rgba(115, 42, 45, 0.45);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.fixdate-btn-sage {
+  background: #9aa289;
+  color: #ffffff;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 500;
+  border-radius: 50px;
+  font-size: 16px;
+  padding: 13px 36px;
+  box-shadow: 0 4px 15px rgba(154, 162, 137, 0.35);
+  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.fixdate-btn-sage:hover {
+  background: #732a2d;
+  box-shadow: 0 6px 20px rgba(115, 42, 45, 0.45);
+  color: #ffffff;
+  transform: translateY(-1px);
+}
+
+.fixdate-btn-secondary {
+  background: #9aa289;
+  color: #ffffff;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 500;
+  border-radius: 50px;
+  font-size: 15px;
+  padding: 11px 28px;
+  box-shadow: 0 4px 12px rgba(154, 162, 137, 0.3);
+  transition: all 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+  text-align: center;
+}
+
+.fixdate-btn-secondary:hover {
+  background: #732a2d;
+  color: #ffffff;
+}
+
+.fixdate-divider {
+  width: 80%;
+  max-width: 600px;
+  height: 80px;
+  margin: 35px auto;
+  background-image: url('/fixdate/img/divider.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+}
+
+.fixdate-polaroid {
+  background-color: #ffffff;
+  padding: 12px;
+  padding-bottom: 50px;
+  border-radius: 4px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.fixdate-polaroid:hover {
+  transform: translateY(-4px) rotate(1deg);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.btn-fixdate {
+  background-color: #B97600;
+  color: #ffffff;
+  font-family: 'Rubik', sans-serif;
+  font-weight: 400;
+  border-radius: 9999px;
+  box-shadow: 0 4px 15px rgba(185, 118, 0, 0.25);
+  transition: all 0.3s ease;
+}
+
+.btn-fixdate:hover {
+  background-color: #9E6400;
+  box-shadow: 0 6px 20px rgba(185, 118, 0, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-fixdate-outline {
+  background-color: transparent;
+  color: #6F6F6E;
+  border: 1px solid #C6C6C5;
+  font-family: 'Rubik', sans-serif;
+  border-radius: 9999px;
+  transition: all 0.3s ease;
+}
+
+.btn-fixdate-outline:hover {
+  border-color: #B97600;
+  color: #B97600;
+}
+
+.card-fixdate {
+  background-color: #ffffff;
+  border-radius: 1.5rem;
+  border: 1px solid #F0ECE6;
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.04);
+}
+
 /* Subtle luxury paper texture and gradients */
 .paper-texture {
   background-color: var(--theme-bg, #F7F5EF);

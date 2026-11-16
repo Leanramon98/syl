@@ -1,84 +1,129 @@
 /**
  * Wedding Digital Invitation Configuration
  *
- * Single centralized configuration object for editing all texts,
- * couple names, dates, colors, fonts, video source, and playback options.
+ * Centralized configuration for all sections, texts, couple details,
+ * date, venue, itinerary, dress code, gifts, playlist, lodging, gallery, etc.
  */
 
 export interface CoupleConfig {
-  /** Name of the first partner */
   person1: string;
-  /** Name of the second partner */
   person2: string;
-  /** Connector between names (e.g. '&', 'y', '+') */
   ampersand?: string;
-  /** Monogram initials for the wax seal and interior watermark (e.g. 'S & T') */
   initials: string;
 }
 
 export interface VideoConfig {
-  /**
-   * Type of video embed or custom stream
-   * - 'auto': Automatically detect based on URL
-   * - 'youtube': YouTube video (watch URL, share URL, or embed URL)
-   * - 'vimeo': Vimeo video URL (watch URL or player embed URL)
-   * - 'local': Direct MP4/WebM file (e.g. '/video.mp4' in public folder)
-   */
   type: 'auto' | 'youtube' | 'vimeo' | 'local';
-  /** Video URL or local file path */
   url: string;
-  /** Accessible title for screen readers and modal header */
   title: string;
-  /** Optional poster image URL for local video playback */
   poster?: string;
-  /** Aspect ratio of the video frame ('16:9' landscape or '9:16' vertical) */
   aspectRatio?: '16:9' | '9:16';
 }
 
 export interface ThemeConfig {
-  /** Main metallic or brand accent (gold) */
   primaryAccent: string;
-  /** Darker accent for hover states, active borders and headlines */
   primaryAccentHover: string;
-  /** Outer viewport & page background color */
+  accentSecondary?: string;
   paperBackground: string;
-  /** Inner invitation card background */
   cardBackground: string;
-  /** Main heading and text color */
   textPrimary: string;
-  /** Subtitle, date, and secondary text color */
   textSecondary: string;
-  /** Serif font family for titles and elegant headings */
   fontSerif: string;
-  /** Sans-serif font family for dates, labels, and buttons */
   fontSans: string;
-  /** Script / calligraphy font family for ornamental ampersand */
   fontScript: string;
 }
 
 export interface IntroConfig {
-  /**
-   * Presentation mode for the invitation opening:
-   * - 'frames': Sequential animated frames with smooth cross-fade
-   * - 'video': High-quality vertical video intro (e.g. envelope opening animation)
-   * - 'animation': Interactive 3D CSS/Framer-Motion gatefold envelope with wax seal & ribbon
-   */
   type: 'frames' | 'video' | 'animation';
-  /** Path to intro video (e.g. '/intro-envelope.mp4' in public folder) */
   videoSrc?: string;
-  /** Frame sequence paths for frame animation mode */
   frames?: string[];
 }
 
 export interface OptionsConfig {
-  /** Whether the envelope untying & opening animation starts automatically */
   autoPlayIntro: boolean;
-  /** Delay in milliseconds before starting the auto-play intro */
   introDelayMs: number;
-  /** Show discrete replay button on the revealed card */
   showReplayButton: boolean;
-  /** Label for the replay button */
   replayButtonText: string;
+}
+
+export interface VenueItem {
+  title: string;
+  name: string;
+  time: string;
+  address: string;
+  city: string;
+  mapUrl: string;
+  note?: string;
+}
+
+export interface VenueConfig {
+  ceremony: VenueItem;
+  party: VenueItem;
+}
+
+export interface ItineraryItem {
+  time: string;
+  title: string;
+  description: string;
+  iconName: 'heart' | 'glass' | 'utensils' | 'music' | 'moon' | 'sparkles' | 'camera';
+}
+
+export interface DressCodeConfig {
+  title: string;
+  subtitle: string;
+  description: string;
+  avoidColorsNote: string;
+  colorPalette?: string[];
+}
+
+export interface BankDetails {
+  bank: string;
+  accountType: string;
+  cbu: string;
+  alias: string;
+  titular: string;
+}
+
+export interface GiftsConfig {
+  title: string;
+  message: string;
+  bankDetails: BankDetails;
+}
+
+export interface PlaylistConfig {
+  title: string;
+  subtitle: string;
+  message: string;
+  spotifyUrl: string;
+}
+
+export interface LodgingItem {
+  name: string;
+  description: string;
+  distance: string;
+  phone?: string;
+  websiteUrl?: string;
+  whatsapp?: string;
+}
+
+export interface PhotoItem {
+  url: string;
+  caption?: string;
+  alt: string;
+}
+
+export interface SharedAlbumConfig {
+  title: string;
+  subtitle: string;
+  description: string;
+  uploadUrl: string;
+  hashtag?: string;
+}
+
+export interface TipItem {
+  title: string;
+  description: string;
+  iconName: 'shield' | 'clock' | 'car' | 'smile';
 }
 
 export interface InvitationConfig {
@@ -100,10 +145,20 @@ export interface InvitationConfig {
     loop: boolean;
     title?: string;
   };
+
+  // Modular sections
+  venue: VenueConfig;
+  itinerary: ItineraryItem[];
+  dressCode: DressCodeConfig;
+  gifts: GiftsConfig;
+  playlist: PlaylistConfig;
+  gallery: PhotoItem[];
+  lodging: LodgingItem[];
+  sharedAlbum: SharedAlbumConfig;
+  tips: TipItem[];
 }
 
 export const invitationConfig: InvitationConfig = {
-  // Couple Information
   couple: {
     person1: "Sol",
     person2: "Lea",
@@ -111,27 +166,16 @@ export const invitationConfig: InvitationConfig = {
     initials: "S & L",
   },
 
-  // Main Invitation Phrasing
   mainPhrase: "NOS CASAMOS, YA TENEMOS LA FECHA",
-
-  // Celebration Date
   date: "06 de Marzo de 2027",
-
-  // Secondary Invitation Text
   secondaryText: "Por ahora solo reservate el día,\nmás adelante te contamos más detalles",
-
-  // Primary Action Button Label
   buttonText: "Descubrí cuándo",
+  countdownTargetDate: "2027-03-06T18:00:00",
 
-  // Target Date for flip clock countdown timer (06 de Marzo de 2027, 17:00 hs)
-  countdownTargetDate: "2027-03-06T17:00:00",
-
-  // Formal Invitation Access Gate (Route /)
   formalInvitation: {
     passcode: "141014syl",
   },
 
-  // Intro Presentation Mode Configuration
   intro: {
     type: "video",
     videoSrc: "/intro-envelope.mp4",
@@ -144,8 +188,6 @@ export const invitationConfig: InvitationConfig = {
     ],
   },
 
-  // Video Source Configuration
-  // Supports YouTube, Vimeo, and local video files in the public folder.
   video: {
     type: "local",
     url: "/save-the-date.mp4",
@@ -153,21 +195,19 @@ export const invitationConfig: InvitationConfig = {
     aspectRatio: "9:16",
   },
 
-  // Color Palette and Typography Styles (Official Sol & Lea Brand Palette)
-  // Brand colors: #9aa289 (sage), #c4a270 (camel sand), #b4717a (dusty rose), #e2b093 (blush), #d4c1bd (dusty alabaster)
   theme: {
-    primaryAccent: "#c4a270",
+    primaryAccent: "#732a2d",
     primaryAccentHover: "#b4717a",
-    paperBackground: "#FAF8F3",
-    cardBackground: "#FAF8F3",
-    textPrimary: "#2C1D18",
-    textSecondary: "#5D4037",
+    accentSecondary: "#9aa289",
+    paperBackground: "#FAF8F5",
+    cardBackground: "#FFFFFF",
+    textPrimary: "#393734",
+    textSecondary: "#73494c",
     fontSerif: "'Cormorant Garamond', Georgia, serif",
-    fontSans: "'Montserrat', sans-serif",
-    fontScript: "'Great Vibes', cursive",
+    fontSans: "'Rubik', sans-serif",
+    fontScript: "'Parisienne', cursive",
   },
 
-  // Interactive Playback Options
   options: {
     autoPlayIntro: false,
     introDelayMs: 800,
@@ -175,11 +215,176 @@ export const invitationConfig: InvitationConfig = {
     replayButtonText: "Volver a ver apertura",
   },
 
-  // Background Audio Configuration
   music: {
     src: "/background-music.mp3",
     loop: true,
     title: "Sarà perché ti amo",
   },
-};
 
+  // 1. Dónde es: Ceremonia y Fiesta
+  venue: {
+    ceremony: {
+      title: "Ceremonia",
+      name: "Parroquia San Gabriel",
+      time: "18:00 hs",
+      address: "Av. de los Eucaliptos 1420",
+      city: "Buenos Aires, Argentina",
+      mapUrl: "https://maps.google.com/?q=Parroquia+San+Gabriel",
+      note: "Te pedimos llegar 15 minutos antes para ubicarnos con tranquilidad.",
+    },
+    party: {
+      title: "Fiesta",
+      name: "Estancia Las Marías",
+      time: "19:30 hs",
+      address: "Ruta 8 Km 54, Ramal Pilar",
+      city: "Buenos Aires, Argentina",
+      mapUrl: "https://maps.google.com/?q=Estancia+Las+Marias",
+      note: "Contamos con estacionamiento privado con seguridad en el predio.",
+    },
+  },
+
+  // 2. Itinerario / Cronograma del día
+  itinerary: [
+    {
+      time: "18:00 hs",
+      title: "Ceremonia Religiosa",
+      description: "El momento donde daremos el sí.",
+      iconName: "heart",
+    },
+    {
+      time: "19:30 hs",
+      title: "Recepción & Cóctel",
+      description: "Tragos de bienvenida, appetizers y fotos al atardecer.",
+      iconName: "glass",
+    },
+    {
+      time: "21:00 hs",
+      title: "Cena & Brindis",
+      description: "Entrada, plato principal y los mejores deseos.",
+      iconName: "utensils",
+    },
+    {
+      time: "23:00 hs",
+      title: "¡A Bailar!",
+      description: "Se abre la pista de baile hasta que las velas no ardan.",
+      iconName: "music",
+    },
+    {
+      time: "02:30 hs",
+      title: "Mesa Dulce & Fin de Fiesta",
+      description: "Recarga de energías para seguir festejando.",
+      iconName: "sparkles",
+    },
+  ],
+
+  // 3. Dress Code
+  dressCode: {
+    title: "Dress Code",
+    subtitle: "Elegante",
+    description: "Queremos que te sientas cómodo/a y radiante para festejar toda la noche.",
+    avoidColorsNote: "El color blanco queda exclusivamente reservado para la novia.",
+    colorPalette: [
+      "#393734",
+      "#b4717a",
+      "#732a2d",
+      "#73494c",
+      "#9aa289",
+      "#d4c1bd",
+      "#c4a270",
+      "#e2b093",
+    ],
+  },
+
+  // 4. Regalos / Datos bancarios
+  gifts: {
+    title: "Regalos",
+    message: "El mejor regalo es tu presencia y compartir este día con nosotros. Pero si deseás hacernos un presente, podés ayudarnos con nuestra luna de miel:",
+    bankDetails: {
+      bank: "Banco Galicia",
+      accountType: "Caja de Ahorro en Pesos",
+      cbu: "0070123430004567890123",
+      alias: "SOL.Y.LEA.BODA",
+      titular: "Solange & Leandro",
+    },
+  },
+
+  // 5. Playlist colaborativa
+  playlist: {
+    title: "¿Qué tema no puede faltar?",
+    subtitle: "Playlist de la fiesta",
+    message: "Armemos la pista de baile juntos. Dejanos las canciones que te hacen bailar sí o sí.",
+    spotifyUrl: "https://open.spotify.com",
+  },
+
+  // 6. Galería de fotos nuestras
+  gallery: [
+    {
+      url: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80",
+      caption: "Nuestro camino juntos",
+      alt: "Sol y Lea abrazo",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=800&q=80",
+      caption: "El día de la propuesta",
+      alt: "Propuesta de matrimonio",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80",
+      caption: "Celebrando el amor",
+      alt: "Pareja sonriendo",
+    },
+    {
+      url: "https://images.unsplash.com/photo-1522673607200-164d1b6ce486?auto=format&fit=crop&w=800&q=80",
+      caption: "Hacia una nueva etapa",
+      alt: "Pareja al atardecer",
+    },
+  ],
+
+  // 7. Recomendación de hospedaje
+  lodging: [
+    {
+      name: "Hotel Howard Johnson Resort & Spa",
+      description: "A 10 minutos de la estancia. Habitaciones dobles y familiares con desayuno incluido.",
+      distance: "8 km del evento",
+      phone: "+54 11 4567-8901",
+      whatsapp: "5491145678901",
+      websiteUrl: "https://www.google.com",
+    },
+    {
+      name: "Cabañas del Pinar",
+      description: "Opción tranquila inmersa en la naturaleza, ideal para grupos y familias.",
+      distance: "12 km del evento",
+      phone: "+54 11 9876-5432",
+      whatsapp: "5491198765432",
+      websiteUrl: "https://www.google.com",
+    },
+  ],
+
+  // 8. Álbum compartido de fotos de la fiesta
+  sharedAlbum: {
+    title: "Álbum de Fotos",
+    subtitle: "Compartí tus fotos",
+    description: "Durante y después de la fiesta, subí todas las fotos y videos que saques para que podamos revivir cada recuerdo juntos.",
+    uploadUrl: "https://photos.google.com",
+    hashtag: "#BodaSolyLea",
+  },
+
+  // 9. Tips útiles
+  tips: [
+    {
+      title: "Puntualidad",
+      description: "Te recomendamos llegar 15 minutos antes de la ceremonia para ubicarnos con calma.",
+      iconName: "clock",
+    },
+    {
+      title: "Estacionamiento",
+      description: "El predio cuenta con estacionamiento privado vigilado sin costo adicional.",
+      iconName: "car",
+    },
+    {
+      title: "Seguridad",
+      description: "Personal de seguridad privada durante todo el desarrollo de la fiesta.",
+      iconName: "shield",
+    },
+  ],
+};

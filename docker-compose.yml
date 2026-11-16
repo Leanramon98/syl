@@ -7,3 +7,10 @@ services:
     restart: unless-stopped
     ports:
       - "8090:80"
+    environment:
+      - PORT=80
+      - NODE_ENV=production
+      - ADMIN_PASSWORD=141014syl
+      - DATA_DIR=/app/data
+    volumes:
+      - ./data:/app/data

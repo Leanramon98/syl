@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Lock, ArrowLeft } from 'lucide-react';
-import { GatefoldEnvelope, type AnimationStage } from '../Envelope/GatefoldEnvelope';
+import { InvitationCard } from '../InvitationCard/InvitationCard';
 
 export interface FormalInvitationViewProps {
   onLock: () => void;
@@ -14,8 +14,6 @@ export const FormalInvitationView: React.FC<FormalInvitationViewProps> = ({
   onNavigateToSaveTheDate,
   onOpenVideoModal = () => {},
 }) => {
-  const [stage, setStage] = useState<AnimationStage>('closed');
-
   return (
     <div className="relative min-h-[100dvh] w-full flex flex-col items-center justify-center py-6 px-4">
       {/* Top Bar with Lock and Save the Date navigation */}
@@ -39,17 +37,17 @@ export const FormalInvitationView: React.FC<FormalInvitationViewProps> = ({
         </button>
       </div>
 
-      {/* Main Gatefold 3D Envelope Experience */}
+      {/* Clean Luxury Invitation Card Presentation */}
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
+        initial={{ opacity: 0, scale: 0.98 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="w-full flex flex-col items-center"
       >
-        <GatefoldEnvelope
-          stage={stage}
-          onStageChange={setStage}
+        <InvitationCard
           onOpenVideo={onOpenVideoModal}
+          isRevealed={true}
+          hasWatchedVideo={true}
         />
       </motion.div>
     </div>
