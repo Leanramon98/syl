@@ -908,7 +908,10 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             </svg>
           </div>
           <h2 className="title reveal d1">Confirmá tu asistencia</h2>
-          <p className="rsvp-note reveal d2">
+          <p className="lede reveal d2" style={{ marginTop: 10 }}>
+            Por favor confirmá antes del 6 de diciembre.
+          </p>
+          <p className="rsvp-note reveal d2" style={{ marginTop: 14 }}>
             Invitación reservada para: <strong className="text-white">{displayName}</strong>
             <br />
             ({group.max_guests} {group.max_guests === 1 ? 'pase reservado' : 'pases reservados'})
