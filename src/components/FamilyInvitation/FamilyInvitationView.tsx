@@ -292,7 +292,6 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
         </div>
         <div className="scroll-ind">
           <span className="hashtag hashtag-date">06 de marzo de 2027</span>
-          <span className="hashtag">#06M</span>
           <span className="chev">
             <svg viewBox="0 0 24 24">
               <path d="M6 9l6 6 6-6" />
@@ -402,7 +401,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             <div className="tl-row mark">
               <span className="tl-time">21:30</span>
               <span className="tl-ev">
-                Fiesta
+                ¡A bailar!
                 <span className="ti">
                   <svg viewBox="0 0 64 64">
                     <path d="M32 6v9" />
