@@ -1,30 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import {
-  Volume2,
-  VolumeX,
-  Copy,
-  Check,
-  X,
-  ExternalLink,
-  Music2,
-  Shirt,
-  Info,
-  Heart,
-  Wine,
-  Utensils,
-  Sparkles,
-  Bed,
-  Car,
-  Phone,
-  MessageCircle,
-} from 'lucide-react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { GuestGroup } from '../../types/wedding';
-import { fetchRsvpByToken } from '../../lib/api';
-import { AddToCalendarButton } from '../InvitationCard/AddToCalendarButton';
-import { invitationConfig } from '../../config/invitation';
-import { FamilyRsvpForm } from './FamilyRsvpForm';
-import { LottieAnimation } from '../Common/LottieAnimation';
+import { fetchRsvpByToken, submitRsvp } from '../../lib/api';
 import { InteractiveEnvelopeIntro } from '../Envelope/InteractiveEnvelopeIntro';
 
 interface FamilyInvitationViewProps {
@@ -32,9 +8,7 @@ interface FamilyInvitationViewProps {
   onNavigateHome?: () => void;
 }
 
-export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
-  token,
-}) => {
+export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ token }) => {
   const [group, setGroup] = useState<GuestGroup | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -43,19 +17,9 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
   const [showEnvelope, setShowEnvelope] = useState(true);
   const [isMusicEnabled, setIsMusicEnabled] = useState(true);
   const [isPlayingMusic, setIsPlayingMusic] = useState(false);
-
-  // Content Modals
-  const [showRsvpModal, setShowRsvpModal] = useState(false);
-  const [showBankModal, setShowBankModal] = useState(false);
-  const [showDressCodeModal, setShowDressCodeModal] = useState(false);
-  const [showTipsModal, setShowTipsModal] = useState(false);
-  const [showMusicSongModal, setShowMusicSongModal] = useState(false);
-
-  const [copiedField, setCopiedField] = useState<'alias' | 'cbu' | null>(null);
-
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Countdown timer calculations
+  // Countdown timer calculations (Target: 06 de Marzo de 2027 a las 18:00)
   const [timeLeft, setTimeLeft] = useState<{
     days: number;
     hours: number;
@@ -64,7 +28,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
   }>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const targetDate = new Date(invitationConfig.countdownTargetDate || '2027-03-06T18:00:00').getTime();
+    const targetDate = new Date('2027-03-06T18:00:00').getTime();
 
     const calculateTime = () => {
       const now = new Date().getTime();
@@ -88,6 +52,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
     return () => clearInterval(interval);
   }, []);
 
+  // Fetch guest group data
   useEffect(() => {
     let isMounted = true;
     setLoading(true);
@@ -99,13 +64,15 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
           setGroup(data.group);
         }
       })
-      .catch((err: any) => {
+      .catch((err) => {
         if (isMounted) {
-          setError(err?.message || 'Invitación no encontrada');
+          setError(err?.message || 'No se encontró la invitación');
         }
       })
       .finally(() => {
-        if (isMounted) setLoading(false);
+        if (isMounted) {
+          setLoading(false);
+        }
       });
 
     return () => {
@@ -113,31 +80,65 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
     };
   }, [token]);
 
-  const handleStartMusic = React.useCallback(() => {
-    if (audioRef.current && isMusicEnabled) {
-      audioRef.current
-        .play()
+  // Audio control
+  const handleStartMusic = useCallback(() => {
+    if (isMusicEnabled && audioRef.current) {
+      audioRef.current.play()
         .then(() => setIsPlayingMusic(true))
-        .catch(() => setIsPlayingMusic(false));
+        .catch((e) => {
+          console.warn('Audio auto-play prevented:', e);
+          setIsPlayingMusic(false);
+        });
     }
   }, [isMusicEnabled]);
 
-  const handleEnvelopeComplete = React.useCallback(() => {
-    setShowEnvelope(false);
-  }, []);
-
-  const toggleMusic = React.useCallback(() => {
+  const toggleMusic = () => {
     if (!audioRef.current) return;
     if (isPlayingMusic) {
       audioRef.current.pause();
       setIsPlayingMusic(false);
+      setIsMusicEnabled(false);
     } else {
-      audioRef.current
-        .play()
-        .then(() => setIsPlayingMusic(true))
-        .catch(() => setIsPlayingMusic(false));
+      audioRef.current.play()
+        .then(() => {
+          setIsPlayingMusic(true);
+          setIsMusicEnabled(true);
+        })
+        .catch(console.warn);
     }
-  }, [isPlayingMusic]);
+  };
+
+  const handleEnvelopeComplete = () => {
+    setShowEnvelope(false);
+    handleStartMusic();
+  };
+
+  // Reveal animation on scroll
+  useEffect(() => {
+    const handleScrollReveal = () => {
+      const elements = document.querySelectorAll('.reveal:not(.in)');
+      const windowHeight = window.innerHeight;
+      elements.forEach((el) => {
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= windowHeight * 0.88) {
+          el.classList.add('in');
+        }
+      });
+    };
+
+    window.addEventListener('scroll', handleScrollReveal, { passive: true });
+    // Run initially after brief timeout
+    const timer = setTimeout(handleScrollReveal, 300);
+
+    return () => {
+      window.removeEventListener('scroll', handleScrollReveal);
+      clearTimeout(timer);
+    };
+  }, [showEnvelope, loading]);
+
+  // Regalos accordion state
+  const [showGiftDetails, setShowGiftDetails] = useState(false);
+  const [copiedField, setCopiedField] = useState<'alias' | 'cbu' | null>(null);
 
   const handleCopy = (text: string, field: 'alias' | 'cbu') => {
     navigator.clipboard.writeText(text);
@@ -147,71 +148,97 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
     }, 2200);
   };
 
-  const displayName = group?.name || '';
-  const guestList = React.useMemo(() => {
-    if (group?.guest_names && group.guest_names.length > 0) {
-      return group.guest_names.map((n) => n.trim()).filter(Boolean);
-    }
-    return [displayName];
-  }, [group?.guest_names, displayName]);
+  // RSVP Form State
+  const [rsvpAttending, setRsvpAttending] = useState<'attending' | 'declined'>('attending');
+  const [confirmedGuests, setConfirmedGuests] = useState<number>(1);
+  const [menuChoice, setMenuChoice] = useState<'Normal' | 'Vegetariano' | 'Celíaco'>('Normal');
+  const [dietaryNotes, setDietaryNotes] = useState('');
+  const [rsvpMessage, setRsvpMessage] = useState('');
+  const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
+  const [rsvpSuccess, setRsvpSuccess] = useState(false);
+  const [rsvpError, setRsvpError] = useState<string | null>(null);
 
-  // Sol & Lea Official Brand Palette
-  const weddingColors = [
-    { hex: '#732a2d', name: 'Burgundy (Principal)' },
-    { hex: '#b4717a', name: 'Dusty Rose (Principal)' },
-    { hex: '#9aa289', name: 'Sage Green (Complementario)' },
-    { hex: '#393734', name: 'Charcoal' },
-    { hex: '#73494c', name: 'Mauve Plum' },
-    { hex: '#d4c1bd', name: 'Alabaster' },
-    { hex: '#c4a270', name: 'Camel Sand' },
-    { hex: '#e2b093', name: 'Blush' },
-  ];
+  // Initialize RSVP count once group is loaded
+  useEffect(() => {
+    if (group) {
+      if (group.confirmed_count > 0) {
+        setConfirmedGuests(group.confirmed_count);
+      } else {
+        setConfirmedGuests(Math.min(group.max_guests, 1));
+      }
+      if (group.rsvp_status === 'attending') {
+        setRsvpSuccess(true);
+        setRsvpAttending('attending');
+      } else if (group.rsvp_status === 'declined') {
+        setRsvpSuccess(true);
+        setRsvpAttending('declined');
+      }
+    }
+  }, [group]);
+
+  const handleRsvpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!group) return;
+
+    setRsvpSubmitting(true);
+    setRsvpError(null);
+
+    const dietaryPayload = [
+      `Menú: ${menuChoice}`,
+      dietaryNotes ? `Restricciones: ${dietaryNotes}` : '',
+      rsvpMessage ? `Mensaje: ${rsvpMessage}` : '',
+    ].filter(Boolean).join(' | ');
+
+    try {
+      const res = await submitRsvp({
+        token: group.token,
+        name: group.name,
+        rsvp_status: rsvpAttending,
+        confirmed_count: rsvpAttending === 'attending' ? confirmedGuests : 0,
+        dietary_requirements: dietaryPayload,
+      });
+
+      if (res.success) {
+        setRsvpSuccess(true);
+        if (res.group) {
+          setGroup(res.group);
+        }
+      }
+    } catch (err: any) {
+      setRsvpError(err?.message || 'Error al registrar tu confirmación. Por favor intentá nuevamente.');
+    } finally {
+      setRsvpSubmitting(false);
+    }
+  };
 
   if (loading) {
     return (
-      <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 bg-white text-[#732a2d]">
-        <div className="w-12 h-12 border-3 border-[#732a2d] border-t-transparent rounded-full animate-spin mb-4" />
-        <p className="font-['Rubik',sans-serif] text-sm tracking-widest uppercase">Cargando...</p>
+      <div className="fixed inset-0 flex flex-col items-center justify-center bg-[#F9F0EA] text-[#53111B] font-['Instrument_Serif']">
+        <div className="w-10 h-10 border-2 border-[#C3A15E] border-t-transparent rounded-full animate-spin mb-4" />
+        <p className="text-xl italic">Cargando invitación...</p>
       </div>
     );
   }
 
   if (error || !group) {
     return (
-      <div className="min-h-[100dvh] w-full flex flex-col items-center justify-center p-4 text-center bg-white">
-        <div className="max-w-md bg-white p-8 rounded-3xl border border-[#d4c1bd] shadow-xl">
-          <h2 className="font-serif text-2xl font-bold text-[#393734] mb-2">
-            Invitación no encontrada
-          </h2>
-          <p className="font-['Rubik',sans-serif] text-xs text-[#73494c]">
-            El enlace ingresado no corresponde a ninguna invitación activa.
-          </p>
-        </div>
+      <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#F9F0EA] text-[#53111B] text-center font-['Instrument_Serif']">
+        <h1 className="text-3xl mb-3">Invitación no encontrada</h1>
+        <p className="font-['Neue_Regrade'] text-sm text-[#9A7B6A] max-w-sm mb-6">
+          El enlace que utilizaste no es válido o ya caducó. Por favor contactate con Sol & Lea.
+        </p>
       </div>
     );
   }
 
+  const displayName = group.name;
+
   return (
-    <div className="relative min-h-[100dvh] w-full fine-paper-texture text-[#393734] font-['Rubik',sans-serif]">
-      {/* Background audio */}
-      <audio ref={audioRef} src="/background-music.mp3" loop preload="metadata" />
+    <div className="relative w-full overflow-x-hidden select-none bg-[#F9F0EA]">
+      {/* Background Music Audio Element */}
+      <audio ref={audioRef} src="/background-music.mp3" loop preload="auto" />
 
-      {/* Floating Audio Toggle Button */}
-      <div className="fixed top-5 right-5 z-40">
-        <button
-          onClick={toggleMusic}
-          aria-label={isPlayingMusic ? 'Pausar música' : 'Reproducir música'}
-          className={`w-12 h-12 rounded-full flex items-center justify-center border shadow-lg backdrop-blur-md transition-all cursor-pointer ${
-            isPlayingMusic
-              ? 'bg-[#b4717a] text-white border-[#b4717a] animate-pulse'
-              : 'bg-white/95 text-[#732a2d] border-[#d4c1bd] hover:text-[#b4717a]'
-          }`}
-        >
-          {isPlayingMusic ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
-        </button>
-      </div>
-
-      {/* 1. Sobre Digital Interactivo Previo (Video sobre abriéndose) */}
+      {/* 1. Envelope Intro Screen (seamless, auto-opens after 3s) */}
       {showEnvelope && (
         <InteractiveEnvelopeIntro
           groupName={displayName}
@@ -229,916 +256,702 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({
         />
       )}
 
-      {/* 2. Portada (Fixdate White exact layout) */}
-      <section
-        className="relative min-h-[100vh] flex flex-col items-center justify-center text-center px-4 py-16 bg-cover bg-center text-white"
-        style={{
-          backgroundImage: `linear-gradient(rgba(57, 55, 52, 0.45), rgba(57, 55, 52, 0.45)), url('/fixdate/img/portada-3.jpg')`,
-        }}
+      {/* Floating Music Toggle Button */}
+      <button
+        className={`music ${isPlayingMusic ? 'playing' : ''}`}
+        type="button"
+        onClick={toggleMusic}
+        aria-label={isPlayingMusic ? 'Pausar música' : 'Reproducir música'}
+        title="Música"
       >
-        <div className="w-full max-w-2xl mx-auto my-auto flex flex-col items-center z-10">
-          {/* Fecha con líneas horizontales a los lados */}
-          <div className="flex items-center justify-center w-full max-w-xs mb-2">
-            <div className="h-px bg-white/60 flex-1" />
-            <span className="font-['Rubik',sans-serif] text-lg sm:text-xl font-medium tracking-widest px-4 text-white">
-              06.03.2027
-            </span>
-            <div className="h-px bg-white/60 flex-1" />
-          </div>
+        <svg className="ic-play ring" viewBox="0 0 24 24">
+          <polygon points="6 4 19 12 6 20 6 4" fill="currentColor" />
+        </svg>
+        <svg className="ic-pause" viewBox="0 0 24 24">
+          <rect x="5" y="4" width="4" height="16" rx="1" fill="currentColor" />
+          <rect x="15" y="4" width="4" height="16" rx="1" fill="currentColor" />
+        </svg>
+      </button>
 
-          {/* Nombres gigantes en tipografía Parisienne con el círculo del & */}
-          <h1 className="font-['Parisienne',cursive] text-6xl sm:text-8xl md:text-9xl text-white leading-none my-2 drop-shadow-md">
-            Sol
-            <span className="inline-flex items-center justify-center w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white text-[#b4717a] text-3xl sm:text-4xl font-['Raleway'] font-medium mx-3 sm:mx-4 align-middle shadow-md">
-              &
-            </span>
-            Lea
+      {/* ===== HERO ===== */}
+      <header className="hero" id="hero">
+        <img
+          className="hero-photo"
+          src="/fixdate/img/portada-3.jpg"
+          alt="Sol y Lea"
+          onError={(e) => {
+            document.getElementById('hero')?.classList.add('no-photo');
+            e.currentTarget.remove();
+          }}
+        />
+        <div className="hero-inner">
+          <p className="eyebrow">nos casamos!!</p>
+          <h1 className="names">
+            Sol <span className="amp">&amp;</span> Lea
           </h1>
-
-          {/* Línea horizontal central */}
-          <div className="w-3/4 max-w-md h-px bg-white/60 my-6" />
-
-          {/* Frase emotiva con comillas Fixdate */}
-          <div className="text-center my-2 max-w-lg">
-            <img
-              src="/fixdate/img/img_comillaApertura.svg"
-              alt="Comilla"
-              className="w-8 h-auto mx-auto mb-3 opacity-90"
-            />
-            <p className="font-['Raleway'] font-medium text-xl sm:text-2xl text-white leading-relaxed drop-shadow-xs px-2">
-              Todos somos mortales, <br />
-              hasta el primer beso y la segunda copa de vino
-            </p>
-            <img
-              src="/fixdate/img/img_comillaCierre.svg"
-              alt="Comilla"
-              className="w-8 h-auto mx-auto mt-3 opacity-90"
-            />
-          </div>
-
-          {/* Flecha animada down-scroll */}
-          <div className="mt-8">
-            <LottieAnimation
-              path="/fixdate/img/down-scroll.json"
-              className="w-12 h-12 mx-auto cursor-pointer"
-            />
-          </div>
         </div>
-      </section>
-
-      {/* 3. Cuenta Regresiva ("Falta") */}
-      <section className="pt-16 pb-6 px-4 bg-transparent text-center">
-        <div className="max-w-xl mx-auto">
-          <span className="font-['Parisienne',cursive] text-5xl sm:text-6xl text-[#732a2d] block mb-8">
-            Falta
+        <div className="scroll-ind">
+          <span className="hashtag hashtag-date">06 de marzo de 2027</span>
+          <span className="hashtag">#06M</span>
+          <span className="chev">
+            <svg viewBox="0 0 24 24">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
           </span>
-
-          {/* Reloj de 4 columnas */}
-          <div className="flex items-center justify-center max-w-md mx-auto">
-            <div className="flex-1 border-r border-[#d4c1bd] px-2 text-center">
-              <span className="block text-4xl sm:text-5xl font-light font-['Rubik',sans-serif] text-[#393734]">
-                {timeLeft.days}
-              </span>
-              <span className="block text-xs sm:text-sm font-semibold font-['Raleway',sans-serif] text-[#9aa289] uppercase mt-1">
-                días
-              </span>
-            </div>
-
-            <div className="flex-1 border-r border-[#d4c1bd] px-2 text-center">
-              <span className="block text-4xl sm:text-5xl font-light font-['Rubik',sans-serif] text-[#393734]">
-                {timeLeft.hours}
-              </span>
-              <span className="block text-xs sm:text-sm font-semibold font-['Raleway',sans-serif] text-[#9aa289] uppercase mt-1">
-                hs
-              </span>
-            </div>
-
-            <div className="flex-1 border-r border-[#d4c1bd] px-2 text-center">
-              <span className="block text-4xl sm:text-5xl font-light font-['Rubik',sans-serif] text-[#393734]">
-                {timeLeft.minutes}
-              </span>
-              <span className="block text-xs sm:text-sm font-semibold font-['Raleway',sans-serif] text-[#9aa289] uppercase mt-1">
-                min
-              </span>
-            </div>
-
-            <div className="flex-1 px-2 text-center">
-              <span className="block text-4xl sm:text-5xl font-light font-['Rubik',sans-serif] text-[#393734]">
-                {timeLeft.seconds}
-              </span>
-              <span className="block text-xs sm:text-sm font-semibold font-['Raleway',sans-serif] text-[#9aa289] uppercase mt-1">
-                seg
-              </span>
-            </div>
-          </div>
         </div>
+      </header>
 
-        {/* Divisor ornamental Fixdate */}
-        <div className="fixdate-divider mt-12" />
-      </section>
-
-      {/* 4. Bloque Grupo de Invitados con botón Confirmar Asistencia */}
-      <section className="py-8 px-4 bg-transparent">
-        <div className="max-w-xl mx-auto">
-          <div className="bg-white rounded-3xl p-8 sm:p-10 border border-[#d4c1bd]/60 shadow-xl text-center">
-            {/* Total de pases en círculo con Dusty Rose */}
-            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-[#b4717a] text-white text-3xl font-bold font-['Raleway'] mb-3 shadow-md">
-              {group.max_guests}
+      {/* ===== MAIN CONTENT WRAP ===== */}
+      <main className="wrap">
+        {/* ===== CUENTA REGRESIVA ===== */}
+        <section className="section" id="countdown">
+          <div className="divider reveal in" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
+          </div>
+          <p className="micro reveal in">Spoiler: hay barra libre.</p>
+          <img
+            className="champagne reveal in d1"
+            src="/fixdate/img/champagne.webp"
+            alt="Torre de copas de champagne"
+            width="210"
+          />
+          <p className="lede reveal in d1">La cuenta regresiva ya empezó.</p>
+          <div className="count reveal in d2">
+            <div className="cell">
+              <span className="num">{timeLeft.days}</span>
+              <span className="lbl">Días</span>
             </div>
-
-            {/* Título del grupo */}
-            <h3 className="font-['Raleway'] text-3xl sm:text-4xl text-[#732a2d] font-semibold tracking-wide my-1 uppercase">
-              {displayName}
-            </h3>
-
-            {/* Pases info con acento en Sage */}
-            <div className="text-sm font-['Rubik',sans-serif] text-[#9aa289] font-medium mt-1">
-              {group.max_guests === 1
-                ? '(1 pase asignado)'
-                : `(${group.max_guests} pases asignados)`}
+            <div className="cell">
+              <span className="num">{timeLeft.hours}</span>
+              <span className="lbl">Horas</span>
             </div>
-
-            {/* Lista de invitados asignados con pill Sage suave */}
-            <ul className="my-5 space-y-2">
-              {guestList.map((guest, idx) => (
-                <li
-                  key={idx}
-                  className="font-['Rubik',sans-serif] text-base sm:text-lg text-[#393734] bg-[#9aa289]/12 border border-[#9aa289]/50 py-1.5 px-4 rounded-lg inline-block mx-1 shadow-2xs font-medium"
-                >
-                  {guest}
-                </li>
-              ))}
-            </ul>
-
-            {/* Mensaje */}
-            <p className="font-['Rubik',sans-serif] text-base text-[#73494c] mt-4 mb-5">
-              Tu presencia es lo más importante. ¡No faltes!
-            </p>
-
-            {/* Botón Confirmar Asistencia directamente dentro de la tarjeta */}
-            <div>
-              <button
-                type="button"
-                onClick={() => setShowRsvpModal(true)}
-                className="fixdate-btn text-base px-10 py-3.5 shadow-md hover:shadow-lg"
-              >
-                Confirmar asistencia
-              </button>
+            <div className="cell">
+              <span className="num">{timeLeft.minutes}</span>
+              <span className="lbl">Min</span>
+            </div>
+            <div className="cell">
+              <span className="num">{timeLeft.seconds}</span>
+              <span className="lbl">Seg</span>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 5. Cuándo y Dónde (Ceremonia y Fiesta unificadas en el mismo lugar) */}
-      <section className="pt-12 pb-6 px-4 bg-transparent text-center">
-        <div className="max-w-2xl mx-auto">
-          {/* Animación Lottie: Ceremonia en Bordó, Fiesta en Dusty Rose */}
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <LottieAnimation
-              path="/fixdate/img/json_ceremonia.json"
-              className="w-28 h-28 sm:w-32 sm:h-32"
-            />
-            <LottieAnimation
-              path="/fixdate/img/json_fiesta.json"
-              className="w-28 h-28 sm:w-32 sm:h-32"
-            />
+        {/* ===== CEREMONIA Y FIESTA ===== */}
+        <section className="section sec-bordo" id="fiesta">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
           </div>
+          <p className="micro reveal">Primero los anillos. Después el baile.</p>
+          <div className="icon reveal d1">
+            <svg viewBox="0 0 64 64">
+              <ellipse cx="26" cy="39" rx="13" ry="14" />
+              <ellipse cx="40" cy="34" rx="11" ry="12" />
+              <path d="M40 12.5l1.9 4 4 1.9-4 1.9-1.9 4-1.9-4-4-1.9 4-1.9z" />
+            </svg>
+          </div>
+          <h2 className="title reveal d1">Ceremonia y Fiesta</h2>
+          <p className="lede reveal d2">Todo sucede en el mismo lugar.</p>
+          <div className="timeline reveal d2">
+            <div className="tl-row mark">
+              <span className="tl-time">18:00</span>
+              <span className="tl-ev">
+                Ceremonia Religiosa
+                <span className="ti">
+                  <svg viewBox="0 0 64 64">
+                    <ellipse cx="26" cy="39" rx="13" ry="14" />
+                    <ellipse cx="40" cy="34" rx="11" ry="12" />
+                    <path d="M40 12.5l1.9 4 4 1.9-4 1.9-1.9 4-1.9-4-4-1.9 4-1.9z" />
+                  </svg>
+                </span>
+              </span>
+            </div>
+            <div className="tl-row">
+              <span className="tl-time">19:30</span>
+              <span className="tl-ev">Recepción & Cóctel</span>
+            </div>
+            <div className="tl-row">
+              <span className="tl-time">21:00</span>
+              <span className="tl-ev">Cena & Brindis</span>
+            </div>
+            <div className="tl-row mark">
+              <span className="tl-time">23:00</span>
+              <span className="tl-ev">
+                ¡Fiesta!
+                <span className="ti">
+                  <svg viewBox="0 0 64 64">
+                    <path d="M32 6v9" />
+                    <path d="M28.5 6.5h7" />
+                    <circle cx="32" cy="36" r="17" />
+                    <path d="M15 36h34" />
+                    <path d="M17.5 27.5h29" />
+                    <path d="M17.5 44.5h29" />
+                    <path d="M32 19v34" />
+                    <path d="M23 20.5c-5 8-5 23 0 31" />
+                    <path d="M41 20.5c5 8 5 23 0 31" />
+                    <path d="M54.5 17l1.3 2.8 2.8 1.3-2.8 1.3-1.3 2.8-1.3-2.8-2.8-1.3 2.8-1.3z" />
+                  </svg>
+                </span>
+              </span>
+            </div>
+            <div className="tl-row">
+              <span className="tl-time">02:30</span>
+              <span className="tl-ev">Fin de fiesta</span>
+            </div>
+          </div>
+          <p className="place reveal d3">Estancia Las Marías</p>
+          <p className="place-sub reveal d3">Ruta 8 Km 54, Ramal Pilar, Buenos Aires.</p>
+          <a
+            className="btn ghost reveal d3"
+            href="https://maps.google.com/?q=Estancia+Las+Marias"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 24 24">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+              <circle cx="12" cy="9" r="2.5" />
+            </svg>
+            Cómo llegar
+          </a>
+        </section>
 
-          <h3 className="font-['Parisienne',cursive] text-4xl sm:text-6xl text-[#732a2d] mb-2 font-medium">
-            Cuándo y Dónde
-          </h3>
-          <p className="font-['Rubik',sans-serif] text-xs sm:text-sm text-[#b4717a] uppercase tracking-widest mb-8 font-medium">
-            Ceremonia & Fiesta
+        {/* ===== DRESS CODE ===== */}
+        <section className="section" id="dresscode">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
+          </div>
+          <p className="micro reveal">La elegancia también es parte de la fiesta.</p>
+          <div className="icon reveal d1">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 9c2.4 0 3.6 1.6 3.6 3.2 0 2-2.6 2.4-3.6 4" />
+              <path d="M32 16.2L15 26.5h34z" />
+              <path d="M27 26.5c.4 3.4-1.2 6-3.4 8.2 2.6 1 4.4 3 4.8 6.2" />
+              <path d="M37 26.5c-.4 3.4 1.2 6 3.4 8.2-2.6 1-4.4 3-4.8 6.2" />
+              <path d="M24.4 34.7C22 41 20 48 19.5 55h25c-.5-7-2.5-14-4.9-20.3" />
+            </svg>
+          </div>
+          <p className="eyebrow reveal d1" style={{ marginBottom: 6 }}>
+            Dress Code
           </p>
-
-          <div className="bg-white/95 rounded-3xl p-8 sm:p-10 border border-[#d4c1bd]/60 shadow-xl max-w-xl mx-auto space-y-7">
-            {/* Día */}
-            <div className="text-center">
-              <h6 className="font-['Rubik',sans-serif] text-xl font-semibold text-[#393734]">
-                Día
-              </h6>
-              <p className="font-['Rubik',sans-serif] text-lg font-medium text-[#732a2d] mt-1 mb-2">
-                Sábado 06 de Marzo de 2027
-              </p>
-
-              {/* Horarios de Ceremonia (Bordó) y Fiesta (Dusty Rose) */}
-              <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-['Rubik',sans-serif] font-medium my-3">
-                <span className="bg-white text-[#732a2d] px-3.5 py-1.5 rounded-full border border-[#732a2d]/30 shadow-2xs">
-                  Ceremonia: 18:00 hs
-                </span>
-                <span className="bg-white text-[#b4717a] px-3.5 py-1.5 rounded-full border border-[#b4717a]/40 shadow-2xs font-semibold">
-                  Fiesta: 19:30 hs
-                </span>
-              </div>
-
-              <div className="mt-4 flex justify-center">
-                <AddToCalendarButton />
-              </div>
+          <h2 className="title reveal d1">Elegante</h2>
+          <p className="body reveal d2" style={{ marginTop: 14 }}>
+            Todos impecables, que la ocasión (y las fotos) lo valen.
+          </p>
+          <div className="dc">
+            <div className="dc-item reveal d2">
+              <h4>Ellos</h4>
+              <p>De traje o pantalón de vestir con camisa y saco (sí, corbata opcional pero con elegancia).</p>
             </div>
+            <div className="dc-item reveal d3">
+              <h4>Ellas</h4>
+              <p>Vestido largo o midi elegante. En lo posible evitá el negro y los tonos excesivamente brillantes.</p>
+            </div>
+          </div>
+          <p className="noblanco reveal d3">Prohibido el blanco, obvio!</p>
+        </section>
 
-            <div className="w-20 h-px bg-[#d4c1bd] mx-auto" />
-
-            {/* Lugar */}
-            <div className="text-center">
-              <h6 className="font-['Rubik',sans-serif] text-xl font-semibold text-[#393734]">
-                Lugar
-              </h6>
-              <p className="font-serif text-2xl text-[#393734] font-semibold mt-1">
-                Estancia Las Marías
+        {/* ===== HOSPEDAJE (Reemplaza a Traslado) ===== */}
+        <section className="section sec-bordo" id="hospedaje">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
+          </div>
+          <p className="micro reveal">Para que descanses cerca y disfrutes sin apuro.</p>
+          <div className="icon reveal d1">
+            <svg viewBox="0 0 64 64">
+              <path d="M12 44V22" />
+              <path d="M12 36h40v8" />
+              <path d="M52 44V30" />
+              <path d="M12 28h18c3 0 5 2 5 5v3H12z" />
+              <circle cx="21" cy="24" r="3.5" />
+              <path d="M8 44h48" />
+            </svg>
+          </div>
+          <h2 className="title reveal d1">Hospedaje</h2>
+          <div className="trip">
+            <div className="trip-item reveal d2">
+              <p className="lg">A 10 minutos de la estancia</p>
+              <h3 className="th">Howard Johnson Resort & Spa</h3>
+              <p className="ts">
+                Habitaciones confortables con desayuno incluido y comodidades ideales para descansar después de la fiesta.
               </p>
-              <p className="font-['Rubik',sans-serif] text-sm text-[#73494c] mt-1 mb-2">
-                Ruta 8 Km 54, Ramal Pilar — BsAs
-              </p>
-              <p className="font-['Rubik',sans-serif] text-xs text-[#52634d] font-medium mb-5 bg-[#9aa289]/15 border border-[#9aa289]/30 py-1.5 px-4 rounded-full inline-block">
-                La ceremonia y la fiesta se realizarán en el mismo predio
-              </p>
-
-              <div>
+              <div style={{ marginTop: 12 }}>
                 <a
-                  href={invitationConfig.venue.party.mapUrl}
+                  className="btn ghost"
+                  style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
+                  href="https://wa.me/5491145678901?text=Hola!%20Consulto%20por%20alojamiento%20para%20el%20casamiento%20de%20Sol%20y%20Lea"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="fixdate-btn-sage"
                 >
-                  ¿Cómo llegar?
+                  Consultar por WhatsApp
+                </a>
+              </div>
+            </div>
+            <div className="trip-item reveal d3">
+              <p className="lg">A 12 minutos de la estancia</p>
+              <h3 className="th">Cabañas del Pinar</h3>
+              <p className="ts">
+                Opción serena y rodeada de naturaleza, ideal para grupos familiares o amigos que deseen compartir estancia.
+              </p>
+              <div style={{ marginTop: 12 }}>
+                <a
+                  className="btn ghost"
+                  style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
+                  href="https://wa.me/5491198765432?text=Hola!%20Consulto%20por%20caba%C3%B1as%20para%20el%20casamiento%20de%20Sol%20y%20Lea"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Consultar por WhatsApp
                 </a>
               </div>
             </div>
           </div>
-        </div>
+        </section>
 
-        {/* Divisor ornamental Fixdate */}
-        <div className="fixdate-divider mt-16" />
-      </section>
-
-      {/* 6. Itinerario del Día (Timeline) */}
-      <section className="pt-8 pb-6 px-4 bg-transparent text-center">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="font-['Parisienne',cursive] text-4xl sm:text-5xl text-[#732a2d] mb-2 font-medium">
-            Itinerario
-          </h2>
-          <p className="font-['Rubik',sans-serif] text-sm text-[#b4717a] mb-10">
-            El paso a paso de nuestro gran día
-          </p>
-
-          <div className="bg-white/95 rounded-3xl p-6 sm:p-10 border border-[#d4c1bd]/60 shadow-xl max-w-xl mx-auto">
-            <div className="relative pl-6 sm:pl-8 space-y-8 text-left border-l-2 border-[#9aa289]/40 ml-4 sm:ml-6">
-              {invitationConfig.itinerary.map((item, idx) => {
-                const icon =
-                  item.iconName === 'heart' ? (
-                    <Heart className="w-4 h-4 text-[#732a2d]" />
-                  ) : item.iconName === 'glass' ? (
-                    <Wine className="w-4 h-4 text-[#b4717a]" />
-                  ) : item.iconName === 'utensils' ? (
-                    <Utensils className="w-4 h-4 text-[#732a2d]" />
-                  ) : item.iconName === 'music' ? (
-                    <Music2 className="w-4 h-4 text-[#b4717a]" />
-                  ) : (
-                    <Sparkles className="w-4 h-4 text-[#9aa289]" />
-                  );
-
-                return (
-                  <div key={idx} className="relative group">
-                    {/* Node Circle */}
-                    <div className="absolute -left-[35px] sm:-left-[43px] top-0 w-8 h-8 rounded-full bg-white border-2 border-[#9aa289] flex items-center justify-center shadow-xs">
-                      {icon}
-                    </div>
-
-                    <div className="flex items-center gap-2 mb-1">
-                      <span className="font-['Rubik',sans-serif] text-xs font-bold text-[#b4717a] uppercase tracking-wider bg-[#b4717a]/10 px-2.5 py-0.5 rounded-full">
-                        {item.time}
-                      </span>
-                    </div>
-
-                    <h4 className="font-['Rubik',sans-serif] text-base sm:text-lg font-semibold text-[#732a2d]">
-                      {item.title}
-                    </h4>
-
-                    <p className="font-['Rubik',sans-serif] text-xs sm:text-sm text-[#73494c] mt-0.5">
-                      {item.description}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+        {/* ===== MENÚ ===== */}
+        <section className="section" id="menu">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
           </div>
-        </div>
-
-        {/* Divisor ornamental Fixdate */}
-        <div className="fixdate-divider mt-16" />
-      </section>
-
-      {/* 7. Galería ("Retratos de Nuestro Amor") con fotos Polaroid Fixdate */}
-      <section className="pt-8 pb-6 px-4 bg-transparent text-center">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="font-['Parisienne',cursive] text-4xl sm:text-5xl text-[#732a2d] mb-2 font-medium">
-            Retratos de Nuestro Amor
-          </h2>
-          <p className="font-['Rubik',sans-serif] text-sm text-[#b4717a] mb-4">
-            Un minuto, un segundo, un instante que queda en la eternidad
-          </p>
-
-          {/* Lottie Cámara */}
-          <LottieAnimation
-            path="/fixdate/img/json_camara.json"
-            className="w-24 h-24 mx-auto mb-8"
-          />
-
-          {/* Grid de Fotos Polaroid reales */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 px-2">
-            {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="fixdate-polaroid">
-                <img
-                  src={`/fixdate/img/galeria/${num}.jpg`}
-                  alt={`Retrato ${num}`}
-                  className="w-full h-48 sm:h-64 object-cover rounded-xs"
-                />
-              </div>
-            ))}
+          <p className="micro reveal">Queremos que todos disfruten de la mesa.</p>
+          <div className="icon reveal d1">
+            <svg viewBox="0 0 64 64">
+              <circle cx="32" cy="34" r="15" />
+              <circle cx="32" cy="34" r="9.5" />
+              <path d="M13 13v9M17 13v9M21 13v9" />
+              <path d="M13 22h8" />
+              <path d="M17 22v29" />
+              <path d="M51 13c-3.4 2-4.2 10.5-1.4 15.4h1.4V51" />
+            </svg>
           </div>
-        </div>
-
-        {/* Divisor ornamental Fixdate */}
-        <div className="fixdate-divider mt-16" />
-      </section>
-
-      {/* 8. Fiesta (3 Bloques de Fixdate con la tríada: Rose, Burgundy, Sage) */}
-      <section className="pt-8 pb-6 px-4 bg-transparent text-center">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="font-['Parisienne',cursive] text-4xl sm:text-5xl text-[#732a2d] mb-2 font-medium">
-            Fiesta
-          </h2>
-          <p className="font-['Rubik',sans-serif] text-sm text-[#b4717a] max-w-md mx-auto mb-12">
-            Hagamos juntos una fiesta épica. Aquí algunos detalles a tener en cuenta.
+          <h2 className="title reveal d1">Menú</h2>
+          <p className="body reveal d2" style={{ marginTop: 14 }}>
+            El servicio cuenta con opciones pensadas para que cada invitado disfrute plenamente.
           </p>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8 px-2">
-            {/* 1. Música (Dusty Rose #b4717a) */}
-            <div className="bg-white rounded-2xl p-8 border border-[#b4717a]/35 shadow-md flex flex-col justify-between items-center min-h-[380px]">
-              <h3 className="font-['Parisienne',cursive] text-3xl text-[#b4717a] font-medium">
-                Música
-              </h3>
-
-              <div className="h-24 flex items-center justify-center my-2">
-                <LottieAnimation
-                  path="/fixdate/img/json_musica.json"
-                  className="w-20 h-20 mx-auto"
-                />
-              </div>
-
-              <p className="font-['Rubik',sans-serif] text-sm text-[#73494c] my-3 leading-relaxed">
-                ¿Cuál es la canción que no debe faltar en la PlayList de la fiesta?
-              </p>
-
-              <button
-                onClick={() => setShowMusicSongModal(true)}
-                className="fixdate-btn-rose w-full mt-2"
-              >
-                Sugerir canción
-              </button>
-            </div>
-
-            {/* 2. Dress Code (Burgundy #732a2d) */}
-            <div className="bg-white rounded-2xl p-8 border border-[#732a2d]/30 shadow-md flex flex-col justify-between items-center min-h-[380px]">
-              <h3 className="font-['Parisienne',cursive] text-3xl text-[#732a2d] font-medium">
-                Dress Code
-              </h3>
-
-              <div className="h-24 flex items-center justify-center my-2">
-                <LottieAnimation
-                  path="/fixdate/img/json_dresscode.json"
-                  className="w-20 h-20 mx-auto"
-                />
-              </div>
-
-              <p className="font-['Rubik',sans-serif] text-sm text-[#73494c] my-3 leading-relaxed">
-                Una orientación para <br /> tu vestuario
-              </p>
-
-              <button
-                onClick={() => setShowDressCodeModal(true)}
-                className="fixdate-btn w-full mt-2"
-              >
-                Ver más
-              </button>
-            </div>
-
-            {/* 3. Tips y Notas (Sage Green #9aa289) */}
-            <div className="bg-white rounded-2xl p-8 border border-[#9aa289]/45 shadow-md flex flex-col justify-between items-center min-h-[380px]">
-              <h3 className="font-['Parisienne',cursive] text-3xl text-[#6b7b62] font-medium">
-                Tips y Notas
-              </h3>
-
-              <div className="h-24 flex items-center justify-center my-2">
-                <LottieAnimation
-                  path="/fixdate/img/json_tips.json"
-                  className="w-20 h-20 mx-auto"
-                />
-              </div>
-
-              <p className="font-['Rubik',sans-serif] text-sm text-[#73494c] my-3 leading-relaxed">
-                Información adicional <br /> para tener en cuenta
-              </p>
-
-              <button
-                onClick={() => setShowTipsModal(true)}
-                className="fixdate-btn-sage w-full mt-2"
-              >
-                + Info
-              </button>
-            </div>
-          </div>
-        </div>
-
-        {/* Divisor ornamental Fixdate */}
-        <div className="fixdate-divider mt-16" />
-      </section>
-
-      {/* 9. Hospedaje & Traslados Recomendados */}
-      <section className="pt-8 pb-6 px-4 bg-transparent text-center">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="font-['Parisienne',cursive] text-4xl sm:text-5xl text-[#732a2d] mb-2 font-medium">
-            Hospedaje & Traslados
-          </h2>
-          <p className="font-['Rubik',sans-serif] text-sm text-[#b4717a] max-w-md mx-auto mb-10">
-            Opciones recomendadas cercanas a la estancia para descansar y viajar tranquilos
+          <p className="body reveal d2" style={{ marginTop: 14 }}>
+            Contamos con menú tradicional, vegetariano y celíaco. Recordá informarnos cualquier restricción alimentaria o alergia en el formulario de asistencia.
           </p>
+        </section>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left mb-6">
-            {invitationConfig.lodging.map((hotel, idx) => (
-              <div
-                key={idx}
-                className="bg-white/95 rounded-2xl p-6 sm:p-7 border border-[#d4c1bd]/60 shadow-md flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="inline-flex items-center gap-1.5 font-['Rubik',sans-serif] text-xs font-semibold text-[#52634d] bg-[#9aa289]/15 px-3 py-1 rounded-full">
-                      <Bed className="w-3.5 h-3.5" />
-                      {hotel.distance}
-                    </span>
-                  </div>
-
-                  <h3 className="font-['Rubik',sans-serif] text-lg font-semibold text-[#732a2d] my-1">
-                    {hotel.name}
-                  </h3>
-
-                  <p className="font-['Rubik',sans-serif] text-xs sm:text-sm text-[#73494c] leading-relaxed my-2">
-                    {hotel.description}
-                  </p>
-                </div>
-
-                <div className="pt-4 border-t border-gray-100 flex flex-wrap gap-2">
-                  {hotel.whatsapp && (
-                    <a
-                      href={`https://wa.me/${hotel.whatsapp}?text=Hola,%20quisiera%20consultar%20por%20alojamiento%20para%20el%2006%20de%20marzo%20de%202027`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#9aa289] hover:bg-[#732a2d] text-white text-xs font-medium transition-all shadow-2xs"
-                    >
-                      <MessageCircle className="w-3.5 h-3.5" />
-                      <span>WhatsApp</span>
-                    </a>
-                  )}
-
-                  {hotel.phone && (
-                    <a
-                      href={`tel:${hotel.phone}`}
-                      className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full border border-[#d4c1bd] hover:border-[#732a2d] text-[#73494c] hover:text-[#732a2d] text-xs font-medium transition-all"
-                    >
-                      <Phone className="w-3.5 h-3.5" />
-                      <span>{hotel.phone}</span>
-                    </a>
-                  )}
-                </div>
-              </div>
-            ))}
+        {/* ===== REGALOS ===== */}
+        <section className="section sec-bordo" id="regalos">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
           </div>
-
-          {/* Tarjeta de Traslados y Remises */}
-          <div className="bg-white/95 rounded-2xl p-6 sm:p-7 border border-[#d4c1bd]/60 shadow-md text-left max-w-xl mx-auto flex items-start gap-4">
-            <div className="w-12 h-12 rounded-full bg-[#FAF8F5] border border-[#9aa289]/40 flex items-center justify-center shrink-0 text-[#732a2d]">
-              <Car className="w-6 h-6" />
-            </div>
-            <div>
-              <h4 className="font-['Rubik',sans-serif] text-base font-semibold text-[#732a2d]">
-                Remises & Combis de la Zona
-              </h4>
-              <p className="font-['Rubik',sans-serif] text-xs text-[#73494c] mt-1 leading-relaxed">
-                Si no vas a venir en auto o querés disfrutar de la fiesta sin preocuparte por manejar, te sugerimos coordinar traslados con anticipación. La estancia cuenta con espacio de descenso y ascenso seguro.
-              </p>
-            </div>
+          <p className="micro reveal">Lo único obligatorio es que vengas.</p>
+          <div className="icon reveal d1">
+            <svg viewBox="0 0 64 64">
+              <rect x="14" y="28" width="36" height="23" rx="1.5" />
+              <rect x="11" y="21.5" width="42" height="7" rx="1.5" />
+              <path d="M32 21.5V51" />
+              <path d="M32 21.5c-2.4-4.8-10-4.8-10 .3 0 3 4.6 3.4 10-.3z" />
+              <path d="M32 21.5c2.4-4.8 10-4.8 10 .3 0 3-4.6 3.4-10-.3z" />
+            </svg>
           </div>
-        </div>
-
-        {/* Divisor ornamental Fixdate */}
-        <div className="fixdate-divider mt-16" />
-      </section>
-
-      {/* 10. Regalos (Dusty Rose Accent) */}
-      <section className="pt-8 pb-6 px-4 bg-transparent text-center">
-        <div className="max-w-xl mx-auto">
-          <h2 className="font-['Parisienne',cursive] text-4xl sm:text-5xl text-[#732a2d] mb-2 font-medium">
-            Regalos
-          </h2>
-          <p className="font-['Rubik',sans-serif] text-sm text-[#73494c] max-w-md mx-auto mb-4">
-            Si deseas regalarnos algo más que tu hermosa presencia...
+          <h2 className="title reveal d1">Regalos</h2>
+          <p className="body reveal d2" style={{ marginTop: 14 }}>
+            El mejor regalo es tu presencia. Si deseás hacernos un presente, podés ayudarnos con nuestra luna de miel:
           </p>
-
-          <LottieAnimation
-            path="/fixdate/img/json_regalo.json"
-            className="w-20 h-20 mx-auto my-4"
-          />
-
           <button
-            onClick={() => setShowBankModal(true)}
-            className="fixdate-btn-rose text-base px-10 py-3.5 shadow-lg mt-2"
+            className="btn reveal d2"
+            type="button"
+            onClick={() => setShowGiftDetails(!showGiftDetails)}
+            style={{ marginTop: 22 }}
           >
-            Ver más
+            {showGiftDetails ? 'Ocultar datos para regalar' : 'Ver datos para regalar'}
           </button>
-        </div>
-
-        {/* Divisor ornamental Fixdate */}
-        <div className="fixdate-divider mt-16" />
-      </section>
-
-      {/* 11. Instagram (Sage & Dusty Rose Accent) */}
-      <section className="pt-8 pb-16 px-4 bg-transparent text-center">
-        <div className="max-w-xl mx-auto">
-          <h2 className="font-['Parisienne',cursive] text-3xl sm:text-4xl text-[#732a2d] mb-2 font-medium">
-            Compartimos este día junto a vos
-          </h2>
-          <p className="font-['Rubik',sans-serif] text-sm text-[#b4717a] max-w-md mx-auto mb-4 font-medium">
-            Compartí tus fotos y videos de ese hermoso día
-          </p>
-
-          <LottieAnimation
-            path="/fixdate/img/json_instagram.json"
-            className="w-20 h-20 mx-auto my-4"
-          />
-
-          <div className="my-3">
-            <a
-              target="_blank"
-              rel="noopener noreferrer"
-              href="https://www.instagram.com/"
-              className="text-xl sm:text-2xl font-['Rubik',sans-serif] font-semibold text-[#b4717a] hover:text-[#732a2d] transition-colors"
-            >
-              #solylea
-            </a>
+          <div className={`gift-card ${showGiftDetails ? '' : 'is-hidden'}`} id="giftCard">
+            <div className="gift-row">
+              <span className="gk">Alias</span>
+              <span className="gv">SOL.Y.LEA.BODA</span>
+              <button
+                className={`gcopy ${copiedField === 'alias' ? 'done' : ''}`}
+                type="button"
+                onClick={() => handleCopy('SOL.Y.LEA.BODA', 'alias')}
+                aria-label="Copiar alias"
+              >
+                {copiedField === 'alias' ? 'Copiado!' : 'Copiar'}
+              </button>
+            </div>
+            <div className="gift-row">
+              <span className="gk">CBU</span>
+              <span className="gv">0070123430004567890123</span>
+              <button
+                className={`gcopy ${copiedField === 'cbu' ? 'done' : ''}`}
+                type="button"
+                onClick={() => handleCopy('0070123430004567890123', 'cbu')}
+                aria-label="Copiar CBU"
+              >
+                {copiedField === 'cbu' ? 'Copiado!' : 'Copiar'}
+              </button>
+            </div>
+            <div className="gift-row">
+              <span className="gk">Titular</span>
+              <span className="gv">Solange &amp; Leandro</span>
+            </div>
+            <div className="gift-row">
+              <span className="gk">Banco</span>
+              <span className="gv">Banco Galicia</span>
+            </div>
           </div>
+        </section>
 
+        {/* ===== GALERÍA ===== */}
+        <section className="section gallery" id="galeria">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
+          </div>
+          <p className="micro reveal">Un poco de nosotros.</p>
+          <h2 className="title reveal d1" style={{ fontSize: 'clamp(1.9rem,7vw,2.5rem)', marginBottom: 6 }}>
+            Galería
+          </h2>
+          <div className="carousel reveal d2">
+            <div className="slide">
+              <img src="/fixdate/img/img_1.webp" alt="Sol y Lea" loading="lazy" />
+            </div>
+            <div className="slide">
+              <img src="/fixdate/img/img_4.webp" alt="Sol y Lea" loading="lazy" />
+            </div>
+            <div className="slide">
+              <img src="/fixdate/img/img_5.webp" alt="Sol y Lea" loading="lazy" />
+            </div>
+            <div className="slide">
+              <img src="/fixdate/img/img_6.webp" alt="Sol y Lea" loading="lazy" />
+            </div>
+            <div className="slide">
+              <img src="/fixdate/img/img_7.webp" alt="Sol y Lea" loading="lazy" />
+            </div>
+            <div className="slide">
+              <img src="/fixdate/img/img_8.webp" alt="Sol y Lea" loading="lazy" />
+            </div>
+          </div>
+          <p className="cue reveal d3">Deslizá para ver más</p>
+        </section>
+
+        {/* ===== INSTAGRAM ===== */}
+        <section className="section" id="instagram">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
+          </div>
+          <p className="micro reveal">Seguinos para enterarte de todo antes y después del gran día.</p>
+          <div className="icon reveal d1">
+            <svg viewBox="0 0 64 64">
+              <rect x="11" y="21" width="42" height="28" rx="6.5" />
+              <path d="M24 21l2.8-5h10.4l2.8 5" />
+              <circle cx="32" cy="35" r="8.5" />
+              <circle cx="32" cy="35" r="3.4" />
+              <circle cx="46" cy="27.5" r="1.5" fill="currentColor" stroke="none" />
+            </svg>
+          </div>
+          <p className="ig-handle reveal d1">@solylea.boda</p>
           <a
+            className="btn reveal d2"
+            href="https://www.instagram.com"
             target="_blank"
             rel="noopener noreferrer"
-            href="https://www.instagram.com/"
-            className="fixdate-btn-sage text-sm px-8 py-3.5 mt-2"
           >
-            Ver en Instagram
+            <svg viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="5" />
+              <circle cx="12" cy="12" r="4" />
+              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+            </svg>
+            Seguir en Instagram
           </a>
-        </div>
-      </section>
+        </section>
 
-      {/* 10. Footer (Fixdate Style) */}
-      <footer className="py-12 px-4 bg-[#FAF8F5] text-center border-t border-[#d4c1bd]/60">
-        <div className="max-w-4xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-          <h4 className="font-['Parisienne',cursive] text-4xl sm:text-5xl text-[#732a2d]">
-            Sol
-            <span className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white text-[#b4717a] text-xl font-['Raleway'] font-medium mx-2 align-middle shadow-xs">
-              &
+        {/* ===== RSVP ===== */}
+        <section className="section sec-bordo" id="rsvp">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
             </span>
-            Lea
-          </h4>
-
-          <ul className="flex flex-wrap justify-center gap-4 text-xs font-['Rubik',sans-serif] uppercase tracking-wider text-[#73494c]">
-            <li>
-              <button
-                onClick={() => setShowRsvpModal(true)}
-                className="hover:text-[#732a2d] transition-colors cursor-pointer font-medium"
-              >
-                Confirmar asistencia
-              </button>
-            </li>
-            <li>•</li>
-            <li>
-              <button
-                onClick={() => setShowMusicSongModal(true)}
-                className="hover:text-[#b4717a] transition-colors cursor-pointer font-medium"
-              >
-                Sugerir canción
-              </button>
-            </li>
-            <li>•</li>
-            <li>
-              <button
-                onClick={() => setShowBankModal(true)}
-                className="hover:text-[#9aa289] transition-colors cursor-pointer font-medium"
-              >
-                Regalos
-              </button>
-            </li>
-            <li>•</li>
-            <li>
-              <button
-                onClick={() => setShowEnvelope(true)}
-                className="hover:text-[#732a2d] transition-colors cursor-pointer font-medium"
-              >
-                Ver sobre
-              </button>
-            </li>
-          </ul>
-        </div>
-      </footer>
-
-      {/* ==================== MODALS ==================== */}
-
-      {/* MODAL 1: Confirmar Asistencia (RSVP) */}
-      <AnimatePresence>
-        {showRsvpModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs overflow-y-auto">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-lg my-auto"
-            >
-              <FamilyRsvpForm
-                group={group}
-                onClose={() => setShowRsvpModal(false)}
-                onSubmitted={(updated) => {
-                  setGroup(updated);
-                  setTimeout(() => {
-                    setShowRsvpModal(false);
-                  }, 1800);
-                }}
-              />
-            </motion.div>
+            <span className="ln r" />
           </div>
-        )}
-      </AnimatePresence>
-
-      {/* MODAL 2: Regalos (Datos Bancarios) */}
-      <AnimatePresence>
-        {showBankModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#d4c1bd]/60"
-            >
-              <button
-                onClick={() => setShowBankModal(false)}
-                className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-[#73494c] hover:text-[#393734] hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="text-center mb-6">
-                <span className="font-['Parisienne',cursive] text-4xl text-[#732a2d] block mb-1">
-                  Regalos
-                </span>
-                <p className="font-['Rubik',sans-serif] text-xs text-[#73494c]">
-                  Luna de miel — Solange & Leandro
-                </p>
-              </div>
-
-              <div className="space-y-4 text-left">
-                <div className="border-b border-gray-100 pb-2">
-                  <span className="font-['Rubik',sans-serif] text-[11px] text-[#73494c] block uppercase tracking-wider">
-                    Banco
-                  </span>
-                  <p className="font-serif text-base font-semibold text-[#393734]">
-                    {invitationConfig.gifts.bankDetails.bank} ({invitationConfig.gifts.bankDetails.accountType})
-                  </p>
-                </div>
-
-                <div className="border-b border-gray-100 pb-2">
-                  <span className="font-['Rubik',sans-serif] text-[11px] text-[#73494c] block uppercase tracking-wider">
-                    Titular
-                  </span>
-                  <p className="font-serif text-base font-semibold text-[#393734]">
-                    {invitationConfig.gifts.bankDetails.titular}
-                  </p>
-                </div>
-
-                {/* Alias */}
-                <div className="flex items-center justify-between gap-2 p-3 bg-[#FAF8F5] rounded-2xl border border-[#d4c1bd]/60">
-                  <div>
-                    <span className="font-['Rubik',sans-serif] text-[11px] text-[#73494c] block uppercase tracking-wider">
-                      Alias
-                    </span>
-                    <span className="font-mono text-sm sm:text-base font-bold text-[#732a2d]">
-                      {invitationConfig.gifts.bankDetails.alias}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => handleCopy(invitationConfig.gifts.bankDetails.alias, 'alias')}
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#732a2d] hover:bg-[#b4717a] text-white text-xs font-medium transition-all cursor-pointer shadow-xs"
-                  >
-                    {copiedField === 'alias' ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                        <span>¡Copiado!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Copiar</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-
-                {/* CBU */}
-                <div className="flex items-center justify-between gap-2 p-3 bg-[#FAF8F5] rounded-2xl border border-[#d4c1bd]/60">
-                  <div className="min-w-0">
-                    <span className="font-['Rubik',sans-serif] text-[11px] text-[#73494c] block uppercase tracking-wider">
-                      CBU
-                    </span>
-                    <span className="font-mono text-xs font-medium text-[#393734] truncate block">
-                      {invitationConfig.gifts.bankDetails.cbu}
-                    </span>
-                  </div>
-                  <button
-                    onClick={() => handleCopy(invitationConfig.gifts.bankDetails.cbu, 'cbu')}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-[#d4c1bd] text-[#73494c] hover:text-[#393734] hover:border-[#732a2d] text-xs font-medium transition-all cursor-pointer shrink-0"
-                  >
-                    {copiedField === 'cbu' ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 stroke-[2.5]" />
-                        <span>¡Copiado!</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>Copiar</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
-            </motion.div>
+          <p className="micro reveal">Un “sí, voy” nos hace muy felices.</p>
+          <div className="icon reveal d1">
+            <svg viewBox="0 0 64 64">
+              <path d="M32 51C15 40 11 29.5 16.5 22.5c3.8-4.8 11.4-4 15.5 3 4.1-7 11.7-7.8 15.5-3C53 29.5 49 40 32 51z" />
+              <path d="M32 31v11" />
+              <path d="M32 35c-3-1.2-5.4 0-6.8 2.2" />
+              <path d="M32 35c3-1.2 5.4 0 6.8 2.2" />
+            </svg>
           </div>
-        )}
-      </AnimatePresence>
+          <h2 className="title reveal d1">Confirmá tu asistencia</h2>
+          <p className="rsvp-note reveal d2">
+            Invitación reservada para: <strong className="text-white">{displayName}</strong>
+            <br />
+            ({group.max_guests} {group.max_guests === 1 ? 'pase reservado' : 'pases reservados'})
+          </p>
 
-      {/* MODAL 3: Dress Code con Paleta Oficial */}
-      <AnimatePresence>
-        {showDressCodeModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#d4c1bd]/60 text-center"
-            >
-              <button
-                onClick={() => setShowDressCodeModal(false)}
-                className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-[#73494c] hover:text-[#393734] hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="w-14 h-14 rounded-full bg-[#FAF8F5] text-[#732a2d] flex items-center justify-center mx-auto mb-3 border border-[#9aa289]/40">
-                <Shirt className="w-7 h-7 stroke-[1.5]" />
+          {rsvpSuccess ? (
+            <div className="rsvp-done" id="rsvpDone">
+              <div className="icon">
+                <svg viewBox="0 0 64 64">
+                  <path d="M32 51C15 40 11 29.5 16.5 22.5c3.8-4.8 11.4-4 15.5 3 4.1-7 11.7-7.8 15.5-3C53 29.5 49 40 32 51z" />
+                  <path d="M32 31v11" />
+                  <path d="M32 35c-3-1.2-5.4 0-6.8 2.2" />
+                  <path d="M32 35c3-1.2 5.4 0 6.8 2.2" />
+                </svg>
               </div>
-
-              <h5 className="font-['Parisienne',cursive] text-4xl text-[#732a2d] mb-2 font-medium">
-                Dress Code
-              </h5>
-
-              <p className="font-serif text-2xl text-[#732a2d] font-normal mb-2">
-                Elegante
+              <h3>¡Gracias por confirmar!</h3>
+              <p>
+                {rsvpAttending === 'attending'
+                  ? `Registramos tu confirmación con ${confirmedGuests} ${
+                      confirmedGuests === 1 ? 'pase' : 'pases'
+                    }. ¡Nos vemos el 06M!`
+                  : 'Registramos tu respuesta. ¡Los vamos a extrañar mucho!'}
               </p>
+              <button
+                type="button"
+                className="btn"
+                onClick={() => setRsvpSuccess(false)}
+                style={{ marginTop: 20 }}
+              >
+                Modificar respuesta
+              </button>
+            </div>
+          ) : (
+            <form className="rsvp-form reveal d2" onSubmit={handleRsvpSubmit}>
+              <fieldset className="fld is-required">
+                <span className="flabel">¿Asistís a la fiesta?</span>
+                <div className="opts">
+                  <label className="opt">
+                    <input
+                      type="radio"
+                      name="asistencia"
+                      value="attending"
+                      checked={rsvpAttending === 'attending'}
+                      onChange={() => setRsvpAttending('attending')}
+                      required
+                    />
+                    <span>Sí, confirmo</span>
+                  </label>
+                  <label className="opt">
+                    <input
+                      type="radio"
+                      name="asistencia"
+                      value="declined"
+                      checked={rsvpAttending === 'declined'}
+                      onChange={() => setRsvpAttending('declined')}
+                    />
+                    <span>No voy a poder</span>
+                  </label>
+                </div>
+              </fieldset>
 
-              <p className="font-['Rubik',sans-serif] text-sm text-[#73494c] leading-relaxed mb-5">
-                Queremos que te sientas cómodo/a y radiante para festejar toda la noche con nosotros.
-              </p>
-
-              {/* Muestra visual de la paleta oficial de Sol & Lea */}
-              <div className="mb-5 p-4 bg-[#FAF8F5] rounded-2xl border border-[#d4c1bd]/60">
-                <span className="font-['Rubik',sans-serif] text-xs font-semibold uppercase tracking-wider text-[#732a2d] block mb-3">
-                  Nuestra paleta de colores
-                </span>
-                <div className="grid grid-cols-4 gap-2.5 max-w-[260px] mx-auto">
-                  {weddingColors.map((color, idx) => (
-                    <div key={idx} className="flex flex-col items-center">
-                      <div
-                        style={{ backgroundColor: color.hex }}
-                        className="w-9 h-9 rounded-xl border border-black/10 shadow-xs"
-                        title={`${color.name} (${color.hex})`}
-                      />
-                      <span className="font-mono text-[9px] text-[#73494c] mt-1 font-medium">
-                        {color.hex}
+              {rsvpAttending === 'attending' && (
+                <div id="rsvpDetails">
+                  {group.max_guests > 1 && (
+                    <fieldset className="fld is-required">
+                      <span className="flabel">
+                        Cantidad de asistentes (máximo {group.max_guests})
                       </span>
+                      <div className="opts">
+                        {Array.from({ length: group.max_guests }, (_, i) => i + 1).map((num) => (
+                          <label key={num} className="opt">
+                            <input
+                              type="radio"
+                              name="pases"
+                              value={num}
+                              checked={confirmedGuests === num}
+                              onChange={() => setConfirmedGuests(num)}
+                            />
+                            <span>{num} {num === 1 ? 'pase' : 'pases'}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                  )}
+
+                  <fieldset className="fld is-required">
+                    <span className="flabel">Menú preferido</span>
+                    <div className="opts">
+                      {(['Normal', 'Vegetariano', 'Celíaco'] as const).map((m) => (
+                        <label key={m} className="opt">
+                          <input
+                            type="radio"
+                            name="menu"
+                            value={m}
+                            checked={menuChoice === m}
+                            onChange={() => setMenuChoice(m)}
+                            required
+                          />
+                          <span>{m}</span>
+                        </label>
+                      ))}
                     </div>
-                  ))}
+                  </fieldset>
+
+                  <label className="fld">
+                    <span className="flabel">Alergias o restricciones (opcional)</span>
+                    <input
+                      type="text"
+                      value={dietaryNotes}
+                      onChange={(e) => setDietaryNotes(e.target.value)}
+                      placeholder="Ej: intolerante a la lactosa, sin mariscos..."
+                    />
+                  </label>
                 </div>
-              </div>
+              )}
 
-              <div className="p-3 bg-white rounded-xl border border-[#b4717a]/50 text-xs font-serif italic text-[#732a2d]">
-                El color blanco queda exclusivamente reservado para la novia.
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+              <label className="fld">
+                <span className="flabel">Dejanos un mensajito (opcional)</span>
+                <textarea
+                  value={rsvpMessage}
+                  onChange={(e) => setRsvpMessage(e.target.value)}
+                  rows={2}
+                  placeholder="¡Nos vemos en la pista!"
+                />
+              </label>
 
-      {/* MODAL 4: Tips y Notas */}
-      <AnimatePresence>
-        {showTipsModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#d4c1bd]/60"
-            >
-              <button
-                onClick={() => setShowTipsModal(false)}
-                className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-[#73494c] hover:text-[#393734] hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-
-              <div className="text-center mb-6">
-                <div className="w-14 h-14 rounded-full bg-[#FAF8F5] text-[#732a2d] flex items-center justify-center mx-auto mb-3 border border-[#9aa289]/40">
-                  <Info className="w-7 h-7 stroke-[1.5]" />
-                </div>
-                <h5 className="font-['Parisienne',cursive] text-4xl text-[#732a2d] mb-1 font-medium">
-                  Tips y Notas
-                </h5>
-                <p className="font-['Rubik',sans-serif] text-xs text-[#73494c]">
-                  Información para tener en cuenta
+              {rsvpError && (
+                <p style={{ margin: 0, textAlign: 'center', color: '#ffb3ba', fontSize: '0.86rem' }}>
+                  {rsvpError}
                 </p>
-              </div>
+              )}
 
-              <div className="space-y-3 text-left">
-                <div className="p-4 bg-[#FAF8F5] rounded-2xl border border-[#d4c1bd]/60">
-                  <p className="font-['Rubik',sans-serif] font-semibold text-sm text-[#732a2d] mb-1">
-                    ⏰ Puntualidad
-                  </p>
-                  <p className="font-['Rubik',sans-serif] text-xs text-[#73494c] leading-relaxed">
-                    Te recomendamos llegar 15 minutos antes de la ceremonia para ubicarnos con tranquilidad.
-                  </p>
-                </div>
-
-                <div className="p-4 bg-[#FAF8F5] rounded-2xl border border-[#d4c1bd]/60">
-                  <p className="font-['Rubik',sans-serif] font-semibold text-sm text-[#732a2d] mb-1">
-                    🚗 Estacionamiento
-                  </p>
-                  <p className="font-['Rubik',sans-serif] text-xs text-[#73494c] leading-relaxed">
-                    El predio cuenta con estacionamiento privado con seguridad vigilada durante todo el evento.
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
-
-      {/* MODAL 5: Sugerir Canción */}
-      <AnimatePresence>
-        {showMusicSongModal && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              className="relative w-full max-w-md bg-white rounded-3xl p-6 sm:p-8 shadow-2xl border border-[#d4c1bd]/60 text-center"
-            >
-              <button
-                onClick={() => setShowMusicSongModal(false)}
-                className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-[#73494c] hover:text-[#393734] hover:bg-gray-100 transition-colors cursor-pointer"
-              >
-                <X className="w-5 h-5" />
+              <button className="btn" type="submit" disabled={rsvpSubmitting}>
+                {rsvpSubmitting ? 'Enviando...' : 'Confirmar Asistencia'}
               </button>
+            </form>
+          )}
+        </section>
+      </main>
 
-              <div className="w-14 h-14 rounded-full bg-[#FAF8F5] text-[#732a2d] flex items-center justify-center mx-auto mb-3 border border-[#9aa289]/40">
-                <Music2 className="w-7 h-7 stroke-[1.5]" />
-              </div>
-
-              <h5 className="font-['Parisienne',cursive] text-4xl text-[#732a2d] mb-2 font-medium">
-                Sugerir Canción
-              </h5>
-
-              <p className="font-['Rubik',sans-serif] text-sm text-[#73494c] leading-relaxed mb-6">
-                ¡Armemos juntos la pista de baile! Dejanos el tema que no puede faltar.
-              </p>
-
-              <a
-                href={invitationConfig.playlist.spotifyUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="fixdate-btn w-full inline-flex items-center justify-center gap-2"
-              >
-                <span>Abrir Playlist en Spotify</span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
+      {/* ===== CIERRE FOOTER ===== */}
+      <footer className="section closing" id="cierre">
+        <div className="divider reveal" aria-hidden="true">
+          <span className="ln" />
+          <span className="mo">
+            <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 4v22" />
+              <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+              <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+              <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+              <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+              <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+              <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+              <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+            </svg>
+          </span>
+          <span className="ln r" />
+        </div>
+        <p className="micro reveal">Ahora sí... nos vemos el 06M</p>
+        <p className="love reveal d2">Con amor</p>
+        <img className="seal reveal d2" src="/fixdate/img/seal.webp" alt="Sello de cera" />
+      </footer>
     </div>
   );
 };

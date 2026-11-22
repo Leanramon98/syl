@@ -112,12 +112,10 @@ export function App() {
   // Render Family Personalized Invitation Route
   if (invitationToken) {
     return (
-      <div style={rootStyle} className="min-h-[100dvh] w-full fine-paper-texture">
-        <FamilyInvitationView
-          token={invitationToken}
-          onNavigateHome={() => navigate('/save-the-date')}
-        />
-      </div>
+      <FamilyInvitationView
+        token={invitationToken}
+        onNavigateHome={() => navigate('/save-the-date')}
+      />
     );
   }
 
