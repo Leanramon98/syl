@@ -725,49 +725,6 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <p className="cue reveal d3">Deslizá para ver más</p>
         </section>
 
-        {/* ===== INSTAGRAM ===== */}
-        <section className="section" id="instagram">
-          <div className="divider reveal" aria-hidden="true">
-            <span className="ln" />
-            <span className="mo">
-              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 4v22" />
-                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
-                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
-                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
-                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
-                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
-                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
-                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
-              </svg>
-            </span>
-            <span className="ln r" />
-          </div>
-          <p className="micro reveal">Seguinos para enterarte de todo antes y después del gran día.</p>
-          <div className="icon reveal d1">
-            <svg viewBox="0 0 64 64">
-              <rect x="11" y="21" width="42" height="28" rx="6.5" />
-              <path d="M24 21l2.8-5h10.4l2.8 5" />
-              <circle cx="32" cy="35" r="8.5" />
-              <circle cx="32" cy="35" r="3.4" />
-              <circle cx="46" cy="27.5" r="1.5" fill="currentColor" stroke="none" />
-            </svg>
-          </div>
-          <p className="ig-handle reveal d1">@solylea.boda</p>
-          <a
-            className="btn reveal d2"
-            href="https://www.instagram.com"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <svg viewBox="0 0 24 24">
-              <rect x="3" y="3" width="18" height="18" rx="5" />
-              <circle cx="12" cy="12" r="4" />
-              <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
-            </svg>
-            Seguir en Instagram
-          </a>
-        </section>
 
         {/* ===== RSVP ===== */}
         <section className="section sec-bordo" id="rsvp">
