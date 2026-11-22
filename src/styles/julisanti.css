@@ -14,7 +14,7 @@
   --ink:#3A2A2A;
   --script:"Luxurious Script", cursive;
   --serif:"Instrument Serif", Georgia, serif;
-  --sans:"Plus Jakarta Sans", "Neue Regrade", "Montserrat", sans-serif;
+  --sans:"Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --lace-w:clamp(16px, 6vw, 34px);
   --maxw:600px;
   --paper:url(/textures/julisanti-paper.webp);

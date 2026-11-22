@@ -367,7 +367,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             </span>
             <span className="ln r" />
           </div>
-          <p className="micro reveal">Primero los anillos. Después el baile.</p>
+          <p className="micro reveal">Primero los anillos. Después la fiesta.</p>
           <div className="icon reveal d1">
             <svg viewBox="0 0 64 64">
               <ellipse cx="26" cy="39" rx="13" ry="14" />
@@ -402,7 +402,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             <div className="tl-row mark">
               <span className="tl-time">21:30</span>
               <span className="tl-ev">
-                ¡A bailar!
+                Fiesta
                 <span className="ti">
                   <svg viewBox="0 0 64 64">
                     <path d="M32 6v9" />
@@ -767,13 +767,13 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                   <path d="M32 35c3-1.2 5.4 0 6.8 2.2" />
                 </svg>
               </div>
-              <h3>¡Gracias por confirmar!</h3>
+              <h3>Gracias por confirmar</h3>
               <p>
                 {rsvpAttending === 'attending'
                   ? `Registramos tu confirmación con ${confirmedGuests} ${
                       confirmedGuests === 1 ? 'pase' : 'pases'
-                    }. ¡Nos vemos el 06M!`
-                  : 'Registramos tu respuesta. ¡Los vamos a extrañar mucho!'}
+                    }. Nos vemos el 06M!`
+                  : 'Registramos tu respuesta. Los vamos a extrañar mucho.'}
               </p>
               <button
                 type="button"
@@ -874,7 +874,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                   value={rsvpMessage}
                   onChange={(e) => setRsvpMessage(e.target.value)}
                   rows={2}
-                  placeholder="¡Nos vemos en la pista!"
+                  placeholder="Nos vemos en la pista..."
                 />
               </label>
 
