@@ -282,13 +282,13 @@ img{max-width:100%;display:block}
 .music{position:fixed;top:16px;right:calc(var(--lace-w) + 8px);z-index:41;width:44px;height:44px;
   border-radius:50%;border:1px solid rgba(180,113,122,.6);background:rgba(249,240,234,.82);
   backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;cursor:pointer;
-  color:var(--bordo);box-shadow:0 6px 16px -8px rgba(83,17,27,.5);transition:transform .3s}
+  color:var(--bordo);box-shadow:0 6px 16px -8px rgba(83,17,27,.5);transition:transform .3s;outline:none}
 .music:hover{transform:scale(1.06)}
-.music svg{width:20px;height:20px;stroke:var(--bordo);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.music svg{width:20px;height:20px;stroke:var(--bordo);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;box-shadow:none;outline:none}
 .music .ic-pause{display:none}
 .music.playing .ic-play{display:none}
 .music.playing .ic-pause{display:block}
-.music.playing .ring{animation:spin 6s linear infinite}
+.music.playing .spin-ring{animation:spin 6s linear infinite}
 .music-player{position:fixed;left:-10000px;top:0;width:200px;height:200px;overflow:hidden;pointer-events:none}
 @keyframes spin{to{transform:rotate(360deg)}}
 

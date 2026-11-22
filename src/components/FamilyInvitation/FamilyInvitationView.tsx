@@ -264,7 +264,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
         aria-label={isPlayingMusic ? 'Pausar música' : 'Reproducir música'}
         title="Música"
       >
-        <svg className="ic-play ring" viewBox="0 0 24 24">
+        <svg className="ic-play spin-ring" viewBox="0 0 24 24">
           <polygon points="6 4 19 12 6 20 6 4" fill="currentColor" />
         </svg>
         <svg className="ic-pause" viewBox="0 0 24 24">
