@@ -346,6 +346,11 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <span className="lbl">Seg</span>
             </div>
           </div>
+          <p className="cue reveal in d3" style={{ marginTop: 24 }}>
+            <a href="#rsvp" style={{ color: 'inherit', textDecoration: 'none' }}>
+              No olvides confirmar tu presencia al final.
+            </a>
+          </p>
         </section>
 
         {/* ===== CEREMONIA Y FIESTA ===== */}
