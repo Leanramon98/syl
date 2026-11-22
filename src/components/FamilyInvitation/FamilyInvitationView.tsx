@@ -427,7 +427,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <p className="place-sub reveal d3">Los Cardales, Provincia de Buenos Aires.</p>
           <a
             className="btn ghost reveal d3"
-            href="https://maps.google.com/?q=La+Celestina+Los+Cardales"
+            href="https://maps.app.goo.gl/ZrZzyJwvj4Go4gZZ7"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -571,13 +571,13 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <p className="lg">A 20 MINUTOS DE LA CELESTINA</p>
               <h3 className="th">Ibis Pilar</h3>
               <p className="ts" style={{ marginTop: 6 }}>
-                Al escribir o comunicarte para reservar, indicá que es por el casamiento de Sol y Leandro.
+                Al escribir o comunicarte para reservar, indicá que es por el casamiento de Sol y Leandro (noche del 6 de marzo).
               </p>
               <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
                 <a
                   className="btn ghost"
                   style={{ fontSize: '0.74rem', padding: '0.6em 1.2em', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                  href="https://wa.me/5491136181016?text=Hola!%20Consulto%20por%20reserva%20para%20el%20casamiento%20de%20Sol%20y%20Leandro"
+                  href="https://wa.me/5491136181016?text=Hola!%20Consulto%20por%20reserva%20para%20la%20noche%20del%206/3%20por%20el%20casamiento%20de%20Sol%20y%20Leandro"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -612,7 +612,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                 <a
                   className="btn ghost"
                   style={{ fontSize: '0.74rem', padding: '0.6em 1.2em', display: 'inline-flex', alignItems: 'center', gap: 6 }}
-                  href="https://wa.me/5491165475354?text=Hola!%20Consulto%20por%20reserva%20para%20el%20casamiento%20de%20Sol%20y%20Leandro"
+                  href="https://wa.me/5491165475354?text=Hola!%20Consulto%20por%20reserva%20para%20la%20noche%20del%206/3%20por%20el%20casamiento%20de%20Sol%20y%20Leandro"
                   target="_blank"
                   rel="noopener noreferrer"
                 >

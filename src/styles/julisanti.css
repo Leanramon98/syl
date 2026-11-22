@@ -57,6 +57,7 @@ img{max-width:100%;display:block}
 .sec-bordo .eyebrow,.sec-bordo .trip-item .lg,.sec-bordo .dc-item h4{color:var(--gold)}
 .sec-bordo .icon svg,.sec-bordo .tl-ev .ti svg{stroke:var(--cream)}
 .sec-bordo .divider{color:var(--cream)}
+.sec-bordo .divider .mo svg{stroke:var(--gold)}
 .sec-bordo .rule,.sec-bordo .dc-item{border-color:rgba(249,240,234,.35)}
 .sec-bordo .tl-time{color:var(--cream)}
 .sec-bordo .timeline::before{background:linear-gradient(var(--gold),rgba(249,240,234,.25))}
