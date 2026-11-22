@@ -378,10 +378,14 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <h2 className="title reveal d1">Ceremonia y Fiesta</h2>
           <p className="lede reveal d2">Todo sucede en el mismo lugar.</p>
           <div className="timeline reveal d2">
+            <div className="tl-row">
+              <span className="tl-time">17:00</span>
+              <span className="tl-ev">Llegada de invitados</span>
+            </div>
             <div className="tl-row mark">
-              <span className="tl-time">18:00</span>
+              <span className="tl-time">17:30</span>
               <span className="tl-ev">
-                Ceremonia Religiosa
+                Ceremonia
                 <span className="ti">
                   <svg viewBox="0 0 64 64">
                     <ellipse cx="26" cy="39" rx="13" ry="14" />
@@ -392,17 +396,17 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               </span>
             </div>
             <div className="tl-row">
-              <span className="tl-time">19:30</span>
-              <span className="tl-ev">Recepción & Cóctel</span>
+              <span className="tl-time">18:15</span>
+              <span className="tl-ev">Recepción</span>
             </div>
             <div className="tl-row">
-              <span className="tl-time">21:00</span>
-              <span className="tl-ev">Cena & Brindis</span>
+              <span className="tl-time">20:00</span>
+              <span className="tl-ev">Cena</span>
             </div>
             <div className="tl-row mark">
-              <span className="tl-time">23:00</span>
+              <span className="tl-time">21:30</span>
               <span className="tl-ev">
-                ¡Fiesta!
+                ¡A bailar!
                 <span className="ti">
                   <svg viewBox="0 0 64 64">
                     <path d="M32 6v9" />
@@ -420,15 +424,19 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               </span>
             </div>
             <div className="tl-row">
-              <span className="tl-time">02:30</span>
+              <span className="tl-time">22:15</span>
+              <span className="tl-ev">Brindis &amp; Mesa Dulce</span>
+            </div>
+            <div className="tl-row">
+              <span className="tl-time">01:00</span>
               <span className="tl-ev">Fin de fiesta</span>
             </div>
           </div>
-          <p className="place reveal d3">Estancia Las Marías</p>
-          <p className="place-sub reveal d3">Ruta 8 Km 54, Ramal Pilar, Buenos Aires.</p>
+          <p className="place reveal d3">La Celestina</p>
+          <p className="place-sub reveal d3">Los Cardales, Provincia de Buenos Aires.</p>
           <a
             className="btn ghost reveal d3"
-            href="https://maps.google.com/?q=Estancia+Las+Marias"
+            href="https://maps.google.com/?q=La+Celestina+Los+Cardales"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -478,11 +486,11 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <div className="dc">
             <div className="dc-item reveal d2">
               <h4>Ellos</h4>
-              <p>De traje o pantalón de vestir con camisa y saco (sí, corbata opcional pero con elegancia).</p>
+              <p>Traje o pantalón de vestir con camisa.</p>
             </div>
             <div className="dc-item reveal d3">
               <h4>Ellas</h4>
-              <p>Vestido largo o midi elegante. En lo posible evitá el negro y los tonos excesivamente brillantes.</p>
+              <p>Vestido largo o midi elegante.</p>
             </div>
           </div>
           <p className="noblanco reveal d3">Prohibido el blanco, obvio!</p>
@@ -589,7 +597,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           </div>
           <h2 className="title reveal d1">Menú</h2>
           <p className="body reveal d2" style={{ marginTop: 14 }}>
-            El servicio cuenta con opciones pensadas para que cada invitado disfrute plenamente.
+            El servicio cuenta con opciones pensadas para que disfrutes de la mesa.
           </p>
           <p className="body reveal d2" style={{ marginTop: 14 }}>
             Contamos con menú tradicional, vegetariano y celíaco. Recordá informarnos cualquier restricción alimentaria o alergia en el formulario de asistencia.
@@ -663,7 +671,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             </div>
             <div className="gift-row">
               <span className="gk">Titular</span>
-              <span className="gv">Solange &amp; Leandro</span>
+              <span className="gv">Sol &amp; Leandro</span>
             </div>
             <div className="gift-row">
               <span className="gk">Banco</span>
@@ -950,7 +958,12 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
         </div>
         <p className="micro reveal">Ahora sí... nos vemos el 06M</p>
         <p className="love reveal d2">Con amor</p>
-        <img className="seal reveal d2" src="/fixdate/img/seal.webp" alt="Sello de cera" />
+        <img
+          className="seal reveal d2"
+          src="/monogram-clean.png"
+          alt="Sol &amp; Lea"
+          style={{ width: 130, height: 130, objectFit: 'contain' }}
+        />
       </footer>
     </div>
   );
