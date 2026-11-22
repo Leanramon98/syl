@@ -478,14 +478,19 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <div className="dc">
             <div className="dc-item reveal d2">
               <h4>Ellos</h4>
-              <p>Traje o pantalón de vestir con camisa.</p>
+              <p>Traje, o pantalón de vestir con camisa. Corbata o moño suman puntos.</p>
+              <p style={{ marginTop: 6, fontSize: '0.86rem', color: '#8f303b', fontWeight: 600 }}>
+                Prohibido: gris, beige y marrón claro.
+              </p>
             </div>
             <div className="dc-item reveal d3">
               <h4>Ellas</h4>
-              <p>Vestido largo o midi elegante.</p>
+              <p>
+                Vestido, mono o conjunto elegante, del largo en que te sientas cómoda. La ceremonia es en el parque: elegí un calzado con el que puedas caminar tranquila por el pasto y después bailar toda la noche.
+              </p>
             </div>
           </div>
-          <p className="noblanco reveal d3">Prohibido el blanco, obvio!</p>
+          <p className="noblanco reveal d3">Prohibido el blanco</p>
         </section>
 
         {/* ===== HOSPEDAJE (Reemplaza a Traslado) ===== */}
