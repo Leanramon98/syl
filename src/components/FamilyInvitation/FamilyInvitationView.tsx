@@ -525,42 +525,45 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <h2 className="title reveal d1">Hospedaje</h2>
           <div className="trip">
             <div className="trip-item reveal d2">
-              <p className="lg">A 10 minutos de la estancia</p>
-              <h3 className="th">Howard Johnson Resort & Spa</h3>
-              <p className="ts">
-                Habitaciones confortables con desayuno incluido y comodidades ideales para descansar después de la fiesta.
+              <p className="lg">Pilar, Buenos Aires</p>
+              <h3 className="th">Ibis Pilar</h3>
+              <p className="ts" style={{ marginTop: 6 }}>
+                Al escribir o comunicarte para reservar, indicá que es por el casamiento de Sol y Leandro.
               </p>
-              <div style={{ marginTop: 12 }}>
+              <div style={{ marginTop: 14 }}>
                 <a
                   className="btn ghost"
                   style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
-                  href="https://wa.me/5491145678901?text=Hola!%20Consulto%20por%20alojamiento%20para%20el%20casamiento%20de%20Sol%20y%20Lea"
+                  href="https://all.accor.com/hotel/3249/index.es.shtml"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Consultar por WhatsApp
+                  Ver Hotel Ibis
                 </a>
               </div>
             </div>
             <div className="trip-item reveal d3">
-              <p className="lg">A 12 minutos de la estancia</p>
-              <h3 className="th">Cabañas del Pinar</h3>
-              <p className="ts">
-                Opción serena y rodeada de naturaleza, ideal para grupos familiares o amigos que deseen compartir estancia.
+              <p className="lg">Pilar, Buenos Aires</p>
+              <h3 className="th">Viva Suites Pilar</h3>
+              <p className="ts" style={{ marginTop: 6 }}>
+                Al reservar desde su web, ingresá el código: <strong>XXXXXX</strong>.
               </p>
-              <div style={{ marginTop: 12 }}>
+              <div style={{ marginTop: 14 }}>
                 <a
                   className="btn ghost"
                   style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
-                  href="https://wa.me/5491198765432?text=Hola!%20Consulto%20por%20caba%C3%B1as%20para%20el%20casamiento%20de%20Sol%20y%20Lea"
+                  href="https://vivasuites.com.ar/"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Consultar por WhatsApp
+                  Reservar en Viva Suites
                 </a>
               </div>
             </div>
           </div>
+          <p className="body reveal d3" style={{ marginTop: 28, color: '#D7AEA6', fontSize: '0.9rem' }}>
+            También podés buscar otras alternativas en la zona: tanto en Pilar como en Los Cardales hay gran variedad de cabañas, quintas y opciones de alojamiento.
+          </p>
         </section>
 
         {/* ===== MENÚ ===== */}
