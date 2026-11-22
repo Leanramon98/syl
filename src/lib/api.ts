@@ -130,3 +130,23 @@ export async function submitRsvp(payload: SubmitRsvpPayload): Promise<{
     body: JSON.stringify(payload),
   });
 }
+
+export async function submitSongSuggestion(payload: {
+  token: string;
+  name: string;
+  song: string;
+  artist?: string;
+}): Promise<{
+  success: boolean;
+  suggestion?: any;
+  message?: string;
+}> {
+  return fetchJson<{
+    success: boolean;
+    suggestion?: any;
+    message?: string;
+  }>('/api/rsvp/suggest-song', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  });
+}

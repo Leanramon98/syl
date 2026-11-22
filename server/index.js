@@ -11,6 +11,8 @@ import {
   deleteGroup,
   submitRsvp,
   getSummaryMetrics,
+  addSongSuggestion,
+  getSongSuggestions,
 } from './db.js';
 
 const app = express();
@@ -191,6 +193,32 @@ app.post('/api/rsvp/submit', (req, res) => {
   } catch (err) {
     console.error('Error submitting RSVP:', err);
     res.status(500).json({ error: err.message || 'Error al procesar la confirmación' });
+  }
+});
+
+// Public: Submit song suggestion
+app.post('/api/rsvp/suggest-song', (req, res) => {
+  try {
+    const { token, name, song, artist } = req.body || {};
+    if (!song || !song.trim()) {
+      return res.status(400).json({ error: 'Debes indicar el nombre de la canción' });
+    }
+    const suggestion = addSongSuggestion({ token, name, song, artist });
+    res.json({ success: true, suggestion });
+  } catch (err) {
+    console.error('Error adding song suggestion:', err);
+    res.status(500).json({ error: 'Error al registrar la sugerencia musical' });
+  }
+});
+
+// Admin: Get suggested songs
+app.get('/api/admin/songs', requireAdmin, (req, res) => {
+  try {
+    const songs = getSongSuggestions();
+    res.json(songs);
+  } catch (err) {
+    console.error('Error fetching songs:', err);
+    res.status(500).json({ error: 'Error al obtener canciones sugeridas' });
   }
 });
 

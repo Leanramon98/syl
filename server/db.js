@@ -33,6 +33,15 @@ db.exec(`
   );
 
   CREATE INDEX IF NOT EXISTS idx_groups_token ON groups(token);
+
+  CREATE TABLE IF NOT EXISTS song_suggestions (
+    id TEXT PRIMARY KEY,
+    token TEXT DEFAULT '',
+    name TEXT DEFAULT '',
+    song TEXT NOT NULL,
+    artist TEXT DEFAULT '',
+    created_at TEXT NOT NULL
+  );
 `);
 
 // Safe migrations for existing databases
@@ -223,4 +232,26 @@ export function getSummaryMetrics() {
     pending_passes: pendingPasses,
     dietary_list: dietaryList,
   };
+}
+
+/**
+ * Add a song suggestion from a guest
+ */
+export function addSongSuggestion({ token = '', name = '', song = '', artist = '' }) {
+  const id = crypto.randomUUID();
+  const now = new Date().toISOString();
+  const stmt = db.prepare(`
+    INSERT INTO song_suggestions (id, token, name, song, artist, created_at)
+    VALUES (?, ?, ?, ?, ?, ?)
+  `);
+  stmt.run(id, token, name, song.trim(), artist.trim(), now);
+  return { id, token, name, song: song.trim(), artist: artist.trim(), created_at: now };
+}
+
+/**
+ * Get all song suggestions (for admin)
+ */
+export function getSongSuggestions() {
+  const stmt = db.prepare('SELECT * FROM song_suggestions ORDER BY created_at DESC');
+  return stmt.all();
 }
