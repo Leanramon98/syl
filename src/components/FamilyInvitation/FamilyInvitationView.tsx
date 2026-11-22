@@ -486,7 +486,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             <div className="dc-item reveal d3">
               <h4>Ellas</h4>
               <p>
-                Vestido, mono o conjunto elegante, del largo en que te sientas cómoda. La ceremonia es en el parque: elegí un calzado con el que puedas caminar tranquila por el pasto y después bailar toda la noche.
+                Vestido, mono o conjunto elegante, del largo en que te sientas cómoda. Calzado cómodo para caminar por el pasto en la ceremonia y bailar después en la fiesta.
               </p>
             </div>
           </div>
