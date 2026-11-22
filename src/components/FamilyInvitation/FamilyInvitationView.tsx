@@ -28,7 +28,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   }>({ days: 0, hours: 0, minutes: 0, seconds: 0 });
 
   useEffect(() => {
-    const targetDate = new Date('2027-03-06T18:00:00').getTime();
+    const targetDate = new Date('2027-03-06T17:00:00').getTime();
 
     const calculateTime = () => {
       const now = new Date().getTime();
@@ -378,12 +378,8 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <h2 className="title reveal d1">Ceremonia y Fiesta</h2>
           <p className="lede reveal d2">Todo sucede en el mismo lugar.</p>
           <div className="timeline reveal d2">
-            <div className="tl-row">
-              <span className="tl-time">17:00</span>
-              <span className="tl-ev">Llegada de invitados</span>
-            </div>
             <div className="tl-row mark">
-              <span className="tl-time">17:30</span>
+              <span className="tl-time">17:00</span>
               <span className="tl-ev">
                 Ceremonia
                 <span className="ti">
@@ -396,7 +392,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               </span>
             </div>
             <div className="tl-row">
-              <span className="tl-time">18:15</span>
+              <span className="tl-time">18:00</span>
               <span className="tl-ev">Recepción</span>
             </div>
             <div className="tl-row">
@@ -422,10 +418,6 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                   </svg>
                 </span>
               </span>
-            </div>
-            <div className="tl-row">
-              <span className="tl-time">22:15</span>
-              <span className="tl-ev">Brindis &amp; Mesa Dulce</span>
             </div>
             <div className="tl-row">
               <span className="tl-time">01:00</span>
