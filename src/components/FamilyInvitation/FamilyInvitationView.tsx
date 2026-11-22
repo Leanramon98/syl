@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { GuestGroup } from '../../types/wedding';
-import { fetchRsvpByToken, submitRsvp, submitSongSuggestion } from '../../lib/api';
+import { fetchRsvpByToken, submitRsvp } from '../../lib/api';
 import { InteractiveEnvelopeIntro } from '../Envelope/InteractiveEnvelopeIntro';
 
 interface FamilyInvitationViewProps {
@@ -146,38 +146,6 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     setTimeout(() => {
       setCopiedField(null);
     }, 2200);
-  };
-
-  // Music suggestion modal state
-  const [showSongModal, setShowSongModal] = useState(false);
-  const [suggestedSong, setSuggestedSong] = useState('');
-  const [suggestedArtist, setSuggestedArtist] = useState('');
-  const [songSubmitting, setSongSubmitting] = useState(false);
-  const [songSuccess, setSongSuccess] = useState(false);
-  const [songError, setSongError] = useState<string | null>(null);
-
-  const handleSongSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!suggestedSong.trim()) return;
-    setSongSubmitting(true);
-    setSongError(null);
-    try {
-      const res = await submitSongSuggestion({
-        token: group?.token || token,
-        name: group?.name || 'Invitado',
-        song: suggestedSong.trim(),
-        artist: suggestedArtist.trim(),
-      });
-      if (res.success) {
-        setSongSuccess(true);
-      } else {
-        setSongError(res.message || 'No se pudo guardar la sugerencia');
-      }
-    } catch (err: any) {
-      setSongError(err?.message || 'Error al enviar la sugerencia');
-    } finally {
-      setSongSubmitting(false);
-    }
   };
 
   // RSVP Form State
@@ -820,18 +788,18 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <p className="body reveal d2" style={{ marginTop: 14 }}>
             ¡Ayudanos a armar la playlist de la fiesta! Sugerí esa canción que te hace bailar sí o sí y no puede faltar en la pista.
           </p>
-          <button
+          <a
             className="btn reveal d3"
-            type="button"
-            onClick={() => {
-              setShowSongModal(true);
-              setSongSuccess(false);
-              setSongError(null);
-            }}
-            style={{ marginTop: 22 }}
+            href="https://open.spotify.com/playlist/365aITY3rFsPpXZr4QS6c4?si=182654ff8f214fa6&pt=5f3e830f5de11f1fbdf8c5f4d9687c86"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ marginTop: 22, display: 'inline-flex', alignItems: 'center', gap: 8 }}
           >
-            Sugerir tema
-          </button>
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor">
+              <path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/>
+            </svg>
+            Sugerir tema en Spotify
+          </a>
         </section>
 
         {/* ===== GALERÍA ===== */}
@@ -1079,120 +1047,6 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           style={{ width: 130, height: 130, objectFit: 'contain' }}
         />
       </footer>
-
-      {/* ===== MODAL: SUGERIR CANCIÓN ===== */}
-      {showSongModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs"
-          onClick={() => setShowSongModal(false)}
-        >
-          <div
-            className="relative w-full max-w-md bg-[#FAF8F5] rounded-3xl p-6 sm:p-8 border border-[#b4717a]/40 shadow-2xl text-[#3A2A2A]"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <button
-              type="button"
-              onClick={() => setShowSongModal(false)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full flex items-center justify-center text-[#53111B] hover:bg-[#b4717a]/15 transition-colors cursor-pointer"
-              aria-label="Cerrar"
-            >
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" fill="none" strokeWidth="2">
-                <line x1="18" y1="6" x2="6" y2="18" />
-                <line x1="6" y1="6" x2="18" y2="18" />
-              </svg>
-            </button>
-
-            <div className="text-center mb-6">
-              <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[11px] uppercase tracking-widest text-[#b4717a] font-bold block mb-1">
-                Playlist de la fiesta
-              </span>
-              <h3 className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#53111B] font-normal tracking-wide">
-                ¿Qué tema no puede faltar?
-              </h3>
-              <p className="font-['Plus_Jakarta_Sans',sans-serif] text-xs sm:text-sm text-[#73494c] mt-2">
-                Dejanos el tema que querés escuchar en la pista de baile.
-              </p>
-            </div>
-
-            {songSuccess ? (
-              <div className="text-center py-4">
-                <div className="w-12 h-12 rounded-full bg-[#b4717a]/15 text-[#53111B] flex items-center justify-center mx-auto mb-3">
-                  <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" fill="none" strokeWidth="2">
-                    <polyline points="20 6 9 17 4 12" />
-                  </svg>
-                </div>
-                <h4 className="font-['Instrument_Serif',serif] text-2xl text-[#53111B] mb-1">¡Tema recibido!</h4>
-                <p className="text-xs sm:text-sm text-[#73494c] mb-6">
-                  ¡Muchas gracias! Ya lo sumamos a la lista de temas para la fiesta.
-                </p>
-                <div className="flex flex-col gap-2">
-                  <button
-                    type="button"
-                    className="btn"
-                    style={{ fontSize: '0.8rem', padding: '0.6em 1.2em' }}
-                    onClick={() => {
-                      setSuggestedSong('');
-                      setSuggestedArtist('');
-                      setSongSuccess(false);
-                    }}
-                  >
-                    Sugerir otro tema
-                  </button>
-                  <button
-                    type="button"
-                    className="text-xs text-[#53111B] underline mt-2 cursor-pointer"
-                    onClick={() => setShowSongModal(false)}
-                  >
-                    Cerrar
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <form onSubmit={handleSongSubmit} className="flex flex-col gap-4 text-left">
-                <div>
-                  <label className="block text-xs font-semibold text-[#53111B] uppercase tracking-wider mb-1">
-                    Canción o Tema *
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    value={suggestedSong}
-                    onChange={(e) => setSuggestedSong(e.target.value)}
-                    placeholder="Ej: Sarà perché ti amo, Una noche fría..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#b4717a]/40 bg-white text-sm text-[#3A2A2A] focus:outline-none focus:ring-2 focus:ring-[#b4717a]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-semibold text-[#53111B] uppercase tracking-wider mb-1">
-                    Artista o Banda (opcional)
-                  </label>
-                  <input
-                    type="text"
-                    value={suggestedArtist}
-                    onChange={(e) => setSuggestedArtist(e.target.value)}
-                    placeholder="Ej: Ricchi e Poveri, Los Palmeras..."
-                    className="w-full px-4 py-2.5 rounded-xl border border-[#b4717a]/40 bg-white text-sm text-[#3A2A2A] focus:outline-none focus:ring-2 focus:ring-[#b4717a]"
-                  />
-                </div>
-
-                {songError && (
-                  <p className="text-xs text-red-600 text-center">{songError}</p>
-                )}
-
-                <button
-                  type="submit"
-                  disabled={songSubmitting}
-                  className="btn mt-2 justify-center"
-                  style={{ width: '100%' }}
-                >
-                  {songSubmitting ? 'Enviando...' : 'Sugerir tema'}
-                </button>
-              </form>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

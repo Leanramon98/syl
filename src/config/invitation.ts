@@ -313,7 +313,7 @@ export const invitationConfig: InvitationConfig = {
     title: "¿Qué tema no puede faltar?",
     subtitle: "Playlist de la fiesta",
     message: "Armemos la pista de baile juntos. Dejanos las canciones que te hacen bailar sí o sí.",
-    spotifyUrl: "https://open.spotify.com",
+    spotifyUrl: "https://open.spotify.com/playlist/365aITY3rFsPpXZr4QS6c4?si=182654ff8f214fa6&pt=5f3e830f5de11f1fbdf8c5f4d9687c86",
   },
 
   // 6. Galería de fotos nuestras
