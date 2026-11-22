@@ -218,7 +218,7 @@ export const invitationConfig: InvitationConfig = {
   music: {
     src: "/background-music.mp3",
     loop: true,
-    title: "Sarà perché ti amo",
+    title: "Para siempre — Benjamín Amadeo",
   },
 
   // 1. Dónde es: Ceremonia y Fiesta
