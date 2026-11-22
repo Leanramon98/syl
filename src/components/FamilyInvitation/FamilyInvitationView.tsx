@@ -775,7 +775,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                 {rsvpAttending === 'attending'
                   ? `Registramos tu confirmación con ${confirmedGuests} ${
                       confirmedGuests === 1 ? 'pase' : 'pases'
-                    }. Nos vemos el 06M!`
+                    }.`
                   : 'Registramos tu respuesta. Los vamos a extrañar mucho.'}
               </p>
               <button
@@ -913,7 +913,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           </span>
           <span className="ln r" />
         </div>
-        <p className="micro reveal">Ahora sí... nos vemos el 06M</p>
+        <p className="micro reveal">Ahora sí, nos vemos el 6 de marzo!</p>
         <p className="love reveal d2">Con amor</p>
         <img
           className="seal reveal d2"
