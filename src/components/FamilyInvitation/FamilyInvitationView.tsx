@@ -479,7 +479,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <h4>Ellos</h4>
               <p>Traje, o pantalón de vestir con camisa. Corbata o moño suman puntos.</p>
               <p style={{ marginTop: 8, fontSize: '0.86rem', color: '#8f303b', fontWeight: 600 }}>
-                Prohibido: gris, beige y marrón claro.
+                Evitá estos colores:
               </p>
               <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 14, marginTop: 8 }}>
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', color: '#53111B' }}>
