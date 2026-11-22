@@ -529,15 +529,24 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <p className="ts" style={{ marginTop: 6 }}>
                 Al escribir o comunicarte para reservar, indicá que es por el casamiento de Sol y Leandro.
               </p>
-              <div style={{ marginTop: 14 }}>
+              <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
                 <a
                   className="btn ghost"
                   style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
-                  href="https://all.accor.com/hotel/3249/index.es.shtml"
+                  href="https://wa.me/5491136181016?text=Hola!%20Consulto%20por%20reserva%20para%20el%20casamiento%20de%20Sol%20y%20Leandro"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Ver Hotel Ibis
+                  WhatsApp
+                </a>
+                <a
+                  className="btn ghost"
+                  style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
+                  href="https://all.accor.com/hotel/8646/index.es.shtml?utm_campaign=seo+maps&utm_medium=seo+maps&utm_source=google+Maps"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Sitio Web
                 </a>
               </div>
             </div>
@@ -547,15 +556,24 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <p className="ts" style={{ marginTop: 6 }}>
                 Al reservar desde su web, ingresá el código: <strong>XXXXXX</strong>.
               </p>
-              <div style={{ marginTop: 14 }}>
+              <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
                 <a
                   className="btn ghost"
                   style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
-                  href="https://vivasuites.com.ar/"
+                  href="https://wa.me/5491165475354?text=Hola!%20Consulto%20por%20reserva%20para%20el%20casamiento%20de%20Sol%20y%20Leandro"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  Reservar en Viva Suites
+                  WhatsApp
+                </a>
+                <a
+                  className="btn ghost"
+                  style={{ fontSize: '0.74rem', padding: '0.6em 1.2em' }}
+                  href="https://www.casacampuspilar.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Sitio Web
                 </a>
               </div>
             </div>
