@@ -194,10 +194,10 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
         </div>
       )}
 
-      {/* Main Envelope Video Container (Seamless full-bleed stage, NO recuadro) */}
+      {/* Main Envelope Stage */}
       <motion.div
         style={{
-          transformOrigin: '50% 41.5%',
+          transformOrigin: '50% 50%',
         }}
         animate={{
           scale: isZooming ? 1.55 : 1,
@@ -207,92 +207,82 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
           scale: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
           opacity: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
         }}
-        className={`relative w-full h-full flex flex-col items-center justify-center select-none bg-[#F9F0EA] ${
+        className={`relative w-full h-full select-none bg-[#F9F0EA] ${
           isRevealed ? 'pointer-events-none' : !hasStarted ? 'cursor-pointer' : ''
         }`}
         onClick={!hasStarted && !isRevealed ? handleStartPlayback : undefined}
       >
-        {/* Top Plaque: Recipient Info */}
         <AnimatePresence>
           {!hasStarted && !isRevealed && (
             <motion.div
-              key="recipient-plaque"
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10, transition: { duration: 0.25 } }}
+              key="envelope-stage-content"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0, transition: { duration: 0.25 } }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="absolute top-7 sm:top-10 inset-x-6 text-center z-30 pointer-events-none"
+              className="relative z-20 w-full h-full max-w-md mx-auto flex flex-col justify-between items-center py-10 sm:py-16 px-6 pointer-events-none"
             >
-              <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] tracking-[0.25em] uppercase text-[#b4717a] font-semibold drop-shadow-sm block">
-                Invitación para
-              </span>
-              <h3 className="font-['Instrument_Serif',serif] text-3xl sm:text-5xl font-normal text-[#53111B] tracking-wide drop-shadow-sm my-1">
-                {groupName}
-              </h3>
-              <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs text-[#734149] font-light">
-                {maxGuests === 1 ? '(1 pase reservado)' : `(${maxGuests} pases reservados)`}
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Video & Seal wrapper: Locked to the exact aspect ratio 1086/1448 of the envelope video */}
-        <div
-          className="relative w-full flex items-center justify-center"
-          style={{
-            maxWidth: 'min(440px, calc(82dvh * 1086 / 1448))',
-            aspectRatio: '1086 / 1448',
-          }}
-        >
-          {/* Video Player - Supports transparent WebM with feathered fallback for Safari */}
-          <video
-            ref={videoRef}
-            muted
-            playsInline
-            controls={false}
-            preload="auto"
-            onTimeUpdate={handleTimeUpdate}
-            onPlay={() => setIsPlaying(true)}
-            onPause={() => setIsPlaying(false)}
-            onEnded={handleEnded}
-            className="w-full h-full object-contain select-none pointer-events-none"
-            style={{
-              maskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
-              WebkitMaskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
-            }}
-          >
-            <source src="/video/sobre_transparente.webm" type="video/webm; codecs=vp9" />
-            <source src="/video/sobre_compuesto.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-        {/* Bottom CTA and Signoff */}
-        <AnimatePresence>
-          {!hasStarted && !isRevealed && (
-            <motion.div
-              key="bottom-cue"
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12, transition: { duration: 0.25 } }}
-              transition={{ delay: 0.25, duration: 0.5 }}
-              className="absolute bottom-6 sm:bottom-10 inset-x-0 flex flex-col items-center justify-center z-30 pointer-events-auto"
-            >
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleStartPlayback();
-                }}
-                className="group uppercase text-[11px] tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium px-6 py-2.5 rounded-full bg-[#53111B] border border-[#b4717a]/50 shadow-xl flex items-center gap-2 hover:bg-[#681824] hover:shadow-2xl transition-all cursor-pointer"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-[#E5D9C5] animate-pulse" />
-                <span>Tocar para abrir</span>
-              </button>
-
-              <div className="mt-4 sm:mt-5 select-none text-center">
-                <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#53111B] tracking-wide drop-shadow-sm">
-                  Sol <span className="font-['Instrument_Serif',serif] italic text-2xl sm:text-3xl text-[#b4717a]">&</span> Lea
+              {/* Top Plaque: Recipient Info */}
+              <div className="text-center pt-2 sm:pt-4">
+                <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[11px] sm:text-xs tracking-[0.3em] uppercase text-[#b4717a] font-semibold drop-shadow-sm block mb-1">
+                  Invitación para
                 </span>
+                <h3 className="font-['Instrument_Serif',serif] text-4xl sm:text-5xl font-normal text-[#53111B] tracking-wide my-1">
+                  {groupName}
+                </h3>
+                <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs sm:text-sm text-[#734149] font-light">
+                  {maxGuests === 1 ? '(1 pase reservado)' : `(${maxGuests} pases reservados)`}
+                </span>
+              </div>
+
+              {/* Center Envelope Video with generous breathing room */}
+              <div
+                className="w-full flex items-center justify-center my-auto"
+                style={{
+                  maxWidth: 'min(360px, calc(50dvh * 1086 / 1448))',
+                  aspectRatio: '1086 / 1448',
+                }}
+              >
+                <video
+                  ref={videoRef}
+                  muted
+                  playsInline
+                  controls={false}
+                  preload="auto"
+                  onTimeUpdate={handleTimeUpdate}
+                  onPlay={() => setIsPlaying(true)}
+                  onPause={() => setIsPlaying(false)}
+                  onEnded={handleEnded}
+                  className="w-full h-full object-contain select-none pointer-events-none"
+                  style={{
+                    maskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
+                    WebkitMaskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
+                  }}
+                >
+                  <source src="/video/sobre_transparente.webm" type="video/webm; codecs=vp9" />
+                  <source src="/video/sobre_compuesto.mp4" type="video/mp4" />
+                </video>
+              </div>
+
+              {/* Bottom CTA and Signoff */}
+              <div className="flex flex-col items-center justify-center pb-2 sm:pb-4 pointer-events-auto">
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStartPlayback();
+                  }}
+                  className="group uppercase text-xs tracking-[0.28em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium px-8 py-3 rounded-full bg-[#53111B] border border-[#b4717a]/50 shadow-xl flex items-center gap-2.5 hover:bg-[#681824] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                >
+                  <Sparkles className="w-4 h-4 text-[#E5D9C5] animate-pulse" />
+                  <span>Tocar para abrir</span>
+                </button>
+
+                <div className="mt-5 sm:mt-7 select-none text-center">
+                  <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#53111B] tracking-wide drop-shadow-sm">
+                    Sol <span className="font-['Instrument_Serif',serif] italic text-2xl sm:text-3xl text-[#b4717a]">&</span> Lea
+                  </span>
+                </div>
               </div>
             </motion.div>
           )}
