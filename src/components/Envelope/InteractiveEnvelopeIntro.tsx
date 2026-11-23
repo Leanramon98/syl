@@ -39,6 +39,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
     clearTimeouts();
     setIsZooming(true);
     setIsRevealed(true);
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
 
     const pauseTimer = setTimeout(() => {
       if (videoRef.current) {

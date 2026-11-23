@@ -112,7 +112,16 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     }
   };
 
+  // Ensure view starts at the very top
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    if ('scrollRestoration' in history) {
+      history.scrollRestoration = 'manual';
+    }
+  }, []);
+
   const handleEnvelopeComplete = () => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     setShowEnvelope(false);
     handleStartMusic();
   };
