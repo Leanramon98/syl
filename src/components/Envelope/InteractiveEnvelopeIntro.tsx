@@ -216,116 +216,119 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
           scale: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
           opacity: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
         }}
-        className={`relative w-full h-full select-none bg-[#F9F0EA] ${
+        className={`relative w-full h-full flex items-center justify-center select-none bg-[#F9F0EA] ${
           isRevealed ? 'pointer-events-none' : !hasStarted ? 'cursor-pointer' : ''
         }`}
         onClick={!hasStarted && !isRevealed ? handleStartPlayback : undefined}
       >
-        {/* Full-width Center Envelope Video (persists throughout playback) */}
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div
-            className="w-full max-w-[440px] flex items-center justify-center"
-            style={{
-              aspectRatio: '1086 / 1448',
-            }}
-          >
-            <video
-              ref={videoRef}
-              src="/video/sobre_compuesto.mp4"
-              muted
-              playsInline
-              controls={false}
-              preload="auto"
-              onTimeUpdate={handleTimeUpdate}
-              onPlay={() => setIsPlaying(true)}
-              onPause={() => setIsPlaying(false)}
-              onEnded={handleEnded}
-              className="w-full h-full object-contain select-none drop-shadow-sm"
-            />
-          </div>
-        </div>
-
-        {/* Foreground Plaque & CTA (fades out smoothly when opening begins) */}
-        <AnimatePresence>
-          {!hasStarted && !isRevealed && (
-            <motion.div
-              key="envelope-stage-content"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.3 } }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              className="relative z-20 w-full h-full max-w-md mx-auto flex flex-col justify-between items-center py-6 sm:py-10 px-5 pointer-events-none"
+        {/* Responsive Stage Column: centered on desktop (max-w-[440px]), edge-to-edge on mobile */}
+        <div className="relative w-full h-full max-w-[440px] flex flex-col items-center justify-between py-6 sm:py-8 px-4">
+          {/* Envelope Video Layer (persists throughout playback) */}
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div
+              className="w-full flex items-center justify-center"
+              style={{
+                aspectRatio: '1086 / 1448',
+              }}
             >
-              {/* Top Plaque: Botanical emblem + Recipient Info */}
-              <div className="text-center pt-1 sm:pt-3 flex flex-col items-center">
-                {/* Botanical Laurel Motif */}
-                <div className="mb-2 text-[#b4717a] opacity-85">
-                  <svg
-                    viewBox="0 0 44 30"
-                    className="w-8 h-6 mx-auto stroke-current"
-                    fill="none"
-                    strokeWidth="1.2"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+              <video
+                ref={videoRef}
+                src="/video/sobre_compuesto.mp4"
+                muted
+                playsInline
+                controls={false}
+                preload="auto"
+                onTimeUpdate={handleTimeUpdate}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                onEnded={handleEnded}
+                className="w-full h-full object-contain select-none"
+              />
+            </div>
+          </div>
+
+          {/* Foreground Plaque & CTA (fades out smoothly when opening begins) */}
+          <AnimatePresence>
+            {!hasStarted && !isRevealed && (
+              <motion.div
+                key="envelope-stage-content"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0, transition: { duration: 0.3 } }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="relative z-20 w-full h-full flex flex-col justify-between items-center pointer-events-none"
+              >
+                {/* Top Plaque: Botanical emblem + Recipient Info */}
+                <div className="text-center pt-1 sm:pt-3 flex flex-col items-center">
+                  {/* Botanical Laurel Motif */}
+                  <div className="mb-2 text-[#b4717a] opacity-85">
+                    <svg
+                      viewBox="0 0 44 30"
+                      className="w-8 h-6 mx-auto stroke-current"
+                      fill="none"
+                      strokeWidth="1.2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M22 4v22" />
+                      <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                      <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                      <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                      <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                      <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                      <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                      <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+                    </svg>
+                  </div>
+
+                  <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[11px] sm:text-xs tracking-[0.3em] uppercase text-[#b4717a] font-semibold drop-shadow-sm block mb-1">
+                    Invitación para
+                  </span>
+                  <h3 className="font-['Instrument_Serif',serif] text-4xl sm:text-5xl font-normal text-[#53111B] tracking-wide my-1">
+                    {groupName}
+                  </h3>
+                  <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs sm:text-sm text-[#734149] font-light">
+                    {maxGuests === 1 ? '(1 pase reservado)' : `(${maxGuests} pases reservados)`}
+                  </span>
+                </div>
+
+                {/* Center transparent spacer: Allows clicking through to the envelope */}
+                <div className="flex-1 w-full" />
+
+                {/* Bottom CTA, Signoff with Hairline Dividers & Wedding Date */}
+                <div className="w-full flex flex-col items-center justify-center pb-2 sm:pb-4 pointer-events-auto">
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleStartPlayback();
+                    }}
+                    className="w-[82%] max-w-[320px] uppercase text-xs tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium py-3 sm:py-3.5 rounded-full bg-[#53111B] border border-[#b4717a]/40 shadow-xl flex items-center justify-center gap-2 hover:bg-[#681824] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                   >
-                    <path d="M22 4v22" />
-                    <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
-                    <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
-                    <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
-                    <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
-                    <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
-                    <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
-                    <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
-                  </svg>
+                    <Sparkles className="w-3.5 h-3.5 text-[#E5D9C5] animate-pulse" />
+                    <span>Tocar para abrir</span>
+                  </button>
+
+                  {/* Names flanked by thin hairline rules: ─── Sol & Lea ─── */}
+                  <div className="w-full max-w-[320px] flex items-center justify-center gap-3 mt-4 sm:mt-5 select-none">
+                    <span className="flex-1 h-[1px] bg-[#b4717a]/35" />
+                    <span className="font-['Instrument_Serif',serif] text-2xl sm:text-3xl text-[#53111B] tracking-wide whitespace-nowrap">
+                      Sol <span className="font-['Instrument_Serif',serif] italic text-xl sm:text-2xl text-[#b4717a]">&</span> Lea
+                    </span>
+                    <span className="flex-1 h-[1px] bg-[#b4717a]/35" />
+                  </div>
+
+                  {/* Wedding Date in subtle tracked typography */}
+                  <div className="mt-1.5 select-none text-center">
+                    <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] tracking-[0.25em] text-[#734149]/80 uppercase font-light">
+                      06 . 03 . 2027
+                    </span>
+                  </div>
                 </div>
-
-                <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[11px] sm:text-xs tracking-[0.3em] uppercase text-[#b4717a] font-semibold drop-shadow-sm block mb-1">
-                  Invitación para
-                </span>
-                <h3 className="font-['Instrument_Serif',serif] text-4xl sm:text-5xl font-normal text-[#53111B] tracking-wide my-1">
-                  {groupName}
-                </h3>
-                <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs sm:text-sm text-[#734149] font-light">
-                  {maxGuests === 1 ? '(1 pase reservado)' : `(${maxGuests} pases reservados)`}
-                </span>
-              </div>
-
-              {/* Center transparent spacer: Allows clicking through to the envelope */}
-              <div className="flex-1 w-full" />
-
-              {/* Bottom CTA, Signoff with Hairline Dividers & Wedding Date */}
-              <div className="w-full flex flex-col items-center justify-center pb-2 sm:pb-4 pointer-events-auto">
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStartPlayback();
-                  }}
-                  className="w-[82%] max-w-[320px] uppercase text-xs tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium py-3 sm:py-3.5 rounded-full bg-[#53111B] border border-[#b4717a]/40 shadow-xl flex items-center justify-center gap-2 hover:bg-[#681824] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
-                >
-                  <Sparkles className="w-3.5 h-3.5 text-[#E5D9C5] animate-pulse" />
-                  <span>Tocar para abrir</span>
-                </button>
-
-                {/* Names flanked by thin hairline rules: ─── Sol & Lea ─── */}
-                <div className="w-full max-w-[320px] flex items-center justify-center gap-3 mt-4 sm:mt-5 select-none">
-                  <span className="flex-1 h-[1px] bg-[#b4717a]/35" />
-                  <span className="font-['Instrument_Serif',serif] text-2xl sm:text-3xl text-[#53111B] tracking-wide whitespace-nowrap">
-                    Sol <span className="font-['Instrument_Serif',serif] italic text-xl sm:text-2xl text-[#b4717a]">&</span> Lea
-                  </span>
-                  <span className="flex-1 h-[1px] bg-[#b4717a]/35" />
-                </div>
-
-                {/* Wedding Date in subtle tracked typography */}
-                <div className="mt-1.5 select-none text-center">
-                  <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] tracking-[0.25em] text-[#734149]/80 uppercase font-light">
-                    06 . 03 . 2027
-                  </span>
-                </div>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </motion.div>
 
       {/* Soft fade overlay during zoom-in into the invitation */}
