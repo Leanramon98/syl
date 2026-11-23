@@ -83,15 +83,16 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   // Audio control
   const handleStartMusic = useCallback(() => {
     if (audioRef.current && isMusicEnabled) {
-      audioRef.current.currentTime = 0;
-      const playPromise = audioRef.current.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlayingMusic(true))
-          .catch((e) => {
-            console.warn('Audio auto-play prevented:', e);
-            setIsPlayingMusic(false);
-          });
+      if (audioRef.current.paused) {
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => setIsPlayingMusic(true))
+            .catch((e) => {
+              console.warn('Audio auto-play prevented:', e);
+              setIsPlayingMusic(false);
+            });
+        }
       }
     }
   }, [isMusicEnabled]);
@@ -112,6 +113,53 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     }
   };
 
+  // Immediate audio playback on page load + gesture unlock fallback
+  useEffect(() => {
+    let cleanupGestures: (() => void) | null = null;
+
+    const tryStartAudio = () => {
+      if (!audioRef.current || !isMusicEnabled) return;
+
+      const promise = audioRef.current.play();
+      if (promise !== undefined) {
+        promise
+          .then(() => {
+            setIsPlayingMusic(true);
+          })
+          .catch(() => {
+            // Mobile browser policy blocked unprompted autoplay.
+            // Bind first touch/click anywhere on screen to unlock audio immediately.
+            const handleFirstGesture = () => {
+              if (audioRef.current && isMusicEnabled && audioRef.current.paused) {
+                audioRef.current.play()
+                  .then(() => setIsPlayingMusic(true))
+                  .catch(console.warn);
+              }
+              cleanup();
+            };
+
+            const cleanup = () => {
+              window.removeEventListener('touchstart', handleFirstGesture);
+              window.removeEventListener('pointerdown', handleFirstGesture);
+              window.removeEventListener('click', handleFirstGesture);
+            };
+
+            cleanupGestures = cleanup;
+
+            window.addEventListener('touchstart', handleFirstGesture, { once: true, passive: true });
+            window.addEventListener('pointerdown', handleFirstGesture, { once: true, passive: true });
+            window.addEventListener('click', handleFirstGesture, { once: true });
+          });
+      }
+    };
+
+    tryStartAudio();
+
+    return () => {
+      if (cleanupGestures) cleanupGestures();
+    };
+  }, [isMusicEnabled]);
+
   // Ensure view starts at the very top
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
@@ -123,7 +171,9 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   const handleEnvelopeComplete = () => {
     window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
     setShowEnvelope(false);
-    handleStartMusic();
+    if (!isPlayingMusic) {
+      handleStartMusic();
+    }
   };
 
   // Reveal animation on scroll
@@ -258,14 +308,8 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           maxGuests={group.max_guests}
           onOpen={handleStartMusic}
           onComplete={handleEnvelopeComplete}
-          isPlayingMusic={isMusicEnabled}
-          onToggleMusic={() => {
-            setIsMusicEnabled(!isMusicEnabled);
-            if (isPlayingMusic && audioRef.current) {
-              audioRef.current.pause();
-              setIsPlayingMusic(false);
-            }
-          }}
+          isPlayingMusic={isPlayingMusic}
+          onToggleMusic={toggleMusic}
         />
       )}
 

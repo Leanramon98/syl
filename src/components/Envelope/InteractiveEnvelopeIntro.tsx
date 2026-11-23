@@ -195,12 +195,12 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
             {isPlayingMusic ? (
               <>
                 <Volume2 className="w-4 h-4 text-[#53111B]" />
-                <span className="hidden sm:inline">Música lista</span>
+                <span className="hidden sm:inline">Música sonando</span>
               </>
             ) : (
               <>
                 <VolumeX className="w-4 h-4 text-[#9A7B6A]" />
-                <span className="hidden sm:inline">Música silenciada</span>
+                <span className="hidden sm:inline">Activar música</span>
               </>
             )}
           </button>
