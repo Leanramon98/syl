@@ -264,51 +264,6 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
             <source src="/video/sobre_transparente.webm" type="video/webm; codecs=vp9" />
             <source src="/video/sobre_compuesto.mp4" type="video/mp4" />
           </video>
-
-          {/* SEAL PULSING CUE - LOCKED EXACTLY OVER THE WAX SEAL */}
-          <AnimatePresence>
-            {!hasStarted && !isRevealed && (
-              <motion.div
-                key="seal-hotspot"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.5, transition: { duration: 0.25 } }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                className="absolute flex items-center justify-center pointer-events-auto"
-                style={{
-                  left: '49.45%',
-                  top: '62.91%',
-                  width: '20.5%',
-                  aspectRatio: '1 / 1',
-                  transform: 'translate(-50%, -50%)',
-                  zIndex: 35,
-                }}
-              >
-                <button
-                  type="button"
-                  aria-label="Tocar sello para abrir invitación"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStartPlayback();
-                  }}
-                  className="group relative w-full h-full rounded-full flex items-center justify-center cursor-pointer select-none focus:outline-none"
-                >
-                  {/* Subtle ping ring aligned with seal perimeter */}
-                  <span
-                    className="absolute inset-0 rounded-full border-2 border-[#53111B]/60 animate-ping opacity-35 pointer-events-none"
-                    style={{ animationDuration: '2.5s' }}
-                  />
-                  {/* Gentle pulsing aura around the seal perimeter */}
-                  <span
-                    className="absolute -inset-1 rounded-full border border-[#b4717a]/50 animate-pulse pointer-events-none"
-                    style={{ animationDuration: '2s' }}
-                  />
-                  {/* Glass tint highlight */}
-                  <span className="absolute inset-0 rounded-full bg-[#b4717a]/15 border border-[#b4717a]/35 backdrop-blur-[0.5px] shadow-[inset_0_0_12px_rgba(180,113,122,0.3),0_0_14px_rgba(83,17,27,0.15)] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#b4717a]/25 group-active:scale-95 pointer-events-none" />
-                </button>
-              </motion.div>
-            )}
-          </AnimatePresence>
         </div>
 
         {/* Bottom CTA and Signoff */}
