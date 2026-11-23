@@ -239,12 +239,13 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
               <div
                 className="w-full flex items-center justify-center my-auto"
                 style={{
-                  maxWidth: 'min(360px, calc(50dvh * 1086 / 1448))',
+                  maxWidth: 'min(330px, calc(44dvh * 1086 / 1448))',
                   aspectRatio: '1086 / 1448',
                 }}
               >
                 <video
                   ref={videoRef}
+                  src="/video/sobre_compuesto.mp4"
                   muted
                   playsInline
                   controls={false}
@@ -254,14 +255,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                   onPause={() => setIsPlaying(false)}
                   onEnded={handleEnded}
                   className="w-full h-full object-contain select-none pointer-events-none"
-                  style={{
-                    maskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
-                    WebkitMaskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
-                  }}
-                >
-                  <source src="/video/sobre_transparente.webm" type="video/webm; codecs=vp9" />
-                  <source src="/video/sobre_compuesto.mp4" type="video/mp4" />
-                </video>
+                />
               </div>
 
               {/* Bottom CTA and Signoff */}
