@@ -101,35 +101,48 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
     const video = videoRef.current;
     if (!video) return;
 
+    setHasStarted(true);
+
     video.defaultMuted = true;
     video.muted = true;
     video.playsInline = true;
 
-    setHasStarted(true);
-    onOpen(); // Starts background music immediately when envelope starts opening!
-
-    video
-      .play()
-      .then(() => {
-        setIsPlaying(true);
-      })
-      .catch((error) => {
-        console.warn('Video playback error with source tags, fallback to mp4:', error);
-        if (video) {
-          video.src = '/video/sobre_compuesto.mp4';
-          video.load();
-          video
-            .play()
-            .then(() => {
-              setIsPlaying(true);
-            })
-            .catch((err2) => {
-              console.warn('Direct MP4 playback error:', err2);
-              // Fallback transition so user is never blocked
-              triggerZoomTransition();
-            });
-        }
-      });
+    // Start video playback first (muted is allowed on all mobile browsers)
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsPlaying(true);
+          // Start background music once video is rolling
+          try {
+            onOpen();
+          } catch (e) {
+            console.warn('Audio play trigger error:', e);
+          }
+        })
+        .catch((error) => {
+          console.warn('Video playback error with source tags, fallback to mp4:', error);
+          if (video) {
+            video.src = '/video/sobre_compuesto.mp4';
+            video.load();
+            video
+              .play()
+              .then(() => {
+                setIsPlaying(true);
+                try {
+                  onOpen();
+                } catch (e) {
+                  console.warn('Audio trigger error:', e);
+                }
+              })
+              .catch((err2) => {
+                console.warn('Direct MP4 playback error:', err2);
+                // Only skip if playback is genuinely unrecoverable
+                triggerZoomTransition();
+              });
+          }
+        });
+    }
   }, [hasStarted, isRevealed, onOpen, triggerZoomTransition]);
 
   const handleStartPlaybackRef = useRef(handleStartPlayback);
@@ -212,13 +225,38 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
         }`}
         onClick={!hasStarted && !isRevealed ? handleStartPlayback : undefined}
       >
+        {/* Full-width Center Envelope Video (persists throughout playback) */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div
+            className="w-full max-w-[440px] flex items-center justify-center"
+            style={{
+              aspectRatio: '1086 / 1448',
+            }}
+          >
+            <video
+              ref={videoRef}
+              src="/video/sobre_compuesto.mp4"
+              muted
+              playsInline
+              controls={false}
+              preload="auto"
+              onTimeUpdate={handleTimeUpdate}
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={handleEnded}
+              className="w-full h-full object-contain select-none drop-shadow-sm"
+            />
+          </div>
+        </div>
+
+        {/* Foreground Plaque & CTA (fades out smoothly when opening begins) */}
         <AnimatePresence>
           {!hasStarted && !isRevealed && (
             <motion.div
               key="envelope-stage-content"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              exit={{ opacity: 0, transition: { duration: 0.25 } }}
+              exit={{ opacity: 0, transition: { duration: 0.3 } }}
               transition={{ duration: 0.5, delay: 0.1 }}
               className="relative z-20 w-full h-full max-w-md mx-auto flex flex-col justify-between items-center py-6 sm:py-10 px-5 pointer-events-none"
             >
@@ -256,28 +294,8 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                 </span>
               </div>
 
-              {/* Center Envelope Video with balanced responsive proportion */}
-              <div
-                className="w-[88%] flex items-center justify-center my-auto"
-                style={{
-                  maxWidth: 'min(360px, calc(46dvh * 1086 / 1448))',
-                  aspectRatio: '1086 / 1448',
-                }}
-              >
-                <video
-                  ref={videoRef}
-                  src="/video/sobre_compuesto.mp4"
-                  muted
-                  playsInline
-                  controls={false}
-                  preload="auto"
-                  onTimeUpdate={handleTimeUpdate}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                  onEnded={handleEnded}
-                  className="w-full h-full object-contain select-none pointer-events-none drop-shadow-sm"
-                />
-              </div>
+              {/* Center transparent spacer: Allows clicking through to the envelope */}
+              <div className="flex-1 w-full" />
 
               {/* Bottom CTA, Signoff with Hairline Dividers & Wedding Date */}
               <div className="w-full flex flex-col items-center justify-center pb-2 sm:pb-4 pointer-events-auto">
