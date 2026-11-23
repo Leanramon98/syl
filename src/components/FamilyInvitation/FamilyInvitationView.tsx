@@ -277,9 +277,12 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   };
 
   // RSVP Form State
+  type MenuOption = 'Tradicional' | 'Vegetariano' | 'Celíaco';
   const [rsvpAttending, setRsvpAttending] = useState<'attending' | 'declined'>('attending');
   const [confirmedGuests, setConfirmedGuests] = useState<number>(1);
-  const [menuChoice, setMenuChoice] = useState<'Tradicional' | 'Vegetariano' | 'Celíaco'>('Tradicional');
+  const [guestMenus, setGuestMenus] = useState<Array<{ name: string; menu: MenuOption }>>([
+    { name: '', menu: 'Tradicional' },
+  ]);
   const [dietaryNotes, setDietaryNotes] = useState('');
   const [rsvpMessage, setRsvpMessage] = useState('');
   const [rsvpSubmitting, setRsvpSubmitting] = useState(false);
@@ -292,7 +295,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
       if (group.confirmed_count > 0) {
         setConfirmedGuests(group.confirmed_count);
       } else {
-        setConfirmedGuests(Math.min(group.max_guests, 1));
+        setConfirmedGuests(group.max_guests > 1 ? group.max_guests : 1);
       }
       if (group.rsvp_status === 'attending') {
         setRsvpSuccess(true);
@@ -304,6 +307,26 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     }
   }, [group]);
 
+  // Keep per-guest menu list in sync with confirmedGuests and prefilled group.guest_names
+  useEffect(() => {
+    const presetNames = group?.guest_names ?? [];
+    setGuestMenus((prev) =>
+      Array.from({ length: confirmedGuests }, (_, idx) => {
+        if (prev[idx]) return prev[idx];
+        return {
+          name: presetNames[idx] || '',
+          menu: 'Tradicional' as MenuOption,
+        };
+      })
+    );
+  }, [confirmedGuests, group]);
+
+  const updateGuestMenu = (index: number, patch: Partial<{ name: string; menu: MenuOption }>) => {
+    setGuestMenus((prev) =>
+      prev.map((item, idx) => (idx === index ? { ...item, ...patch } : item))
+    );
+  };
+
   const handleRsvpSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!group) return;
@@ -311,8 +334,33 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     setRsvpSubmitting(true);
     setRsvpError(null);
 
+    let menuSummary = '';
+    if (rsvpAttending === 'attending') {
+      if (confirmedGuests === 1) {
+        menuSummary = `Menú: ${guestMenus[0]?.menu || 'Tradicional'}`;
+      } else {
+        const activeGuests = guestMenus.slice(0, confirmedGuests);
+        const counts: Record<MenuOption, number> = {
+          Tradicional: 0,
+          Vegetariano: 0,
+          Celíaco: 0,
+        };
+        activeGuests.forEach((g) => {
+          counts[g.menu] = (counts[g.menu] || 0) + 1;
+        });
+        const totalsStr = (Object.entries(counts) as Array<[MenuOption, number]>)
+          .filter(([, count]) => count > 0)
+          .map(([label, count]) => `${count} ${label}`)
+          .join(', ');
+        const detailStr = activeGuests
+          .map((g, idx) => `${g.name.trim() || `Invitado ${idx + 1}`}: ${g.menu}`)
+          .join('; ');
+        menuSummary = `Menú: ${totalsStr} (${detailStr})`;
+      }
+    }
+
     const dietaryPayload = [
-      `Menú: ${menuChoice}`,
+      menuSummary,
       dietaryNotes ? `Restricciones: ${dietaryNotes}` : '',
       rsvpMessage ? `Mensaje: ${rsvpMessage}` : '',
     ].filter(Boolean).join(' | ');
@@ -1322,24 +1370,74 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                     </fieldset>
                   )}
 
-                  <fieldset className="fld is-required">
-                    <span className="flabel">Menú preferido</span>
-                    <div className="opts">
-                      {(['Tradicional', 'Vegetariano', 'Celíaco'] as const).map((m) => (
-                        <label key={m} className="opt">
-                          <input
-                            type="radio"
-                            name="menu"
-                            value={m}
-                            checked={menuChoice === m}
-                            onChange={() => setMenuChoice(m)}
-                            required
-                          />
-                          <span>{m === 'Tradicional' ? 'Tradicional (con carne)' : m}</span>
-                        </label>
-                      ))}
+                  {confirmedGuests === 1 ? (
+                    <fieldset className="fld is-required">
+                      <span className="flabel">Menú preferido</span>
+                      <div className="opts">
+                        {(['Tradicional', 'Vegetariano', 'Celíaco'] as const).map((m) => (
+                          <label key={m} className="opt">
+                            <input
+                              type="radio"
+                              name="menu-0"
+                              value={m}
+                              checked={(guestMenus[0]?.menu || 'Tradicional') === m}
+                              onChange={() => updateGuestMenu(0, { menu: m })}
+                              required
+                            />
+                            <span>{m === 'Tradicional' ? 'Tradicional (con carne)' : m}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </fieldset>
+                  ) : (
+                    <div className="fld">
+                      <span className="flabel">Menú por asistente</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, marginTop: 4 }}>
+                        {Array.from({ length: confirmedGuests }, (_, idx) => {
+                          const entry = guestMenus[idx] || { name: '', menu: 'Tradicional' as MenuOption };
+                          return (
+                            <div
+                              key={`guest-menu-${idx}`}
+                              style={{
+                                padding: '12px 14px',
+                                borderRadius: 12,
+                                backgroundColor: 'rgba(249,240,234,0.08)',
+                                border: '1px solid rgba(249,240,234,0.22)',
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 10,
+                              }}
+                            >
+                              <div className="person-head">
+                                <span className="ptitle">Invitado {idx + 1}</span>
+                              </div>
+                              <input
+                                type="text"
+                                value={entry.name}
+                                onChange={(e) => updateGuestMenu(idx, { name: e.target.value })}
+                                placeholder={`Nombre del invitado ${idx + 1} (opcional)`}
+                              />
+                              <div className="opts">
+                                {(['Tradicional', 'Vegetariano', 'Celíaco'] as const).map((m) => (
+                                  <label key={m} className="opt">
+                                    <input
+                                      type="radio"
+                                      name={`menu-${idx}`}
+                                      value={m}
+                                      checked={entry.menu === m}
+                                      onChange={() => updateGuestMenu(idx, { menu: m })}
+                                      required
+                                    />
+                                    <span>{m}</span>
+                                  </label>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                  </fieldset>
+                  )}
 
                   <label className="fld">
                     <span className="flabel">Alergias o restricciones (opcional)</span>
