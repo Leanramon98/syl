@@ -582,48 +582,48 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <p style={{ marginTop: 8, fontSize: '0.86rem', color: '#8f303b', fontWeight: 600 }}>
                 Evitá estos colores:
               </p>
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 14, marginTop: 8 }}>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', color: '#53111B' }}>
+              <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 14, marginTop: 8 }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: '#53111B' }}>
                   <span
                     style={{
-                      width: 14,
-                      height: 14,
+                      width: 15,
+                      height: 15,
                       borderRadius: '50%',
-                      backgroundColor: '#9E9E9E',
+                      backgroundColor: '#9aa289',
                       border: '1px solid rgba(83,17,27,0.25)',
                       display: 'inline-block',
                     }}
                     aria-hidden="true"
                   />
-                  <span>Gris</span>
+                  <span>Verde salvia</span>
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', color: '#53111B' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: '#53111B' }}>
                   <span
                     style={{
-                      width: 14,
-                      height: 14,
+                      width: 15,
+                      height: 15,
                       borderRadius: '50%',
-                      backgroundColor: '#E5D9C5',
+                      backgroundColor: '#e2b093',
                       border: '1px solid rgba(83,17,27,0.25)',
                       display: 'inline-block',
                     }}
                     aria-hidden="true"
                   />
-                  <span>Beige</span>
+                  <span>Durazno</span>
                 </div>
-                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: '0.78rem', color: '#53111B' }}>
+                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: '0.78rem', color: '#53111B' }}>
                   <span
                     style={{
-                      width: 14,
-                      height: 14,
+                      width: 15,
+                      height: 15,
                       borderRadius: '50%',
-                      backgroundColor: '#A67B56',
+                      backgroundColor: '#d4c1bd',
                       border: '1px solid rgba(83,17,27,0.25)',
                       display: 'inline-block',
                     }}
                     aria-hidden="true"
                   />
-                  <span>Marrón claro</span>
+                  <span>Rosa pálido</span>
                 </div>
               </div>
             </div>
