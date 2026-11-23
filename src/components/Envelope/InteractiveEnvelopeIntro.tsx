@@ -167,7 +167,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-[#53111B] select-none">
+    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center overflow-hidden bg-[#F9F0EA] select-none">
       {/* Sound Preference Toggle */}
       {!hasStarted && (
         <div className="absolute top-5 right-5 z-40">
@@ -177,16 +177,16 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
               e.stopPropagation();
               onToggleMusic();
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#3d0d15]/80 border border-[#b4717a]/50 shadow-md text-xs font-['Plus_Jakarta_Sans',sans-serif] text-[#F9F0EA] hover:bg-[#3d0d15] transition-all cursor-pointer backdrop-blur-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/80 border border-[#b4717a]/40 shadow-sm text-xs font-['Plus_Jakarta_Sans',sans-serif] text-[#53111B] hover:bg-white transition-all cursor-pointer backdrop-blur-sm"
           >
             {isPlayingMusic ? (
               <>
-                <Volume2 className="w-4 h-4 text-[#b4717a]" />
+                <Volume2 className="w-4 h-4 text-[#53111B]" />
                 <span className="hidden sm:inline">Música lista</span>
               </>
             ) : (
               <>
-                <VolumeX className="w-4 h-4 text-[#D7AEA6]" />
+                <VolumeX className="w-4 h-4 text-[#9A7B6A]" />
                 <span className="hidden sm:inline">Música silenciada</span>
               </>
             )}
@@ -207,7 +207,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
           scale: { duration: 0.7, ease: [0.16, 1, 0.3, 1] },
           opacity: { duration: 0.5, ease: [0.16, 1, 0.3, 1] },
         }}
-        className={`relative w-full h-full flex flex-col items-center justify-center select-none bg-[#53111B] ${
+        className={`relative w-full h-full flex flex-col items-center justify-center select-none bg-[#F9F0EA] ${
           isRevealed ? 'pointer-events-none' : !hasStarted ? 'cursor-pointer' : ''
         }`}
         onClick={!hasStarted && !isRevealed ? handleStartPlayback : undefined}
@@ -226,10 +226,10 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
               <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] tracking-[0.25em] uppercase text-[#b4717a] font-semibold drop-shadow-sm block">
                 Invitación para
               </span>
-              <h3 className="font-['Instrument_Serif',serif] text-3xl sm:text-5xl font-normal text-[#F9F0EA] tracking-wide drop-shadow-md my-1">
+              <h3 className="font-['Instrument_Serif',serif] text-3xl sm:text-5xl font-normal text-[#53111B] tracking-wide drop-shadow-sm my-1">
                 {groupName}
               </h3>
-              <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs text-[#D7AEA6] drop-shadow-sm font-light">
+              <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs text-[#734149] font-light">
                 {maxGuests === 1 ? '(1 pase reservado)' : `(${maxGuests} pases reservados)`}
               </span>
             </motion.div>
@@ -295,7 +295,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                 >
                   {/* Subtle ping ring aligned with seal perimeter */}
                   <span
-                    className="absolute inset-0 rounded-full border-2 border-[#b4717a]/70 animate-ping opacity-40 pointer-events-none"
+                    className="absolute inset-0 rounded-full border-2 border-[#53111B]/60 animate-ping opacity-35 pointer-events-none"
                     style={{ animationDuration: '2.5s' }}
                   />
                   {/* Gentle pulsing aura around the seal perimeter */}
@@ -304,7 +304,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                     style={{ animationDuration: '2s' }}
                   />
                   {/* Glass tint highlight */}
-                  <span className="absolute inset-0 rounded-full bg-[#b4717a]/15 border border-[#b4717a]/35 backdrop-blur-[0.5px] shadow-[inset_0_0_12px_rgba(180,113,122,0.4),0_0_14px_rgba(180,113,122,0.3)] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#b4717a]/25 group-active:scale-95 pointer-events-none" />
+                  <span className="absolute inset-0 rounded-full bg-[#b4717a]/15 border border-[#b4717a]/35 backdrop-blur-[0.5px] shadow-[inset_0_0_12px_rgba(180,113,122,0.3),0_0_14px_rgba(83,17,27,0.15)] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#b4717a]/25 group-active:scale-95 pointer-events-none" />
                 </button>
               </motion.div>
             )}
@@ -328,14 +328,14 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                   e.stopPropagation();
                   handleStartPlayback();
                 }}
-                className="group uppercase text-[11px] tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium px-6 py-2.5 rounded-full bg-[#3d0d15]/90 border border-[#b4717a]/60 shadow-xl backdrop-blur-md flex items-center gap-2 hover:bg-[#4d131d] hover:border-[#b4717a] transition-all cursor-pointer"
+                className="group uppercase text-[11px] tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium px-6 py-2.5 rounded-full bg-[#53111B] border border-[#b4717a]/50 shadow-xl flex items-center gap-2 hover:bg-[#681824] hover:shadow-2xl transition-all cursor-pointer"
               >
-                <Sparkles className="w-3.5 h-3.5 text-[#b4717a] animate-pulse" />
+                <Sparkles className="w-3.5 h-3.5 text-[#E5D9C5] animate-pulse" />
                 <span>Tocar para abrir</span>
               </button>
 
               <div className="mt-4 sm:mt-5 select-none text-center">
-                <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#F9F0EA] tracking-wide drop-shadow-md">
+                <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#53111B] tracking-wide drop-shadow-sm">
                   Sol <span className="font-['Instrument_Serif',serif] italic text-2xl sm:text-3xl text-[#b4717a]">&</span> Lea
                 </span>
               </div>
