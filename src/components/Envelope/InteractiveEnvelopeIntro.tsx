@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, ArrowUp, Volume2, VolumeX } from 'lucide-react';
+import { Sparkles, Volume2, VolumeX } from 'lucide-react';
 
 interface InteractiveEnvelopeIntroProps {
   groupName: string;
@@ -147,11 +147,11 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
     video.load();
   }, []);
 
-  // Auto-open after 3 seconds if user does not touch the screen
+  // Auto-open after 5 seconds if user does not touch the screen
   useEffect(() => {
     const autoOpenTimer = setTimeout(() => {
       handleStartPlaybackRef.current();
-    }, 3000);
+    }, 5000);
 
     return () => clearTimeout(autoOpenTimer);
   }, []);
@@ -209,10 +209,9 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
         }`}
         onClick={!hasStarted && !isRevealed ? handleStartPlayback : undefined}
       >
-        {/* Video Player - composite video with exact #53111B background */}
+        {/* Video Player - Supports transparent WebM for Chrome/Android/Firefox, with feathered fallback for Safari */}
         <video
           ref={videoRef}
-          src="/video/sobre_compuesto.mp4"
           muted
           playsInline
           controls={false}
@@ -222,9 +221,16 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
           onPause={() => setIsPlaying(false)}
           onEnded={handleEnded}
           className="w-full h-full object-contain select-none pointer-events-none"
-        />
+          style={{
+            maskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
+            WebkitMaskImage: 'radial-gradient(ellipse at 50% 60%, black 48%, transparent 72%)',
+          }}
+        >
+          <source src="/video/sobre_transparente.webm" type="video/webm; codecs=vp9" />
+          <source src="/video/sobre_compuesto.mp4" type="video/mp4" />
+        </video>
 
-        {/* Interactive Seal Cue: Translucent pulsing ring & radar target */}
+        {/* Interactive Intro Overlay */}
         <AnimatePresence>
           {!hasStarted && !isRevealed && (
             <motion.div
@@ -233,10 +239,10 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.35, ease: 'easeOut' } }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none"
+              className="absolute inset-0 z-30 flex flex-col justify-between items-center py-10 sm:py-14 px-6 pointer-events-none select-none"
             >
               {/* Personalized Recipient Plaque at top */}
-              <div className="absolute top-10 sm:top-14 inset-x-6 text-center">
+              <div className="text-center">
                 <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] tracking-[0.25em] uppercase text-[#b4717a] font-semibold drop-shadow-sm block">
                   Invitación para
                 </span>
@@ -248,53 +254,28 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                 </span>
               </div>
 
-              {/* Touch target centered over the seal */}
-              <div className="relative flex flex-col items-center justify-center">
-                <button
-                  type="button"
-                  aria-label="Tocar para abrir invitación"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleStartPlayback();
-                  }}
-                  className="group relative w-24 h-24 sm:w-28 sm:h-28 rounded-full flex items-center justify-center cursor-pointer pointer-events-auto select-none focus:outline-none"
-                >
-                  <span
-                    className="absolute inset-0 rounded-full border border-[#b4717a]/60 animate-ping opacity-35 pointer-events-none"
-                    style={{ animationDuration: '2.5s' }}
-                  />
-                  <span
-                    className="absolute -inset-2 rounded-full border border-[#b4717a]/35 animate-pulse pointer-events-none"
-                    style={{ animationDuration: '2s' }}
-                  />
-                  <span className="absolute -inset-2.5 rounded-full bg-[#b4717a]/20 blur-md pointer-events-none animate-pulse" />
-                  <span className="absolute inset-0 rounded-full bg-[#3d0d15]/[0.15] border border-[#b4717a]/45 backdrop-blur-[0.5px] shadow-[inset_0_0_14px_rgba(180,113,122,0.45),0_0_16px_rgba(83,17,27,0.4)] transition-all duration-300 group-hover:scale-105 group-hover:bg-[#3d0d15]/[0.25] group-active:scale-95 pointer-events-none" />
-                </button>
-              </div>
-
-              {/* Bouncing Arrow, "Tocar para abrir" Pill & Sol & Lea */}
+              {/* Bottom Cue & Signoff */}
               <motion.div
                 initial={{ opacity: 0, y: 12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25, duration: 0.5 }}
-                className="absolute bottom-10 sm:bottom-14 inset-x-0 flex flex-col items-center justify-center pointer-events-none z-30"
+                className="flex flex-col items-center justify-center pointer-events-auto"
               >
-                <motion.div
-                  animate={{ y: [0, -6, 0] }}
-                  transition={{ repeat: Infinity, duration: 1.6, ease: 'easeInOut' }}
-                  className="flex items-center justify-center mb-1.5"
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleStartPlayback();
+                  }}
+                  className="group uppercase text-[11px] tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium px-6 py-2.5 rounded-full bg-[#3d0d15]/90 border border-[#b4717a]/60 shadow-xl backdrop-blur-md flex items-center gap-2 hover:bg-[#4d131d] hover:border-[#b4717a] transition-all cursor-pointer"
                 >
-                  <ArrowUp className="w-5 h-5 text-[#b4717a] drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]" />
-                </motion.div>
-
-                <div className="uppercase text-[10px] sm:text-[11px] tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium px-4 py-1.5 rounded-full bg-[#3d0d15]/75 border border-[#b4717a]/50 shadow-xl backdrop-blur-md flex items-center gap-1.5 select-none drop-shadow-sm">
-                  <Sparkles className="w-3 h-3 text-[#b4717a] animate-pulse" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#b4717a] animate-pulse" />
                   <span>Tocar para abrir</span>
-                </div>
+                </button>
 
-                <div className="mt-4 select-none">
-                  <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#F9F0EA] drop-shadow-md">
-                    Sol <span className="font-['Instrument_Serif',serif] italic text-2xl text-[#b4717a]">&</span> Lea
+                <div className="mt-5 sm:mt-6 select-none text-center">
+                  <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#F9F0EA] tracking-wide drop-shadow-md">
+                    Sol <span className="font-['Instrument_Serif',serif] italic text-2xl sm:text-3xl text-[#b4717a]">&</span> Lea
                   </span>
                 </div>
               </motion.div>
