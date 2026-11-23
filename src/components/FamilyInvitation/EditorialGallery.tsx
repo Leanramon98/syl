@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
-import { X, ChevronLeft, ChevronRight, Grid } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight, Grid, PlayCircle } from 'lucide-react';
 
 export interface GalleryPhoto {
   src: string;
@@ -9,15 +9,30 @@ export interface GalleryPhoto {
 
 interface EditorialGalleryProps {
   photos: GalleryPhoto[];
+  onVideoOpen?: () => void;
+  onVideoClose?: () => void;
 }
 
-export const EditorialGallery: React.FC<EditorialGalleryProps> = ({ photos }) => {
+export const EditorialGallery: React.FC<EditorialGalleryProps> = ({
+  photos,
+  onVideoOpen,
+  onVideoClose,
+}) => {
   const [isGridOpen, setIsGridOpen] = useState(false);
+  const [isVideoOpen, setIsVideoOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const touchStartX = useRef<number | null>(null);
 
   const closeLightbox = useCallback(() => setLightboxIndex(null), []);
   const closeGrid = useCallback(() => setIsGridOpen(false), []);
+  const openVideo = useCallback(() => {
+    setIsVideoOpen(true);
+    onVideoOpen?.();
+  }, [onVideoOpen]);
+  const closeVideo = useCallback(() => {
+    setIsVideoOpen(false);
+    onVideoClose?.();
+  }, [onVideoClose]);
 
   const showPrev = useCallback(() => {
     setLightboxIndex((prev) => {
@@ -33,31 +48,33 @@ export const EditorialGallery: React.FC<EditorialGalleryProps> = ({ photos }) =>
     });
   }, [photos.length]);
 
-  // Lock body scroll when either modal or lightbox is open
+  // Lock body scroll when any modal or lightbox is open
   useEffect(() => {
-    if (isGridOpen || lightboxIndex !== null) {
+    if (isGridOpen || isVideoOpen || lightboxIndex !== null) {
       const prevOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       return () => {
         document.body.style.overflow = prevOverflow;
       };
     }
-  }, [isGridOpen, lightboxIndex]);
+  }, [isGridOpen, isVideoOpen, lightboxIndex]);
 
-  // Keyboard navigation for lightbox & grid modal
+  // Keyboard navigation for lightbox, video modal & grid modal
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (lightboxIndex !== null) {
         if (e.key === 'Escape') closeLightbox();
         if (e.key === 'ArrowLeft') showPrev();
         if (e.key === 'ArrowRight') showNext();
+      } else if (isVideoOpen && e.key === 'Escape') {
+        closeVideo();
       } else if (isGridOpen && e.key === 'Escape') {
         closeGrid();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [lightboxIndex, isGridOpen, closeLightbox, closeGrid, showPrev, showNext]);
+  }, [lightboxIndex, isVideoOpen, isGridOpen, closeLightbox, closeVideo, closeGrid, showPrev, showNext]);
 
   const handleTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX;
@@ -113,8 +130,11 @@ export const EditorialGallery: React.FC<EditorialGalleryProps> = ({ photos }) =>
 
       <p className="cue reveal d3">Deslizá para ver más</p>
 
-      {/* "Ver todas" Button */}
-      <div className="reveal d3" style={{ marginTop: 18 }}>
+      {/* "Ver todas" + "Save the Date" Buttons */}
+      <div
+        className="reveal d3"
+        style={{ marginTop: 18, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}
+      >
         <button
           type="button"
           className="btn ghost"
@@ -124,7 +144,60 @@ export const EditorialGallery: React.FC<EditorialGalleryProps> = ({ photos }) =>
           <Grid className="w-4 h-4" />
           <span>Ver todas ({photos.length})</span>
         </button>
+
+        <button
+          type="button"
+          className="btn"
+          onClick={openVideo}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+        >
+          <PlayCircle className="w-4 h-4" />
+          <span>Save the Date</span>
+        </button>
       </div>
+
+      {/* Save the Date Full-Screen Video Modal (portaled to body) */}
+      {isVideoOpen &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[9995] w-screen h-[100dvh] bg-[#140A0C]/96 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-8"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Video Save the Date"
+            onClick={closeVideo}
+          >
+            <div
+              className="absolute top-0 inset-x-0 flex items-center justify-between px-4 sm:px-8 py-4 z-10"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <span className="font-['Instrument_Serif',serif] text-xl sm:text-2xl text-[#F9F0EA]">
+                Sol &amp; Lea — Save the Date
+              </span>
+              <button
+                type="button"
+                onClick={closeVideo}
+                className="w-10 h-10 rounded-full bg-white/15 hover:bg-white/25 text-[#F9F0EA] flex items-center justify-center transition-colors cursor-pointer"
+                aria-label="Cerrar video"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div
+              className="w-full max-w-4xl flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video
+                src="/save-the-date.mp4"
+                controls
+                autoPlay
+                playsInline
+                className="w-full max-h-[82dvh] rounded-xl shadow-2xl bg-black"
+              />
+            </div>
+          </div>,
+          document.body
+        )}
 
       {/* Airbnb-style Asymmetric Grid Full-Screen Overlay (portaled to body) */}
       {isGridOpen &&

@@ -226,9 +226,28 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     };
   }, [showEnvelope, loading]);
 
-  // Regalos accordion state
+  // Regalos accordion & currency switch state
   const [showGiftDetails, setShowGiftDetails] = useState(false);
+  const [giftCurrency, setGiftCurrency] = useState<'ARS' | 'USD'>('ARS');
   const [copiedField, setCopiedField] = useState<'alias' | 'cbu' | null>(null);
+  const wasPlayingBeforeVideoRef = useRef(false);
+
+  const handleVideoOpen = useCallback(() => {
+    if (audioRef.current && !audioRef.current.paused) {
+      wasPlayingBeforeVideoRef.current = true;
+      audioRef.current.pause();
+      setIsPlayingMusic(false);
+    } else {
+      wasPlayingBeforeVideoRef.current = false;
+    }
+  }, []);
+
+  const handleVideoClose = useCallback(() => {
+    if (wasPlayingBeforeVideoRef.current && audioRef.current && isMusicEnabled) {
+      audioRef.current.play().then(() => setIsPlayingMusic(true)).catch(() => {});
+    }
+    wasPlayingBeforeVideoRef.current = false;
+  }, [isMusicEnabled]);
 
   const handleCopy = (text: string, field: 'alias' | 'cbu') => {
     navigator.clipboard.writeText(text);
@@ -512,8 +531,14 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <span className="tl-ev">Fin de fiesta</span>
             </div>
           </div>
+          <p className="body reveal d2" style={{ marginTop: 10, marginBottom: 24, fontSize: '0.9rem', color: '#E4C3BB' }}>
+            La ceremonia comienza <strong>puntual a las 17:00 hs</strong>. Por favor llegá con tiempo para acompañarnos desde el primer minuto.
+          </p>
           <p className="place reveal d3">La Celestina</p>
-          <p className="place-sub reveal d3">Los Cardales, Provincia de Buenos Aires.</p>
+          <p className="place-sub reveal d3" style={{ marginBottom: 8 }}>Los Cardales, Provincia de Buenos Aires.</p>
+          <p className="body reveal d3" style={{ fontSize: '0.86rem', color: '#D7AEA6', marginBottom: 22 }}>
+            El predio cuenta con estacionamiento privado con seguridad.
+          </p>
           <a
             className="btn ghost reveal d3"
             href="https://maps.app.goo.gl/ZrZzyJwvj4Go4gZZ7"
@@ -835,38 +860,129 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             {showGiftDetails ? 'Ocultar datos para regalar' : 'Ver datos para regalar'}
           </button>
           <div className={`gift-card ${showGiftDetails ? '' : 'is-hidden'}`} id="giftCard">
-            <div className="gift-row">
-              <span className="gk">Alias</span>
-              <span className="gv">SOL.Y.LEA.BODA</span>
+            {/* Currency Switch: ARS / USD */}
+            <div
+              role="tablist"
+              aria-label="Moneda de cuenta bancaria"
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 1fr',
+                gap: 6,
+                padding: 4,
+                borderRadius: 999,
+                backgroundColor: 'rgba(83,17,27,0.08)',
+                marginBottom: 14,
+              }}
+            >
               <button
-                className={`gcopy ${copiedField === 'alias' ? 'done' : ''}`}
                 type="button"
-                onClick={() => handleCopy('SOL.Y.LEA.BODA', 'alias')}
-                aria-label="Copiar alias"
+                role="tab"
+                aria-selected={giftCurrency === 'ARS'}
+                onClick={() => {
+                  setGiftCurrency('ARS');
+                  setCopiedField(null);
+                }}
+                style={{
+                  border: 0,
+                  borderRadius: 999,
+                  padding: '8px 12px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backgroundColor: giftCurrency === 'ARS' ? '#53111B' : 'transparent',
+                  color: giftCurrency === 'ARS' ? '#F9F0EA' : '#53111B',
+                }}
               >
-                {copiedField === 'alias' ? 'Copiado!' : 'Copiar'}
+                Pesos (ARS)
+              </button>
+              <button
+                type="button"
+                role="tab"
+                aria-selected={giftCurrency === 'USD'}
+                onClick={() => {
+                  setGiftCurrency('USD');
+                  setCopiedField(null);
+                }}
+                style={{
+                  border: 0,
+                  borderRadius: 999,
+                  padding: '8px 12px',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  letterSpacing: '0.12em',
+                  textTransform: 'uppercase',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease',
+                  backgroundColor: giftCurrency === 'USD' ? '#53111B' : 'transparent',
+                  color: giftCurrency === 'USD' ? '#F9F0EA' : '#53111B',
+                }}
+              >
+                Dólares (USD)
               </button>
             </div>
-            <div className="gift-row">
-              <span className="gk">CBU</span>
-              <span className="gv">0070123430004567890123</span>
-              <button
-                className={`gcopy ${copiedField === 'cbu' ? 'done' : ''}`}
-                type="button"
-                onClick={() => handleCopy('0070123430004567890123', 'cbu')}
-                aria-label="Copiar CBU"
-              >
-                {copiedField === 'cbu' ? 'Copiado!' : 'Copiar'}
-              </button>
-            </div>
-            <div className="gift-row">
-              <span className="gk">Titular</span>
-              <span className="gv">Sol &amp; Leandro</span>
-            </div>
-            <div className="gift-row">
-              <span className="gk">Banco</span>
-              <span className="gv">Banco Galicia</span>
-            </div>
+
+            {giftCurrency === 'ARS' ? (
+              <>
+                <div className="gift-row">
+                  <span className="gk">Alias</span>
+                  <span className="gv">BODA.SOL.LEA</span>
+                  <button
+                    className={`gcopy ${copiedField === 'alias' ? 'done' : ''}`}
+                    type="button"
+                    onClick={() => handleCopy('BODA.SOL.LEA', 'alias')}
+                    aria-label="Copiar alias en pesos"
+                  >
+                    {copiedField === 'alias' ? 'Copiado!' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">CBU</span>
+                  <span className="gv">0070054230004074800545</span>
+                  <button
+                    className={`gcopy ${copiedField === 'cbu' ? 'done' : ''}`}
+                    type="button"
+                    onClick={() => handleCopy('0070054230004074800545', 'cbu')}
+                    aria-label="Copiar CBU"
+                  >
+                    {copiedField === 'cbu' ? 'Copiado!' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Titular</span>
+                  <span className="gv">Leandro Gabriel Ramon</span>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Banco</span>
+                  <span className="gv">Banco Galicia</span>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="gift-row">
+                  <span className="gk">Alias</span>
+                  <span className="gv">BODA.SOL.LEA.USD</span>
+                  <button
+                    className={`gcopy ${copiedField === 'alias' ? 'done' : ''}`}
+                    type="button"
+                    onClick={() => handleCopy('BODA.SOL.LEA.USD', 'alias')}
+                    aria-label="Copiar alias en dólares"
+                  >
+                    {copiedField === 'alias' ? 'Copiado!' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Titular</span>
+                  <span className="gv">Leandro Gabriel Ramon</span>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Banco</span>
+                  <span className="gv">Brubank</span>
+                </div>
+              </>
+            )}
           </div>
         </section>
 
@@ -892,7 +1008,11 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           <h2 className="title reveal d1" style={{ fontSize: 'clamp(1.9rem,7vw,2.5rem)', marginBottom: 6 }}>
             Galería
           </h2>
-          <EditorialGallery photos={GALLERY_PHOTOS} />
+          <EditorialGallery
+            photos={GALLERY_PHOTOS}
+            onVideoOpen={handleVideoOpen}
+            onVideoClose={handleVideoClose}
+          />
         </section>
 
         {/* ===== MÚSICA ===== */}
