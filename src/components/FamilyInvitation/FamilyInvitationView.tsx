@@ -82,13 +82,17 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
 
   // Audio control
   const handleStartMusic = useCallback(() => {
-    if (isMusicEnabled && audioRef.current) {
-      audioRef.current.play()
-        .then(() => setIsPlayingMusic(true))
-        .catch((e) => {
-          console.warn('Audio auto-play prevented:', e);
-          setIsPlayingMusic(false);
-        });
+    if (audioRef.current && isMusicEnabled) {
+      audioRef.current.currentTime = 0;
+      const playPromise = audioRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlayingMusic(true))
+          .catch((e) => {
+            console.warn('Audio auto-play prevented:', e);
+            setIsPlayingMusic(false);
+          });
+      }
     }
   }, [isMusicEnabled]);
 
