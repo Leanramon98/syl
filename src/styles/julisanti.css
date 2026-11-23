@@ -204,14 +204,15 @@ img{max-width:100%;display:block}
 .trip-item .th{font-family:var(--serif);font-size:1.5rem;color:var(--bordo);line-height:1.1}
 .trip-item .ts{font-size:.92rem;color:var(--ink)}
 
-/* ===== Fixed Photo Pairs (Editorial Diptychs on Signature Rose) ===== */
-.photo-pair-section{padding-block:44px 44px}
-.photo-pair-section::before{background-color:var(--gold);background-blend-mode:soft-light}
+/* ===== Fixed Photo Pairs (Editorial Diptychs on #d4c1bd) ===== */
+.section.photo-pair-section{padding-block:48px 48px}
+.section.photo-pair-section::before{background-color:#d4c1bd;background-blend-mode:soft-light}
+.section.photo-pair-section + .section{padding-top:72px}
 .photo-pair{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
   width:min(94vw,880px);margin-left:calc(50% - min(47vw,440px))}
 .photo-pair-card{position:relative;aspect-ratio:3/4;border-radius:10px;overflow:hidden;
-  background:linear-gradient(160deg,#c98d95,#9e5b64);
-  box-shadow:0 18px 34px -18px rgba(59,20,28,.55);border:0;padding:0;display:block;width:100%}
+  background:linear-gradient(160deg,#dfd0cc,#c5afa9);
+  box-shadow:0 18px 34px -18px rgba(59,20,28,.45);border:0;padding:0;display:block;width:100%}
 .photo-pair-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
   transition:transform .45s cubic-bezier(.2,.7,.2,1)}
 .photo-pair-card:hover img{transform:scale(1.03)}
