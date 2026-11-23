@@ -707,7 +707,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               <p className="lg">A 22 MINUTOS DE LA CELESTINA</p>
               <h3 className="th">Viva Suites Pilar</h3>
               <p className="ts" style={{ marginTop: 6 }}>
-                Al reservar desde su web, ingresá el código: <strong>XXXXXX</strong>.
+                Al reservar desde su web, ingresá el código: <strong>BODA10</strong>.
               </p>
               <div style={{ marginTop: 14, display: 'flex', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
                 <a
