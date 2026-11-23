@@ -174,16 +174,16 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
               e.stopPropagation();
               onToggleMusic();
             }}
-            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/90 border border-white/60 shadow-md text-xs font-['Rubik',sans-serif] text-[#732a2d] hover:bg-white transition-all cursor-pointer backdrop-blur-sm"
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-[#FAF8F5]/90 border border-[#b4717a]/40 shadow-md text-xs font-['Plus_Jakarta_Sans',sans-serif] text-[#53111B] hover:bg-[#FAF8F5] transition-all cursor-pointer backdrop-blur-sm"
           >
             {isPlayingMusic ? (
               <>
-                <Volume2 className="w-4 h-4 text-[#732a2d]" />
+                <Volume2 className="w-4 h-4 text-[#53111B]" />
                 <span className="hidden sm:inline">Música lista</span>
               </>
             ) : (
               <>
-                <VolumeX className="w-4 h-4 text-[#73494c]" />
+                <VolumeX className="w-4 h-4 text-[#9A7B6A]" />
                 <span className="hidden sm:inline">Música silenciada</span>
               </>
             )}
@@ -237,13 +237,13 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
             >
               {/* Personalized Recipient Plaque at top */}
               <div className="absolute top-10 sm:top-14 inset-x-6 text-center">
-                <span className="font-['Rubik',sans-serif] text-[10px] tracking-[0.25em] uppercase text-white/95 font-semibold drop-shadow-sm block">
+                <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] tracking-[0.25em] uppercase text-white/95 font-semibold drop-shadow-sm block">
                   Invitación para
                 </span>
-                <h3 className="font-['Raleway',sans-serif] text-lg sm:text-2xl font-bold text-white tracking-wide uppercase drop-shadow-md my-1">
+                <h3 className="font-['Instrument_Serif',serif] text-2xl sm:text-4xl font-normal text-white tracking-wide drop-shadow-md my-1">
                   {groupName}
                 </h3>
-                <span className="font-['Rubik',sans-serif] text-xs text-white/90 drop-shadow-sm font-light">
+                <span className="font-['Plus_Jakarta_Sans',sans-serif] text-xs text-white/90 drop-shadow-sm font-light">
                   {maxGuests === 1 ? '(1 pase reservado)' : `(${maxGuests} pases reservados)`}
                 </span>
               </div>
@@ -287,14 +287,14 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                   <ArrowUp className="w-5 h-5 text-white/95 drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]" />
                 </motion.div>
 
-                <div className="uppercase text-[10px] sm:text-[11px] tracking-[0.25em] text-white/95 font-sans font-medium px-4 py-1.5 rounded-full bg-white/25 border border-white/50 shadow-xl backdrop-blur-md flex items-center gap-1.5 select-none drop-shadow-sm">
-                  <Sparkles className="w-3 h-3 text-white/90 animate-pulse" />
+                <div className="uppercase text-[10px] sm:text-[11px] tracking-[0.25em] text-white/95 font-['Plus_Jakarta_Sans',sans-serif] font-medium px-4 py-1.5 rounded-full bg-black/20 border border-white/40 shadow-xl backdrop-blur-md flex items-center gap-1.5 select-none drop-shadow-sm">
+                  <Sparkles className="w-3 h-3 text-[#E5D9C5] animate-pulse" />
                   <span>Tocar para abrir</span>
                 </div>
 
                 <div className="mt-5 select-none">
-                  <span className="font-['Parisienne',cursive] text-2xl sm:text-3xl text-white/90 drop-shadow-sm">
-                    Sol <span className="font-['Raleway'] text-lg text-white/80 font-light">&</span> Lea
+                  <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-white/95 drop-shadow-md">
+                    Sol <span className="font-['Instrument_Serif',serif] italic text-2xl text-[#E5D9C5]">&</span> Lea
                   </span>
                 </div>
               </motion.div>
