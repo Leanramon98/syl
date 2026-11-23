@@ -2,6 +2,20 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import type { GuestGroup } from '../../types/wedding';
 import { fetchRsvpByToken, submitRsvp } from '../../lib/api';
 import { InteractiveEnvelopeIntro } from '../Envelope/InteractiveEnvelopeIntro';
+import { EditorialGallery, type GalleryPhoto } from './EditorialGallery';
+
+const GALLERY_PHOTOS: GalleryPhoto[] = [
+  { src: '/photos/portada.jpg', alt: 'Sol y Lea en la playa' },
+  { src: '/photos/fija-1.jpg', alt: 'Sol y Lea mirando el mar' },
+  { src: '/photos/fija-2.jpg', alt: 'Sol y Lea en la costa' },
+  { src: '/photos/fija-3.jpg', alt: 'Sol y Lea caminando de la mano' },
+  { src: '/photos/fija-4.jpg', alt: 'Sol y Lea sonriendo en la arena' },
+  { src: '/photos/cierre-manos.jpg', alt: 'Sol y Lea de la mano' },
+  { src: '/fixdate/img/img_1.webp', alt: 'Sol y Lea' },
+  { src: '/fixdate/img/img_4.webp', alt: 'Sol y Lea' },
+  { src: '/fixdate/img/img_5.webp', alt: 'Sol y Lea' },
+  { src: '/fixdate/img/img_6.webp', alt: 'Sol y Lea' },
+];
 
 interface FamilyInvitationViewProps {
   token: string;
@@ -514,6 +528,18 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           </a>
         </section>
 
+        {/* ===== FOTOS FIJAS 1 Y 2 (entre Ceremonia y Elegante) ===== */}
+        <section className="section photo-pair-section" aria-label="Fotos de Sol y Lea">
+          <div className="photo-pair reveal">
+            <div className="photo-pair-card">
+              <img src="/photos/fija-1.jpg" alt="Sol y Lea mirando el mar" loading="lazy" />
+            </div>
+            <div className="photo-pair-card">
+              <img src="/photos/fija-2.jpg" alt="Sol y Lea en la costa" loading="lazy" />
+            </div>
+          </div>
+        </section>
+
         {/* ===== DRESS CODE ===== */}
         <section className="section" id="dresscode">
           <div className="divider reveal" aria-hidden="true">
@@ -718,6 +744,18 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           </p>
         </section>
 
+        {/* ===== FOTOS FIJAS 3 Y 4 (entre Hospedaje y Menú) ===== */}
+        <section className="section photo-pair-section" aria-label="Fotos de Sol y Lea">
+          <div className="photo-pair reveal">
+            <div className="photo-pair-card">
+              <img src="/photos/fija-3.jpg" alt="Sol y Lea caminando de la mano" loading="lazy" />
+            </div>
+            <div className="photo-pair-card">
+              <img src="/photos/fija-4.jpg" alt="Sol y Lea sonriendo en la arena" loading="lazy" />
+            </div>
+          </div>
+        </section>
+
         {/* ===== MENÚ ===== */}
         <section className="section" id="menu">
           <div className="divider reveal" aria-hidden="true">
@@ -832,6 +870,31 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           </div>
         </section>
 
+        {/* ===== GALERÍA ===== */}
+        <section className="section gallery" id="galeria">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
+          </div>
+          <p className="micro reveal">Un poco de nosotros.</p>
+          <h2 className="title reveal d1" style={{ fontSize: 'clamp(1.9rem,7vw,2.5rem)', marginBottom: 6 }}>
+            Galería
+          </h2>
+          <EditorialGallery photos={GALLERY_PHOTOS} />
+        </section>
+
         {/* ===== MÚSICA ===== */}
         <section className="section" id="musica">
           <div className="divider reveal" aria-hidden="true">
@@ -875,51 +938,6 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             </svg>
             Sugerir tema en Spotify
           </a>
-        </section>
-
-        {/* ===== GALERÍA ===== */}
-        <section className="section gallery" id="galeria">
-          <div className="divider reveal" aria-hidden="true">
-            <span className="ln" />
-            <span className="mo">
-              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M22 4v22" />
-                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
-                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
-                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
-                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
-                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
-                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
-                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
-              </svg>
-            </span>
-            <span className="ln r" />
-          </div>
-          <p className="micro reveal">Un poco de nosotros.</p>
-          <h2 className="title reveal d1" style={{ fontSize: 'clamp(1.9rem,7vw,2.5rem)', marginBottom: 6 }}>
-            Galería
-          </h2>
-          <div className="carousel reveal d2">
-            <div className="slide">
-              <img src="/fixdate/img/img_1.webp" alt="Sol y Lea" loading="lazy" />
-            </div>
-            <div className="slide">
-              <img src="/fixdate/img/img_4.webp" alt="Sol y Lea" loading="lazy" />
-            </div>
-            <div className="slide">
-              <img src="/fixdate/img/img_5.webp" alt="Sol y Lea" loading="lazy" />
-            </div>
-            <div className="slide">
-              <img src="/fixdate/img/img_6.webp" alt="Sol y Lea" loading="lazy" />
-            </div>
-            <div className="slide">
-              <img src="/fixdate/img/img_7.webp" alt="Sol y Lea" loading="lazy" />
-            </div>
-            <div className="slide">
-              <img src="/fixdate/img/img_8.webp" alt="Sol y Lea" loading="lazy" />
-            </div>
-          </div>
-          <p className="cue reveal d3">Deslizá para ver más</p>
         </section>
 
 
