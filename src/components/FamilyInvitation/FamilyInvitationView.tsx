@@ -5,16 +5,34 @@ import { InteractiveEnvelopeIntro } from '../Envelope/InteractiveEnvelopeIntro';
 import { EditorialGallery, type GalleryPhoto } from './EditorialGallery';
 
 const GALLERY_PHOTOS: GalleryPhoto[] = [
-  { src: '/photos/portada.jpg', alt: 'Sol y Lea en la playa' },
+  { src: '/photos/galeria/dsc-6774.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6776.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6781.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6788.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6823.jpg', alt: 'Sol y Lea' },
   { src: '/photos/fija-1.jpg', alt: 'Sol y Lea mirando el mar' },
+  { src: '/photos/galeria/dsc-6836.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6846.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6851.jpg', alt: 'Sol y Lea' },
   { src: '/photos/fija-2.jpg', alt: 'Sol y Lea en la costa' },
+  { src: '/photos/galeria/dsc-6875.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6890.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6918.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6925.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6939.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/portada.jpg', alt: 'Sol y Lea en la playa' },
+  { src: '/photos/galeria/dsc-6951.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6972.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-6977.jpg', alt: 'Sol y Lea' },
   { src: '/photos/fija-3.jpg', alt: 'Sol y Lea caminando de la mano' },
-  { src: '/photos/fija-4.jpg', alt: 'Sol y Lea sonriendo en la arena' },
+  { src: '/photos/galeria/dsc-6997.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-7026.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-7027.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-7033.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-7044.jpg', alt: 'Sol y Lea' },
+  { src: '/photos/galeria/dsc-7052.jpg', alt: 'Sol y Lea' },
   { src: '/photos/cierre-manos.jpg', alt: 'Sol y Lea de la mano' },
-  { src: '/fixdate/img/img_1.webp', alt: 'Sol y Lea' },
-  { src: '/fixdate/img/img_4.webp', alt: 'Sol y Lea' },
-  { src: '/fixdate/img/img_5.webp', alt: 'Sol y Lea' },
-  { src: '/fixdate/img/img_6.webp', alt: 'Sol y Lea' },
+  { src: '/photos/fija-4.jpg', alt: 'Sol y Lea sonriendo en la arena' },
 ];
 
 interface FamilyInvitationViewProps {
@@ -229,7 +247,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   // Regalos accordion & currency switch state
   const [showGiftDetails, setShowGiftDetails] = useState(false);
   const [giftCurrency, setGiftCurrency] = useState<'ARS' | 'USD'>('ARS');
-  const [copiedField, setCopiedField] = useState<'alias' | 'cbu' | null>(null);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
   const wasPlayingBeforeVideoRef = useRef(false);
 
   const handleVideoOpen = useCallback(() => {
@@ -249,7 +267,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     wasPlayingBeforeVideoRef.current = false;
   }, [isMusicEnabled]);
 
-  const handleCopy = (text: string, field: 'alias' | 'cbu') => {
+  const handleCopy = (text: string, field: string) => {
     navigator.clipboard.writeText(text);
     setCopiedField(field);
     setTimeout(() => {
@@ -933,24 +951,12 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                   <span className="gk">Alias</span>
                   <span className="gv">BODA.SOL.LEA</span>
                   <button
-                    className={`gcopy ${copiedField === 'alias' ? 'done' : ''}`}
+                    className={`gcopy ${copiedField === 'alias-ars' ? 'done' : ''}`}
                     type="button"
-                    onClick={() => handleCopy('BODA.SOL.LEA', 'alias')}
+                    onClick={() => handleCopy('BODA.SOL.LEA', 'alias-ars')}
                     aria-label="Copiar alias en pesos"
                   >
-                    {copiedField === 'alias' ? 'Copiado!' : 'Copiar'}
-                  </button>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">CBU</span>
-                  <span className="gv">0070054230004074800545</span>
-                  <button
-                    className={`gcopy ${copiedField === 'cbu' ? 'done' : ''}`}
-                    type="button"
-                    onClick={() => handleCopy('0070054230004074800545', 'cbu')}
-                    aria-label="Copiar CBU"
-                  >
-                    {copiedField === 'cbu' ? 'Copiado!' : 'Copiar'}
+                    {copiedField === 'alias-ars' ? 'Copiado!' : 'Copiar'}
                   </button>
                 </div>
                 <div className="gift-row">
@@ -964,16 +970,30 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               </>
             ) : (
               <>
+                <p
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.16em',
+                    textTransform: 'uppercase',
+                    color: '#9A7B6A',
+                    textAlign: 'left',
+                    marginBottom: 6,
+                    marginTop: 2,
+                  }}
+                >
+                  Argentina
+                </p>
                 <div className="gift-row">
                   <span className="gk">Alias</span>
                   <span className="gv">BODA.SOL.LEA.USD</span>
                   <button
-                    className={`gcopy ${copiedField === 'alias' ? 'done' : ''}`}
+                    className={`gcopy ${copiedField === 'alias-usd' ? 'done' : ''}`}
                     type="button"
-                    onClick={() => handleCopy('BODA.SOL.LEA.USD', 'alias')}
+                    onClick={() => handleCopy('BODA.SOL.LEA.USD', 'alias-usd')}
                     aria-label="Copiar alias en dólares"
                   >
-                    {copiedField === 'alias' ? 'Copiado!' : 'Copiar'}
+                    {copiedField === 'alias-usd' ? 'Copiado!' : 'Copiar'}
                   </button>
                 </div>
                 <div className="gift-row">
@@ -983,6 +1003,81 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                 <div className="gift-row">
                   <span className="gk">Banco</span>
                   <span className="gv">Brubank</span>
+                </div>
+
+                <div
+                  style={{
+                    height: 1,
+                    backgroundColor: 'rgba(180,113,122,0.3)',
+                    marginBlock: 16,
+                  }}
+                  aria-hidden="true"
+                />
+
+                <p
+                  style={{
+                    fontSize: '0.68rem',
+                    fontWeight: 700,
+                    letterSpacing: '0.16em',
+                    textTransform: 'uppercase',
+                    color: '#9A7B6A',
+                    textAlign: 'left',
+                    marginBottom: 6,
+                  }}
+                >
+                  Exterior / USA
+                </p>
+                <div className="gift-row">
+                  <span className="gk">Banco</span>
+                  <span className="gv">SSB Bank</span>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Tipo de cuenta</span>
+                  <span className="gv">Checking</span>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">SWIFT</span>
+                  <span className="gv">SSBAUS32</span>
+                  <button
+                    className={`gcopy ${copiedField === 'swift' ? 'done' : ''}`}
+                    type="button"
+                    onClick={() => handleCopy('SSBAUS32', 'swift')}
+                    aria-label="Copiar código SWIFT"
+                  >
+                    {copiedField === 'swift' ? 'Copiado!' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Número de ruta</span>
+                  <span className="gv">043087080</span>
+                  <button
+                    className={`gcopy ${copiedField === 'routing' ? 'done' : ''}`}
+                    type="button"
+                    onClick={() => handleCopy('043087080', 'routing')}
+                    aria-label="Copiar número de ruta"
+                  >
+                    {copiedField === 'routing' ? 'Copiado!' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Número de cuenta</span>
+                  <span className="gv">315540961617</span>
+                  <button
+                    className={`gcopy ${copiedField === 'account' ? 'done' : ''}`}
+                    type="button"
+                    onClick={() => handleCopy('315540961617', 'account')}
+                    aria-label="Copiar número de cuenta"
+                  >
+                    {copiedField === 'account' ? 'Copiado!' : 'Copiar'}
+                  </button>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Dirección</span>
+                  <span className="gv">8700 Perry Hwy, Pittsburgh, Pennsylvania, 15237, USA</span>
+                </div>
+                <div className="gift-row">
+                  <span className="gk">Titular</span>
+                  <span className="gv">Leandro Gabriel Ramon</span>
                 </div>
               </>
             )}
