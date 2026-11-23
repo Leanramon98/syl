@@ -175,6 +175,10 @@ export function submitRsvp({ token, name, rsvp_status, confirmed_count = 1, diet
     throw new Error('Invitación no encontrada para el token proporcionado');
   }
 
+  if (group.rsvp_status === 'attending' || group.rsvp_status === 'declined') {
+    throw new Error('Tu respuesta ya fue registrada. Si necesitás hacer algún cambio, escribinos directamente.');
+  }
+
   const now = new Date().toISOString();
   const status = rsvp_status === 'attending' ? 'attending' : 'declined';
   const count = status === 'attending' ? Math.min(group.max_guests, Math.max(1, Number(confirmed_count) || 1)) : 0;

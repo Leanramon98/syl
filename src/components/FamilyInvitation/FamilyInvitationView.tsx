@@ -1246,22 +1246,28 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                   <path d="M32 35c3-1.2 5.4 0 6.8 2.2" />
                 </svg>
               </div>
-              <h3>Gracias por confirmar</h3>
+              <h3>¡Respuesta registrada!</h3>
               <p>
                 {rsvpAttending === 'attending'
-                  ? `Registramos tu confirmación con ${confirmedGuests} ${
+                  ? `Confirmaste tu asistencia con ${confirmedGuests} ${
                       confirmedGuests === 1 ? 'pase' : 'pases'
-                    }.`
-                  : 'Registramos tu respuesta. Los vamos a extrañar mucho.'}
+                    }. ¡Qué alegría compartir este día con vos!`
+                  : 'Registramos que no vas a poder asistir. ¡Te vamos a extrañar mucho!'}
               </p>
-              <button
-                type="button"
-                className="btn"
-                onClick={() => setRsvpSuccess(false)}
-                style={{ marginTop: 20 }}
+              <p
+                style={{
+                  marginTop: 18,
+                  padding: '12px 16px',
+                  borderRadius: 12,
+                  backgroundColor: 'rgba(249,240,234,0.1)',
+                  border: '1px solid rgba(249,240,234,0.22)',
+                  fontSize: '0.84rem',
+                  color: '#E7C9C1',
+                  lineHeight: 1.5,
+                }}
               >
-                Modificar respuesta
-              </button>
+                Tu respuesta ya quedó cerrada y no puede modificarse desde acá. Si surgió algún imprevisto o necesitás hacer un cambio, por favor escribinos directamente.
+              </p>
             </div>
           ) : (
             <form className="rsvp-form reveal d2" onSubmit={handleRsvpSubmit}>
