@@ -247,6 +247,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   // Regalos accordion & currency switch state
   const [showGiftDetails, setShowGiftDetails] = useState(false);
   const [giftCurrency, setGiftCurrency] = useState<'ARS' | 'USD'>('ARS');
+  const [usdRegion, setUsdRegion] = useState<'ARG' | 'USA'>('ARG');
   const [copiedField, setCopiedField] = useState<string | null>(null);
   const wasPlayingBeforeVideoRef = useRef(false);
 
@@ -905,6 +906,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                 }}
                 style={{
                   border: 0,
+                  outline: 'none',
                   borderRadius: 999,
                   padding: '8px 12px',
                   fontSize: '0.72rem',
@@ -929,6 +931,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
                 }}
                 style={{
                   border: 0,
+                  outline: 'none',
                   borderRadius: 999,
                   padding: '8px 12px',
                   fontSize: '0.72rem',
@@ -970,115 +973,152 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
               </>
             ) : (
               <>
-                <p
-                  style={{
-                    fontSize: '0.68rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.16em',
-                    textTransform: 'uppercase',
-                    color: '#9A7B6A',
-                    textAlign: 'left',
-                    marginBottom: 6,
-                    marginTop: 2,
-                  }}
-                >
-                  Argentina
-                </p>
-                <div className="gift-row">
-                  <span className="gk">Alias</span>
-                  <span className="gv">BODA.SOL.LEA.USD</span>
-                  <button
-                    className={`gcopy ${copiedField === 'alias-usd' ? 'done' : ''}`}
-                    type="button"
-                    onClick={() => handleCopy('BODA.SOL.LEA.USD', 'alias-usd')}
-                    aria-label="Copiar alias en dólares"
-                  >
-                    {copiedField === 'alias-usd' ? 'Copiado!' : 'Copiar'}
-                  </button>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">Titular</span>
-                  <span className="gv">Leandro Gabriel Ramon</span>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">Banco</span>
-                  <span className="gv">Brubank</span>
-                </div>
-
+                {/* Sub-tabs: Argentina / Exterior */}
                 <div
+                  role="tablist"
+                  aria-label="Ubicación de cuenta en dólares"
                   style={{
-                    height: 1,
-                    backgroundColor: 'rgba(180,113,122,0.3)',
-                    marginBlock: 16,
-                  }}
-                  aria-hidden="true"
-                />
-
-                <p
-                  style={{
-                    fontSize: '0.68rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.16em',
-                    textTransform: 'uppercase',
-                    color: '#9A7B6A',
-                    textAlign: 'left',
-                    marginBottom: 6,
+                    display: 'grid',
+                    gridTemplateColumns: '1fr 1fr',
+                    gap: 6,
+                    padding: 3,
+                    borderRadius: 999,
+                    border: '1px solid rgba(180,113,122,0.35)',
+                    backgroundColor: 'rgba(255,255,255,0.45)',
+                    marginBottom: 8,
                   }}
                 >
-                  Exterior / USA
-                </p>
-                <div className="gift-row">
-                  <span className="gk">Banco</span>
-                  <span className="gv">SSB Bank</span>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">Tipo de cuenta</span>
-                  <span className="gv">Checking</span>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">SWIFT</span>
-                  <span className="gv">SSBAUS32</span>
                   <button
-                    className={`gcopy ${copiedField === 'swift' ? 'done' : ''}`}
                     type="button"
-                    onClick={() => handleCopy('SSBAUS32', 'swift')}
-                    aria-label="Copiar código SWIFT"
+                    role="tab"
+                    aria-selected={usdRegion === 'ARG'}
+                    onClick={() => {
+                      setUsdRegion('ARG');
+                      setCopiedField(null);
+                    }}
+                    style={{
+                      border: 0,
+                      outline: 'none',
+                      borderRadius: 999,
+                      padding: '6px 10px',
+                      fontSize: '0.68rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      backgroundColor: usdRegion === 'ARG' ? '#b4717a' : 'transparent',
+                      color: usdRegion === 'ARG' ? '#F9F0EA' : '#734149',
+                    }}
                   >
-                    {copiedField === 'swift' ? 'Copiado!' : 'Copiar'}
+                    Argentina
+                  </button>
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={usdRegion === 'USA'}
+                    onClick={() => {
+                      setUsdRegion('USA');
+                      setCopiedField(null);
+                    }}
+                    style={{
+                      border: 0,
+                      outline: 'none',
+                      borderRadius: 999,
+                      padding: '6px 10px',
+                      fontSize: '0.68rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.12em',
+                      textTransform: 'uppercase',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s ease',
+                      backgroundColor: usdRegion === 'USA' ? '#b4717a' : 'transparent',
+                      color: usdRegion === 'USA' ? '#F9F0EA' : '#734149',
+                    }}
+                  >
+                    Exterior / USA
                   </button>
                 </div>
-                <div className="gift-row">
-                  <span className="gk">Número de ruta</span>
-                  <span className="gv">043087080</span>
-                  <button
-                    className={`gcopy ${copiedField === 'routing' ? 'done' : ''}`}
-                    type="button"
-                    onClick={() => handleCopy('043087080', 'routing')}
-                    aria-label="Copiar número de ruta"
-                  >
-                    {copiedField === 'routing' ? 'Copiado!' : 'Copiar'}
-                  </button>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">Número de cuenta</span>
-                  <span className="gv">315540961617</span>
-                  <button
-                    className={`gcopy ${copiedField === 'account' ? 'done' : ''}`}
-                    type="button"
-                    onClick={() => handleCopy('315540961617', 'account')}
-                    aria-label="Copiar número de cuenta"
-                  >
-                    {copiedField === 'account' ? 'Copiado!' : 'Copiar'}
-                  </button>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">Dirección</span>
-                  <span className="gv">8700 Perry Hwy, Pittsburgh, Pennsylvania, 15237, USA</span>
-                </div>
-                <div className="gift-row">
-                  <span className="gk">Titular</span>
-                  <span className="gv">Leandro Gabriel Ramon</span>
-                </div>
+
+                {usdRegion === 'ARG' ? (
+                  <>
+                    <div className="gift-row">
+                      <span className="gk">Alias</span>
+                      <span className="gv">BODA.SOL.LEA.USD</span>
+                      <button
+                        className={`gcopy ${copiedField === 'alias-usd' ? 'done' : ''}`}
+                        type="button"
+                        onClick={() => handleCopy('BODA.SOL.LEA.USD', 'alias-usd')}
+                        aria-label="Copiar alias en dólares"
+                      >
+                        {copiedField === 'alias-usd' ? 'Copiado!' : 'Copiar'}
+                      </button>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">Titular</span>
+                      <span className="gv">Leandro Gabriel Ramon</span>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">Banco</span>
+                      <span className="gv">Brubank</span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="gift-row">
+                      <span className="gk">Banco</span>
+                      <span className="gv">SSB Bank</span>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">Tipo de cuenta</span>
+                      <span className="gv">Checking</span>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">SWIFT</span>
+                      <span className="gv">SSBAUS32</span>
+                      <button
+                        className={`gcopy ${copiedField === 'swift' ? 'done' : ''}`}
+                        type="button"
+                        onClick={() => handleCopy('SSBAUS32', 'swift')}
+                        aria-label="Copiar código SWIFT"
+                      >
+                        {copiedField === 'swift' ? 'Copiado!' : 'Copiar'}
+                      </button>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">Número de ruta</span>
+                      <span className="gv">043087080</span>
+                      <button
+                        className={`gcopy ${copiedField === 'routing' ? 'done' : ''}`}
+                        type="button"
+                        onClick={() => handleCopy('043087080', 'routing')}
+                        aria-label="Copiar número de ruta"
+                      >
+                        {copiedField === 'routing' ? 'Copiado!' : 'Copiar'}
+                      </button>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">Número de cuenta</span>
+                      <span className="gv">315540961617</span>
+                      <button
+                        className={`gcopy ${copiedField === 'account' ? 'done' : ''}`}
+                        type="button"
+                        onClick={() => handleCopy('315540961617', 'account')}
+                        aria-label="Copiar número de cuenta"
+                      >
+                        {copiedField === 'account' ? 'Copiado!' : 'Copiar'}
+                      </button>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">Dirección</span>
+                      <span className="gv">8700 Perry Hwy, Pittsburgh, Pennsylvania, 15237, USA</span>
+                    </div>
+                    <div className="gift-row">
+                      <span className="gk">Titular</span>
+                      <span className="gv">Leandro Gabriel Ramon</span>
+                    </div>
+                  </>
+                )}
               </>
             )}
           </div>
