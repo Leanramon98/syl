@@ -220,10 +220,31 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
               animate={{ opacity: 1 }}
               exit={{ opacity: 0, transition: { duration: 0.25 } }}
               transition={{ duration: 0.5, delay: 0.1 }}
-              className="relative z-20 w-full h-full max-w-md mx-auto flex flex-col justify-between items-center py-10 sm:py-16 px-6 pointer-events-none"
+              className="relative z-20 w-full h-full max-w-md mx-auto flex flex-col justify-between items-center py-6 sm:py-10 px-5 pointer-events-none"
             >
-              {/* Top Plaque: Recipient Info */}
-              <div className="text-center pt-2 sm:pt-4">
+              {/* Top Plaque: Botanical emblem + Recipient Info */}
+              <div className="text-center pt-1 sm:pt-3 flex flex-col items-center">
+                {/* Botanical Laurel Motif */}
+                <div className="mb-2 text-[#b4717a] opacity-85">
+                  <svg
+                    viewBox="0 0 44 30"
+                    className="w-8 h-6 mx-auto stroke-current"
+                    fill="none"
+                    strokeWidth="1.2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M22 4v22" />
+                    <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                    <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                    <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                    <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                    <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                    <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                    <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+                  </svg>
+                </div>
+
                 <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[11px] sm:text-xs tracking-[0.3em] uppercase text-[#b4717a] font-semibold drop-shadow-sm block mb-1">
                   Invitación para
                 </span>
@@ -235,11 +256,11 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                 </span>
               </div>
 
-              {/* Center Envelope Video with generous breathing room */}
+              {/* Center Envelope Video with balanced responsive proportion */}
               <div
-                className="w-full flex items-center justify-center my-auto"
+                className="w-[88%] flex items-center justify-center my-auto"
                 style={{
-                  maxWidth: 'min(330px, calc(44dvh * 1086 / 1448))',
+                  maxWidth: 'min(360px, calc(46dvh * 1086 / 1448))',
                   aspectRatio: '1086 / 1448',
                 }}
               >
@@ -254,27 +275,37 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
                   onPlay={() => setIsPlaying(true)}
                   onPause={() => setIsPlaying(false)}
                   onEnded={handleEnded}
-                  className="w-full h-full object-contain select-none pointer-events-none"
+                  className="w-full h-full object-contain select-none pointer-events-none drop-shadow-sm"
                 />
               </div>
 
-              {/* Bottom CTA and Signoff */}
-              <div className="flex flex-col items-center justify-center pb-2 sm:pb-4 pointer-events-auto">
+              {/* Bottom CTA, Signoff with Hairline Dividers & Wedding Date */}
+              <div className="w-full flex flex-col items-center justify-center pb-2 sm:pb-4 pointer-events-auto">
                 <button
                   type="button"
                   onClick={(e) => {
                     e.stopPropagation();
                     handleStartPlayback();
                   }}
-                  className="group uppercase text-xs tracking-[0.28em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium px-8 py-3 rounded-full bg-[#53111B] border border-[#b4717a]/50 shadow-xl flex items-center gap-2.5 hover:bg-[#681824] hover:scale-105 active:scale-95 transition-all cursor-pointer"
+                  className="w-[82%] max-w-[320px] uppercase text-xs tracking-[0.25em] text-[#F9F0EA] font-['Plus_Jakarta_Sans',sans-serif] font-medium py-3 sm:py-3.5 rounded-full bg-[#53111B] border border-[#b4717a]/40 shadow-xl flex items-center justify-center gap-2 hover:bg-[#681824] hover:scale-[1.02] active:scale-[0.98] transition-all cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4 text-[#E5D9C5] animate-pulse" />
+                  <Sparkles className="w-3.5 h-3.5 text-[#E5D9C5] animate-pulse" />
                   <span>Tocar para abrir</span>
                 </button>
 
-                <div className="mt-5 sm:mt-7 select-none text-center">
-                  <span className="font-['Instrument_Serif',serif] text-3xl sm:text-4xl text-[#53111B] tracking-wide drop-shadow-sm">
-                    Sol <span className="font-['Instrument_Serif',serif] italic text-2xl sm:text-3xl text-[#b4717a]">&</span> Lea
+                {/* Names flanked by thin hairline rules: ─── Sol & Lea ─── */}
+                <div className="w-full max-w-[320px] flex items-center justify-center gap-3 mt-4 sm:mt-5 select-none">
+                  <span className="flex-1 h-[1px] bg-[#b4717a]/35" />
+                  <span className="font-['Instrument_Serif',serif] text-2xl sm:text-3xl text-[#53111B] tracking-wide whitespace-nowrap">
+                    Sol <span className="font-['Instrument_Serif',serif] italic text-xl sm:text-2xl text-[#b4717a]">&</span> Lea
+                  </span>
+                  <span className="flex-1 h-[1px] bg-[#b4717a]/35" />
+                </div>
+
+                {/* Wedding Date in subtle tracked typography */}
+                <div className="mt-1.5 select-none text-center">
+                  <span className="font-['Plus_Jakarta_Sans',sans-serif] text-[10px] sm:text-[11px] tracking-[0.25em] text-[#734149]/80 uppercase font-light">
+                    06 . 03 . 2027
                   </span>
                 </div>
               </div>
