@@ -7,7 +7,7 @@ interface InteractiveEnvelopeIntroProps {
   maxGuests: number;
   onOpen: () => void;
   onComplete: () => void;
-  isPlayingMusic: boolean;
+  isMusicEnabled: boolean;
   onToggleMusic: () => void;
 }
 
@@ -16,7 +16,7 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
   maxGuests,
   onOpen,
   onComplete,
-  isPlayingMusic,
+  isMusicEnabled,
   onToggleMusic,
 }) => {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -103,22 +103,23 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
 
     setHasStarted(true);
 
+    // Call onOpen synchronously to trigger audio within user interaction gesture
+    try {
+      onOpen();
+    } catch (e) {
+      console.warn('Audio onOpen error:', e);
+    }
+
     video.defaultMuted = true;
     video.muted = true;
     video.playsInline = true;
 
-    // Start video playback first (muted is allowed on all mobile browsers)
+    // Start video playback (muted is allowed on all mobile browsers)
     const playPromise = video.play();
     if (playPromise !== undefined) {
       playPromise
         .then(() => {
           setIsPlaying(true);
-          // Start background music once video is rolling
-          try {
-            onOpen();
-          } catch (e) {
-            console.warn('Audio play trigger error:', e);
-          }
         })
         .catch((error) => {
           console.warn('Video playback error with source tags, fallback to mp4:', error);
@@ -129,11 +130,6 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
               .play()
               .then(() => {
                 setIsPlaying(true);
-                try {
-                  onOpen();
-                } catch (e) {
-                  console.warn('Audio trigger error:', e);
-                }
               })
               .catch((err2) => {
                 console.warn('Direct MP4 playback error:', err2);
@@ -192,15 +188,15 @@ export const InteractiveEnvelopeIntro: React.FC<InteractiveEnvelopeIntroProps> =
             }}
             className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-white/80 border border-[#b4717a]/40 shadow-sm text-xs font-['Plus_Jakarta_Sans',sans-serif] text-[#53111B] hover:bg-white transition-all cursor-pointer backdrop-blur-sm"
           >
-            {isPlayingMusic ? (
+            {isMusicEnabled ? (
               <>
                 <Volume2 className="w-4 h-4 text-[#53111B]" />
-                <span className="hidden sm:inline">Música sonando</span>
+                <span className="hidden sm:inline">Música</span>
               </>
             ) : (
               <>
                 <VolumeX className="w-4 h-4 text-[#9A7B6A]" />
-                <span className="hidden sm:inline">Activar música</span>
+                <span className="hidden sm:inline">Silenciada</span>
               </>
             )}
           </button>

@@ -83,6 +83,8 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   // Audio control
   const handleStartMusic = useCallback(() => {
     if (audioRef.current && isMusicEnabled) {
+      audioRef.current.muted = false;
+      audioRef.current.volume = 1.0;
       if (audioRef.current.paused) {
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
@@ -90,7 +92,6 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             .then(() => setIsPlayingMusic(true))
             .catch((e) => {
               console.warn('Audio auto-play prevented:', e);
-              setIsPlayingMusic(false);
             });
         }
       }
@@ -104,6 +105,8 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
       setIsPlayingMusic(false);
       setIsMusicEnabled(false);
     } else {
+      audioRef.current.muted = false;
+      audioRef.current.volume = 1.0;
       audioRef.current.play()
         .then(() => {
           setIsPlayingMusic(true);
@@ -120,6 +123,9 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
     const tryStartAudio = () => {
       if (!audioRef.current || !isMusicEnabled) return;
 
+      audioRef.current.muted = false;
+      audioRef.current.volume = 1.0;
+
       const promise = audioRef.current.play();
       if (promise !== undefined) {
         promise
@@ -131,6 +137,8 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
             // Bind first touch/click anywhere on screen to unlock audio immediately.
             const handleFirstGesture = () => {
               if (audioRef.current && isMusicEnabled && audioRef.current.paused) {
+                audioRef.current.muted = false;
+                audioRef.current.volume = 1.0;
                 audioRef.current.play()
                   .then(() => setIsPlayingMusic(true))
                   .catch(console.warn);
@@ -299,7 +307,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
   return (
     <div className="relative w-full overflow-x-hidden select-none bg-[#F9F0EA]">
       {/* Background Music Audio Element */}
-      <audio ref={audioRef} src="/background-music.mp3" loop preload="auto" />
+      <audio ref={audioRef} src="/background-music.mp3" loop autoPlay preload="auto" playsInline />
 
       {/* 1. Envelope Intro Screen (seamless, auto-opens after 3s) */}
       {showEnvelope && (
@@ -308,7 +316,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
           maxGuests={group.max_guests}
           onOpen={handleStartMusic}
           onComplete={handleEnvelopeComplete}
-          isPlayingMusic={isPlayingMusic}
+          isMusicEnabled={isMusicEnabled}
           onToggleMusic={toggleMusic}
         />
       )}
