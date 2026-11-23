@@ -347,7 +347,7 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
       <header className="hero" id="hero">
         <img
           className="hero-photo"
-          src="/fixdate/img/portada-3.jpg"
+          src="/photos/portada.jpg"
           alt="Sol y Lea"
           onError={(e) => {
             document.getElementById('hero')?.classList.add('no-photo');
@@ -1097,30 +1097,38 @@ export const FamilyInvitationView: React.FC<FamilyInvitationViewProps> = ({ toke
 
       {/* ===== CIERRE FOOTER ===== */}
       <footer className="section closing" id="cierre">
-        <div className="divider reveal" aria-hidden="true">
-          <span className="ln" />
-          <span className="mo">
-            <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M22 4v22" />
-              <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
-              <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
-              <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
-              <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
-              <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
-              <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
-              <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
-            </svg>
-          </span>
-          <span className="ln r" />
-        </div>
-        <p className="micro reveal">Ahora sí, nos vemos el 6 de marzo!</p>
-        <p className="love reveal d2">Con amor</p>
         <img
-          className="seal reveal d2"
-          src="/monogram-clean.png"
-          alt="Sol &amp; Lea"
-          style={{ width: 130, height: 130, objectFit: 'contain' }}
+          className="closing-photo"
+          src="/photos/cierre-manos.jpg"
+          alt=""
+          aria-hidden="true"
         />
+        <div className="closing-inner">
+          <div className="divider reveal" aria-hidden="true">
+            <span className="ln" />
+            <span className="mo">
+              <svg viewBox="0 0 44 30" fill="none" stroke="currentColor" strokeWidth="1" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M22 4v22" />
+                <path d="M22 4c-1.3 1.3-1.3 3.2 0 4.5 1.3-1.3 1.3-3.2 0-4.5z" />
+                <path d="M22 11c-3.6-1-6.6.4-8.6 3 2.9 1 5.9.2 8.6-2" />
+                <path d="M22 11c3.6-1 6.6.4 8.6 3-2.9 1-5.9.2-8.6-2" />
+                <path d="M22 17c-3-.8-5.4.3-7 2.5 2.4.9 5 .2 7-1.7" />
+                <path d="M22 17c3-.8 5.4.3 7 2.5-2.4.9-5 .2-7-1.7" />
+                <path d="M22 23c-2.2-.6-4 .2-5.3 1.9 1.8.7 3.8.1 5.3-1.3" />
+                <path d="M22 23c2.2-.6 4 .2 5.3 1.9-1.8.7-3.8.1-5.3-1.3" />
+              </svg>
+            </span>
+            <span className="ln r" />
+          </div>
+          <p className="micro reveal">Ahora sí, nos vemos el 6 de marzo!</p>
+          <p className="love reveal d2">Con amor</p>
+          <img
+            className="seal reveal d2"
+            src="/monogram-clean.png"
+            alt="Sol &amp; Lea"
+            style={{ width: 130, height: 130, objectFit: 'contain' }}
+          />
+        </div>
       </footer>
     </div>
   );

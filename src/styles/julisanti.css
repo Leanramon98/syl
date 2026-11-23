@@ -111,17 +111,16 @@ img{max-width:100%;display:block}
   justify-content:flex-start;text-align:center;position:relative;overflow:hidden;
   padding:clamp(66px,9vh,112px) calc(var(--lace-w) + 22px) 96px}
 .hero-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  object-position:50% 34%;z-index:0}
+  object-position:50% 56%;z-index:0}
 .hero::before{content:"";position:absolute;inset:0;z-index:1;
   background:
     linear-gradient(180deg,
-      rgba(249,240,234,.90) 0%,
-      rgba(249,240,234,.74) 23%,
-      rgba(249,240,234,.38) 40%,
-      rgba(249,240,234,.18) 56%,
-      rgba(249,240,234,.16) 76%,
-      rgba(249,240,234,.36) 100%),
-    linear-gradient(180deg, rgba(59,34,48,0) 58%, rgba(59,34,48,.12) 100%);}
+      rgba(249,240,234,.82) 0%,
+      rgba(249,240,234,.55) 22%,
+      rgba(249,240,234,.18) 38%,
+      rgba(249,240,234,.08) 58%,
+      rgba(249,240,234,.22) 80%,
+      rgba(249,240,234,.82) 100%);}
 .hero.no-photo::before{background:
     radial-gradient(120% 90% at 50% 20%, #fff8f2, var(--cream) 70%)}
 .hero-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0;
@@ -272,8 +271,19 @@ img{max-width:100%;display:block}
 .rsvp-done h3{font-family:var(--serif);font-size:1.9rem;color:var(--cream);margin-bottom:6px}
 .rsvp-done p{color:#F0E0DA}
 /* ===== Closing ===== */
-.closing{padding-bottom:74px}
-.closing .love{font-family:var(--serif);font-style:italic;color:var(--topo);font-size:1.15rem;letter-spacing:.06em;margin-top:.2em}
+.closing{position:relative;overflow:hidden;padding-block:96px 88px}
+.closing-photo{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  object-position:50% 56%;opacity:.32;z-index:0;pointer-events:none;user-select:none}
+.closing::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(180deg,
+    rgba(249,240,234,.92) 0%,
+    rgba(249,240,234,.42) 32%,
+    rgba(249,240,234,.36) 72%,
+    rgba(249,240,234,.78) 100%)}
+.closing-inner{position:relative;z-index:2;max-width:var(--maxw);margin-inline:auto;
+  padding-inline:calc(var(--lace-w) + 20px)}
+.closing .micro{color:var(--bordo);text-shadow:0 1px 10px rgba(249,240,234,.85)}
+.closing .love{font-family:var(--serif);font-style:italic;color:var(--bordo);font-size:1.2rem;letter-spacing:.06em;margin-top:.2em;text-shadow:0 1px 10px rgba(249,240,234,.85)}
 .seal{width:126px;margin:26px auto 0;filter:drop-shadow(0 12px 20px rgba(83,17,27,.28))}
 
 /* ===== Traslado car illustration ===== */
