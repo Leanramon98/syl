@@ -130,7 +130,10 @@ export function createGroup({ name, max_guests = 1, notes = '', custom_token = '
   return getGroupById(id);
 }
 
-export function updateGroup(id, { name, max_guests, notes, custom_token, guest_names }) {
+export function updateGroup(
+  id,
+  { name, max_guests, notes, custom_token, guest_names, rsvp_status, confirmed_count, dietary_requirements }
+) {
   const existing = getGroupById(id);
   if (!existing) return null;
 
@@ -145,11 +148,58 @@ export function updateGroup(id, { name, max_guests, notes, custom_token, guest_n
     ? JSON.stringify(Array.isArray(guest_names) ? guest_names.map((n) => String(n).trim()).filter(Boolean) : [])
     : JSON.stringify(existing.guest_names || []);
 
+  const validStatuses = ['pending', 'attending', 'declined'];
+  const updatedStatus =
+    rsvp_status !== undefined && validStatuses.includes(rsvp_status)
+      ? rsvp_status
+      : existing.rsvp_status;
+
+  let updatedConfirmedCount = existing.confirmed_count;
+  let updatedRespondedAt = existing.responded_at;
+
+  if (updatedStatus === 'pending') {
+    updatedConfirmedCount = 0;
+    updatedRespondedAt = null;
+  } else if (updatedStatus === 'declined') {
+    updatedConfirmedCount = 0;
+    updatedRespondedAt = existing.responded_at || now;
+  } else if (updatedStatus === 'attending') {
+    const rawCount = confirmed_count !== undefined ? Number(confirmed_count) : existing.confirmed_count || updatedMaxGuests;
+    updatedConfirmedCount = Math.min(updatedMaxGuests, Math.max(1, rawCount || 1));
+    updatedRespondedAt = existing.responded_at || now;
+  }
+
+  const updatedDietary =
+    dietary_requirements !== undefined ? String(dietary_requirements).trim() : existing.dietary_requirements || '';
+
   db.prepare(`
     UPDATE groups
-    SET name = ?, confirmed_name = ?, token = ?, max_guests = ?, guest_names = ?, notes = ?, updated_at = ?
+    SET name = ?,
+        confirmed_name = ?,
+        token = ?,
+        max_guests = ?,
+        guest_names = ?,
+        notes = ?,
+        rsvp_status = ?,
+        confirmed_count = ?,
+        dietary_requirements = ?,
+        responded_at = ?,
+        updated_at = ?
     WHERE id = ?
-  `).run(updatedName, updatedName, updatedToken, updatedMaxGuests, updatedGuestNamesJson, updatedNotes, now, id);
+  `).run(
+    updatedName,
+    updatedName,
+    updatedToken,
+    updatedMaxGuests,
+    updatedGuestNamesJson,
+    updatedNotes,
+    updatedStatus,
+    updatedConfirmedCount,
+    updatedDietary,
+    updatedRespondedAt,
+    now,
+    id
+  );
 
   return getGroupById(id);
 }

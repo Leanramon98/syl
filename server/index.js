@@ -107,8 +107,26 @@ app.post('/api/admin/groups', requireAdmin, (req, res) => {
 app.put('/api/admin/groups/:id', requireAdmin, (req, res) => {
   try {
     const { id } = req.params;
-    const { name, max_guests, notes, custom_token, guest_names } = req.body;
-    const updated = updateGroup(id, { name, max_guests, notes, custom_token, guest_names });
+    const {
+      name,
+      max_guests,
+      notes,
+      custom_token,
+      guest_names,
+      rsvp_status,
+      confirmed_count,
+      dietary_requirements,
+    } = req.body;
+    const updated = updateGroup(id, {
+      name,
+      max_guests,
+      notes,
+      custom_token,
+      guest_names,
+      rsvp_status,
+      confirmed_count,
+      dietary_requirements,
+    });
 
     if (!updated) {
       return res.status(404).json({ error: 'Grupo no encontrado' });

@@ -79,9 +79,15 @@ export async function createAdminGroup(input: CreateGroupInput): Promise<GuestGr
   });
 }
 
+export interface UpdateGroupInput extends Partial<CreateGroupInput> {
+  rsvp_status?: 'pending' | 'attending' | 'declined';
+  confirmed_count?: number;
+  dietary_requirements?: string;
+}
+
 export async function updateAdminGroup(
   id: string,
-  input: Partial<CreateGroupInput>
+  input: UpdateGroupInput
 ): Promise<GuestGroup> {
   return fetchJson<GuestGroup>(`/api/admin/groups/${id}`, {
     method: 'PUT',

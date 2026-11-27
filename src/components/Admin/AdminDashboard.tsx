@@ -50,6 +50,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     custom_token: '',
     notes: '',
     guest_names: ['', ''] as string[],
+    rsvp_status: 'pending' as 'pending' | 'attending' | 'declined',
+    confirmed_count: 1,
+    dietary_requirements: '',
   });
   const [formSubmitting, setFormSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
@@ -88,6 +91,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
     setFormData((prev) => ({
       ...prev,
       max_guests: newMax,
+      confirmed_count: Math.min(newMax, Math.max(1, prev.confirmed_count || 1)),
       guest_names: adjustedNames,
     }));
   };
@@ -100,6 +104,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       custom_token: '',
       notes: '',
       guest_names: ['', ''],
+      rsvp_status: 'pending',
+      confirmed_count: 2,
+      dietary_requirements: '',
     });
     setFormError(null);
     setIsModalOpen(true);
@@ -115,6 +122,9 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       custom_token: group.token,
       notes: group.notes || '',
       guest_names: padded,
+      rsvp_status: group.rsvp_status || 'pending',
+      confirmed_count: group.confirmed_count > 0 ? group.confirmed_count : group.max_guests,
+      dietary_requirements: group.dietary_requirements || '',
     });
     setFormError(null);
     setIsModalOpen(true);
@@ -136,6 +146,12 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
           custom_token: formData.custom_token,
           notes: formData.notes,
           guest_names: cleanGuestNames,
+          rsvp_status: formData.rsvp_status,
+          confirmed_count:
+            formData.rsvp_status === 'attending'
+              ? Math.min(formData.max_guests, Math.max(1, formData.confirmed_count || 1))
+              : 0,
+          dietary_requirements: formData.dietary_requirements,
         });
         setGroups((prev) => prev.map((g) => (g.id === updated.id ? updated : g)));
       } else {
@@ -558,7 +574,7 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
       {/* Modal: Create / Edit Group */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl border border-[#EFE9DE] max-w-md w-full p-6 sm:p-7">
+          <div className="bg-white rounded-3xl shadow-2xl border border-[#EFE9DE] max-w-md w-full max-h-[90vh] overflow-y-auto p-6 sm:p-7">
             <h2 className="font-serif text-2xl font-bold text-[#2C2A29] mb-1">
               {editingGroup ? 'Editar Familia / Invitación' : 'Nueva Familia / Invitación'}
             </h2>
@@ -651,6 +667,84 @@ export const AdminDashboard: React.FC<AdminDashboardProps> = ({ onLogout }) => {
                   Si lo dejás vacío se arma automáticamente con los nombres de los pases.
                 </p>
               </div>
+
+              {editingGroup && (
+                <div className="p-3.5 rounded-2xl bg-[#FAF8F5] border border-[#EFE9DE] space-y-3">
+                  <label className="block font-semibold text-[#2C2A29]">
+                    Estado de Asistencia (RSVP)
+                  </label>
+                  <div className="grid grid-cols-3 gap-2">
+                    {(
+                      [
+                        { value: 'pending', label: 'Pendiente', active: 'bg-amber-600 text-white border-amber-600' },
+                        { value: 'attending', label: 'Asiste', active: 'bg-emerald-700 text-white border-emerald-700' },
+                        { value: 'declined', label: 'No asiste', active: 'bg-red-700 text-white border-red-700' },
+                      ] as const
+                    ).map((opt) => (
+                      <button
+                        key={opt.value}
+                        type="button"
+                        onClick={() =>
+                          setFormData((prev) => ({
+                            ...prev,
+                            rsvp_status: opt.value,
+                            confirmed_count:
+                              opt.value === 'attending'
+                                ? prev.confirmed_count > 0
+                                  ? Math.min(prev.max_guests, prev.confirmed_count)
+                                  : prev.max_guests
+                                : 0,
+                          }))
+                        }
+                        className={`py-2 px-2.5 rounded-xl border text-xs font-medium transition-all cursor-pointer ${
+                          formData.rsvp_status === opt.value
+                            ? opt.active
+                            : 'bg-white text-[#5C544E] border-[#DCD5C7] hover:bg-[#F3EFE8]'
+                        }`}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {formData.rsvp_status === 'attending' && (
+                    <div>
+                      <label className="block font-medium text-[#2C2A29] mb-1">
+                        Pases confirmados (máx. {formData.max_guests})
+                      </label>
+                      <input
+                        type="number"
+                        min={1}
+                        max={formData.max_guests}
+                        value={formData.confirmed_count}
+                        onChange={(e) =>
+                          setFormData({
+                            ...formData,
+                            confirmed_count: Math.min(
+                              formData.max_guests,
+                              Math.max(1, Number(e.target.value) || 1)
+                            ),
+                          })
+                        }
+                        className="w-full px-3 py-2 rounded-xl border border-[#DCD5C7] bg-white text-xs text-[#2C2A29] focus:outline-none focus:ring-1 focus:ring-[#855F1E]"
+                      />
+                    </div>
+                  )}
+
+                  <div>
+                    <label className="block font-medium text-[#2C2A29] mb-1">
+                      Menú / Restricciones / Mensaje
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.dietary_requirements}
+                      onChange={(e) => setFormData({ ...formData, dietary_requirements: e.target.value })}
+                      placeholder="Ej: Menú: 2 Tradicional, 1 Vegetariano"
+                      className="w-full px-3 py-2 rounded-xl border border-[#DCD5C7] bg-white text-xs text-[#2C2A29] focus:outline-none focus:ring-1 focus:ring-[#855F1E]"
+                    />
+                  </div>
+                </div>
+              )}
 
               <div>
                 <label className="block font-medium text-[#2C2A29] mb-1">
